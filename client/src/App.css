@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+
+/*When mouse is hovering over the navigation commands then change the mouse pointer to hand*/
+.list-group-item {
+  cursor: pointer;
+}
