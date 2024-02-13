@@ -1,0 +1,1 @@
+# This file to have the SQL statements to create the MySQL database schema
