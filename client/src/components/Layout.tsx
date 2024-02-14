@@ -10,7 +10,7 @@ interface Props {
 }
 
 const Layout = ({ children, onSelectItem } : Props) => {
-  const items = ["Dashboard", "Users", "Categories", "Expenses", "Incomes"];
+  const items = ["Dashboard", "Categories", "Transactions", "Groups"];
 
   return (
     <div>
