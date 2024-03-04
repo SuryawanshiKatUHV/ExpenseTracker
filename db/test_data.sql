@@ -28,18 +28,18 @@ INSERT INTO TRANSACTION (CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSA
 	SELECT CATEGORY_ID, 'Expense', '2024-01-01', 55.00, concat(CATEGORY_TITLE, ' expense')
     FROM CATEGORY;
 
-INSERT INTO EVENT (OWNER_ID, EVENT_TITLE, EVENT_DESCRIPTION) VALUES
-(1, 'Tech Innovate Summit', 'A gathering for showcasing cutting-edge technology innovations.'),
-(2, 'Global Entrepreneurs Meet', 'Networking and knowledge exchange for entrepreneurs from around the globe.'),
-(3, 'Art & Culture Fest', 'Celebrating diverse art forms and cultural expressions from various communities.'),
-(4, 'Health and Wellness Expo', 'An expo focused on promoting health, wellness, and fitness among individuals.');
+INSERT INTO USER_GROUP (OWNER_ID, USER_GROUP_TITLE, USER_GROUP_DATE, USER_GROUP_DESCRIPTION) VALUES
+(1, 'Tech Innovate Summit', '2024-01-01', 'A gathering for showcasing cutting-edge technology innovations.'),
+(2, 'Global Entrepreneurs Meet', '2024-01-01', 'Networking and knowledge exchange for entrepreneurs from around the globe.'),
+(3, 'Art & Culture Fest', '2024-01-01', 'Celebrating diverse art forms and cultural expressions from various communities.'),
+(4, 'Health and Wellness Expo', '2024-01-01', 'An expo focused on promoting health, wellness, and fitness among individuals.');
 
-INSERT INTO EVENT_MEMBERSHIP (EVENT_ID, MEMBER_ID)
-	SELECT e.EVENT_ID, u.USER_ID
-	FROM EVENT e
+INSERT INTO USER_GROUP_MEMBERSHIP (USER_GROUP_ID, MEMBER_ID)
+	SELECT e.USER_GROUP_ID, u.USER_ID
+	FROM USER_GROUP e
 	CROSS JOIN USER u;
 
--- INSERT INTO EVENT_TRANSACTION (EVENT_ID, TRANSACTION_ID, PAID_BY_USER_ID, PAID_TO_USER_ID, EVENT_TRANSACTION_DATE, EVENT_TRANSACTION_AMOUNT, EVENT_TRANSACTION_NOTES) VALUES
+-- INSERT INTO USER_GROUP_TRANSACTION (USER_GROUP_ID, TRANSACTION_ID, PAID_BY_USER_ID, PAID_TO_USER_ID, USER_GROUP_TRANSACTION_DATE, USER_GROUP_TRANSACTION_AMOUNT, USER_GROUP_TRANSACTION_NOTES) VALUES
 --  ();
 
 COMMIT;
