@@ -1,4 +1,7 @@
-const TransactionForm = () => {
+interface Props {
+    userId: number;
+}
+const TransactionForm = ({userId}:Props) => {
     return <></>;
 }
 

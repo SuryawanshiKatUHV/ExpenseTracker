@@ -1,4 +1,8 @@
-const GroupForm = () => {
+interface Props {
+    userId: number;
+}
+
+const GroupForm = ({userId}:Props) => {
     return <></>;
 }
 

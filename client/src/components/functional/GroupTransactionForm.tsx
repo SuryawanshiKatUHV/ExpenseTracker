@@ -1,4 +1,8 @@
-const GroupTransactionForm = () => {
+interface Props {
+    userId: number;
+}
+
+const GroupTransactionForm = ({userId}:Props) => {
     return <></>;
 }
 
