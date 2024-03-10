@@ -2,22 +2,37 @@
 import Header from './Header';
 import Navigation from './Navigation';
 import Content from './Content';
-import { ReactNode } from 'react';
+import { useState } from 'react';
+import { FUNCTIONS } from '../Common';
 
 interface Props {
-  children :ReactNode;
-  onSelectItem: (item: string) => void;
+  userId: number;
+  userFullName: string;
+  logoutHandler : () => void;
 }
 
-const Layout = ({ children, onSelectItem } : Props) => {
-  const items = ["Dashboard", "Categories", "Budget", "Transactions", "Groups", "Group Transactions"];
+const Layout = ({ userId, userFullName, logoutHandler } : Props) => {
+  const [currentFunction, setCurrentFunction] = useState(FUNCTIONS.Dashboard);
+
+  /**
+   * Operations
+   */
+
+
+  /**
+   * Event Handlers
+   */
+
+  const ItemClicked = (item:string) => {
+    setCurrentFunction(item);
+  }
 
   return (
     <div>
-      <Header />
+      <Header userFullName={userFullName} logoutHandler={logoutHandler}/>
       <div style={{ display: 'flex' }}>
-        <Navigation items={items} onSelectItem={onSelectItem}/>
-        <Content>{children}</Content>
+        <Navigation itemClickHandler={ItemClicked}/>
+        <Content userId={userId} selectedFunction={currentFunction}/>
       </div>
     </div>
   );
