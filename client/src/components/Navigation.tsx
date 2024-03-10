@@ -1,12 +1,14 @@
 import { useState } from "react";
+import { FUNCTIONS } from "../Common";
 
 interface Props {
-  items: string[];
-  onSelectItem: (item: string) => void;
+  itemClickHandler: (item: string) => void;
 }
 
-const Navigation = ({ items, onSelectItem }: Props) => {
+const Navigation = ({ itemClickHandler }: Props) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  
+  const items = [FUNCTIONS.Dashboard, FUNCTIONS.Categories, FUNCTIONS.Budgets, FUNCTIONS.Transactions, FUNCTIONS.Groups, FUNCTIONS.GroupTransactions];
 
   return (
     <div style={{ width: "200px", backgroundColor: "#ddd", padding: "20px" }}>
@@ -21,7 +23,7 @@ const Navigation = ({ items, onSelectItem }: Props) => {
             key={item}
             onClick={() => {
               setSelectedIndex(index);
-              onSelectItem(item);
+              itemClickHandler(item);
             }}
           >
             {item}
