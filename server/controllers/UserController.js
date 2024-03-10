@@ -20,10 +20,29 @@ class UserController {
   }
 
   async create(req, res) {
-    const { fname, lname } = req.body;
+    console.log("User create is invoked...");
     try {
-      res.status(201).json(userModel.create({fname, lname})); // Send the saved object as a JSON response
+      const { email, firstName, lastName, password } = req.body;
+      const data = userModel.create({email, firstName, lastName, password});
+
+      res.status(201).json(data); // Send the saved object as a JSON response
+      console.log(`User is created ${data}`);
     } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async login(req, res) {
+    console.log("User login is invoked...");
+    try {
+      const { email, password } = req.body;
+      const data = userModel.login({email, password});
+
+      res.status(201).json(data); // Send the saved object as a JSON response
+      console.log(`User is created ${data}`);
+    } catch (error) {
+      console.error(error.message);
       res.status(500).json({ message: error.message });
     }
   }
