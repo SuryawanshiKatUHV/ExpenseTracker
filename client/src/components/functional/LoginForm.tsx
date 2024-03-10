@@ -1,0 +1,65 @@
+import { useState } from "react";
+
+interface Props {
+    loginHandler: (email : string, password: string) => void;
+    showRegistrationHandler: () => void;
+}
+
+function LoginForm({loginHandler, showRegistrationHandler}:Props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({email:'', password:''});
+
+  /**
+   * Operations
+   */
+  const validateInput = () : boolean => {
+    let errors = {email:'', password:''};
+
+    if (email == "") {
+      errors["email"] = "Email is required.";
+    }
+    else if (email.indexOf('@') == -1 || email.indexOf('.') == -1) {
+      errors["email"] = "Email should be in format name@domain.com.";
+    }
+
+    if (password == '') {
+      errors["password"] = "Password is required.";
+    }
+
+    setErrors(errors);
+    return !(errors.email || errors.password);
+  }
+
+  /**
+   * Event Handler
+   */
+  const LoginClicked = () => {
+    if (validateInput())
+      loginHandler(email, password);
+  }
+
+  return (
+    <div>
+        <h2 className="m-5">Login to your account</h2>
+        
+        <div className="form-floating mb-3">
+          <input type="email" className="form-control" id="inputEmail" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)}/>
+          <label htmlFor="inputEmail">Email address</label>
+          {errors.email && <p style={{color:'red'}}>{errors.email}</p>}
+        </div>
+        
+        <div className="form-floating mb-3">
+          <input type="password" className="form-control" id="inputPassword" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+          <label htmlFor="inputPassword">Password</label>
+          {errors.password && <p style={{color:'red'}}>{errors.password}</p>}
+        </div>
+
+        <button className="btn btn-primary" onClick={LoginClicked}>Login</button>
+        <br/>
+        <button className="btn btn-link" onClick={showRegistrationHandler}>Register new account</button>
+    </div>
+  );
+}
+
+export default LoginForm;
