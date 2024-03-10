@@ -12,6 +12,9 @@ const groupRouter = require("./routers/groupRouter");
 const groupTransactionRouter = require("./routers/groupTransactionRouter");
 
 // Use routes
+app.get("/", (req, res) => {
+  res.send("Hello from server");
+});
 app.use("/api/users", userRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/budgets", budgetRouter);
