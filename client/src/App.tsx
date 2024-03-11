@@ -12,7 +12,7 @@ function App() {
   const [view, setView] = useState(VIEW.LoginForm);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
-  const [loggedInUser, setLoggedInUser] = useState({email:'', firstName:'', lastName:'', id:0});
+  const [loggedInUser, setLoggedInUser] = useState({USER_FULL_NAME:'', USER_ID:0});
 
   /**
    * Operations
@@ -26,7 +26,7 @@ function App() {
       return <RegistrationForm registerHandler={RegisterClicked} showLoginHandler={ShowLoginClicked}/>;
     case VIEW.AppHome:
       return (
-        <Layout userId={loggedInUser.id} userFullName={`${loggedInUser.lastName}, ${loggedInUser.firstName}`} logoutHandler={LogoutClicked}/>
+        <Layout userId={loggedInUser.USER_ID} userFullName={loggedInUser.USER_FULL_NAME} logoutHandler={LogoutClicked}/>
       );
     }
 
@@ -41,21 +41,21 @@ function App() {
     setView(VIEW.LoginForm);
   }
 
-  const LoginClicked = async (email : string, password: string) => {
+  const LoginClicked = async (USER_EMAIL : string, USER_PASSWORD: string) => {
     try {
-      const payload = {email, password};
+      const payload = {USER_EMAIL, USER_PASSWORD};
       const user = await post(END_POINTS.Login, payload);
 
-      setLoggedInUser({id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName});
+      setLoggedInUser({USER_FULL_NAME:`${user.USER_LNAME}, ${user.USER_FNAME}`, USER_ID:user.USER_ID});
       setView(VIEW.AppHome);
     } catch (error : any) {
       setError(error.message);
     }
   }
 
-  const RegisterClicked = async (email: string, firstName: string, lastName: string, password: string) => {
+  const RegisterClicked = async (USER_EMAIL: string, USER_FNAME: string, USER_LNAME: string, USER_PASSWORD: string) => {
     try {
-      const payload = {email, firstName, lastName, password};
+      const payload = {USER_EMAIL, USER_FNAME, USER_LNAME, USER_PASSWORD};
       const data = await post(END_POINTS.Users, payload);
 
       setInfo('Registration is successful.');
