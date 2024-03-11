@@ -3,18 +3,28 @@ const userModel = require("../models/UserModel");
 class UserController {
 
   async getAll(req, res) {
+    console.log("User getAll is invoked...");
     try {
-      res.json(userModel.getAll()); // Send the categories as a JSON response
+      const data = await userModel.getAll();
+
+      res.status(201).json(data); // Send the users as a JSON response
     } catch (error) {
+      console.error(error.message);
       res.status(500).json({ message: error.message });
     }
   }
 
   async getById(req, res) {
-    const { id } = req.params;
+    console.log("User getById is invoked...");
     try {
-      res.status(201).json(userModel.getById(parseInt(id))); // Send the retrieved object as a JSON response
+      const { id } = req.params;
+      console.log("id=", id);
+
+      const data = await userModel.getById(parseInt(id));
+
+      res.status(201).json(data); // Send the retrieved object as a JSON response
     } catch (error) {
+      console.error(error.message);
       res.status(500).json({ message: error.message });
     }
   }
@@ -22,8 +32,8 @@ class UserController {
   async create(req, res) {
     console.log("User create is invoked...");
     try {
-      const { email, firstName, lastName, password } = req.body;
-      const data = userModel.create({email, firstName, lastName, password});
+      const userData = req.body;
+      const data = await userModel.create(userData);
 
       res.status(201).json(data); // Send the saved object as a JSON response
       console.log(`User is created ${data}`);
@@ -36,11 +46,11 @@ class UserController {
   async login(req, res) {
     console.log("User login is invoked...");
     try {
-      const { email, password } = req.body;
-      const data = userModel.login({email, password});
+      const { USER_EMAIL, USER_PASSWORD } = req.body;
+      const data = await userModel.login({USER_EMAIL, USER_PASSWORD});
 
       res.status(201).json(data); // Send the saved object as a JSON response
-      console.log(`User is created ${data}`);
+      console.log(`User is logged in ${data}`);
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ message: error.message });
@@ -48,20 +58,34 @@ class UserController {
   }
 
   async update(req, res) {
-    const { id } = req.params;
-    const { fname, lname } = req.body;
+    console.log("User update is invoked...");
     try {
-      res.status(201).json(userModel.update(parseInt(id), { fname, lname })); // Send the saved object as a JSON response
+      const { id } = req.params;
+      console.log("id=", id);
+
+      const { USER_FNAME, USER_LNAME } = req.body;
+      console.log(`USER_FNAME=${USER_FNAME} USER_LNAME=${USER_LNAME}`);
+
+      const data = await userModel.update(parseInt(id), {USER_FNAME, USER_LNAME});
+
+      res.status(201).json(data); // Send the saved object as a JSON response
     } catch (error) {
+      console.error(error.message);
       res.status(500).json({ message: error.message });
     }
   }
 
   async delete(req, res) {
-    const { id } = req.params;
+    console.log("User delete is invoked...");
     try {
-      res.status(201).json(userModel.delete(parseInt(id))); // Send the deleted object as a JSON response
+      const { id } = req.params;
+      console.log("id=", id);
+
+      const data = await userModel.delete(parseInt(id));
+
+      res.status(201).json(data); // Send the saved object as a JSON response
     } catch (error) {
+      console.error(error.message);
       res.status(500).json({ message: error.message });
     }
   }
