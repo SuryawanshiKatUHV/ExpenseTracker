@@ -1,6 +1,9 @@
+require('dotenv').config(); // Loads the environment from .env file
+
 const express = require("express");
 const app = express();
 
+// Enable json processing
 app.use(express.json());
 
 // Import routes
@@ -13,7 +16,7 @@ const groupTransactionRouter = require("./routers/groupTransactionRouter");
 
 // Use routes
 app.get("/", (req, res) => {
-  res.send("Hello from server");
+  res.send("Hello from the server");
 });
 app.use("/api/users", userRouter);
 app.use("/api/categories", categoryRouter);
@@ -23,7 +26,7 @@ app.use("/api/groups", groupRouter);
 app.use("/api/groupTransactions", groupTransactionRouter);
 
 // Finally start the server
-const port = process.env.PORT || 3000;
+const port = process.env.SERVER_PORT || 3000;
 app.listen(port, () => {
   console.log(`Application listening on port ${port}`);
 });
