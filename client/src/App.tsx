@@ -38,6 +38,7 @@ function App() {
    */
 
   const LogoutClicked = () => {
+    localStorage.removeItem('login_token');
     setView(VIEW.LoginForm);
   }
 
@@ -46,6 +47,7 @@ function App() {
       const payload = {USER_EMAIL, USER_PASSWORD};
       const user = await post(END_POINTS.Login, payload);
 
+      localStorage.setItem('login_token', user.token);
       setLoggedInUser({USER_FULL_NAME:`${user.USER_LNAME}, ${user.USER_FNAME}`, USER_ID:user.USER_ID});
       setView(VIEW.AppHome);
     } catch (error : any) {

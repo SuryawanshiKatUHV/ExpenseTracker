@@ -37,10 +37,12 @@ export async function post(url:string, payload:object) {
     const strPayload = JSON.stringify(payload);
     console.log(`Payload=${strPayload}`);
 
+    const token = localStorage.getItem('login_token');
     const response = await fetch(url, {
         method:'POST',
         headers: {
-          'Content-Type':'application/json'
+          'Content-Type':'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: strPayload,
       });
@@ -63,4 +65,4 @@ export async function post(url:string, payload:object) {
 
 // export async function put(url: string, payload:object) {}
 
-// export async function delete(url: string, payload:object) {}
+// export async function delete(url: string) {}

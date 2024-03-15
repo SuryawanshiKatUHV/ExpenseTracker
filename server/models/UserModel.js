@@ -1,5 +1,7 @@
 const Joi = require("joi");
 const connectionPool = require('../database');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 class UserModel {
 
@@ -35,22 +37,33 @@ class UserModel {
     return new Promise((resolve, reject) => {
       this._validate(userData);
 
-      const sql = "INSERT INTO USER (USER_EMAIL, USER_FNAME, USER_LNAME, USER_PASSWORD) VALUES (?, ?, ?, ?)";
-      connectionPool.query(sql, [userData.USER_EMAIL, userData.USER_FNAME, userData.USER_LNAME, userData.USER_PASSWORD], (error, result) => {
-        if (error) {
-          reject(error);
+      // Hash the password
+      bcrypt.hash(userData.USER_PASSWORD, 10, (err, hash) => {
+        if (err) {
+          reject(err);
         }
+        else {
+          console.log(`hash=${hash}`);
+          userData.USER_PASSWORD = hash;
 
-        const sql = "SELECT * FROM USER WHERE USER_EMAIL=?";
-        connectionPool.query(sql, [userData.USER_EMAIL], (error, result) => {
+          const sql = "INSERT INTO USER (USER_EMAIL, USER_FNAME, USER_LNAME, USER_PASSWORD) VALUES (?, ?, ?, ?)";
+          connectionPool.query(sql, [userData.USER_EMAIL, userData.USER_FNAME, userData.USER_LNAME, userData.USER_PASSWORD], (error, result) => {
+            if (error) {
+              reject(error);
+            }
 
-          if (error) {
-            reject(error);
-          }
-          else {
-            resolve(result[0]);
-          }
-        });
+            const sql = "SELECT * FROM USER WHERE USER_EMAIL=?";
+            connectionPool.query(sql, [userData.USER_EMAIL], (error, result) => {
+
+              if (error) {
+                reject(error);
+              }
+              else {
+                resolve(result[0]);
+              }
+            });
+          });
+        }
       });
     });
   }
@@ -58,19 +71,45 @@ class UserModel {
   login({ USER_EMAIL, USER_PASSWORD }) {
     return new Promise((resolve, reject)=>{
 
-      const sql = "SELECT * FROM USER WHERE LOWER(USER_EMAIL)=LOWER(?) AND USER_PASSWORD=?";
-      connectionPool.query(sql, [USER_EMAIL, USER_PASSWORD], (error, result) => {
-        console.log(`result.length ${result.length}`);
+      const sql = "SELECT * FROM USER WHERE LOWER(USER_EMAIL)=LOWER(?)";
+      connectionPool.query(sql, [USER_EMAIL], (error, result) => {
+        console.log(`error=${error}`);
+        console.log(`result=${result}`);
+
         if (error) {
           reject(error);
         }
-        else if (result.length == 0) {
-          reject(new Error(`Authentication failed. Login denied.`));
+        else if (result) {
+          console.log(`result.length ${result.length}`);
+          if (result.length == 0) {
+            reject(new Error(`User account with this email does not exist.`));
+          }
+          else {
+            // Compare the encrypted password
+            bcrypt.compare(USER_PASSWORD, result[0].USER_PASSWORD, (err, comparison) => {
+              if (err) {
+                reject(err);
+              }
+              else if (comparison === false) {
+                reject(new Error(`Authentication failed.`));
+              }
+              else {
+                const user = result[0];
+
+                const token = jwt.sign({ USRE_ID: user.USRE_ID }, process.env.JWT_SECRET, { expiresIn: '1h' });
+                console.log(`Login token generated ${token}`);
+                // When password is matched, then return the user record as successful login signal
+                // also send the json web token.
+                // The client stores the token locally (e.g., in localStorage or sessionStorage) and 
+                // includes it in the Authorization header for subsequent requests that require authentication.
+                user.token = token;
+                resolve(user);
+              }
+            });
+          }
         }
         else {
-          // For security reason mask the password
-          result[0].USER_PASSWORD = "*****";
-          resolve(result[0]);
+          reject(new Error(`The query result is undefined.`));
         }
       });
     });
