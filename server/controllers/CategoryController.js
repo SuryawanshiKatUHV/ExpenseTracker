@@ -1,14 +1,20 @@
-const catgeoryModel = require("../models/CategoryModel");
+const categoryModel = require("../models/CategoryModel");
+
 
 class CategoryController {
 
   async getAll(req, res) {
+    console.log("Category getAll is invoked...");
     try {
-      res.json(catgeoryModel.getAll()); // Send the categories as a JSON response
+      const data = await categoryModel.getAll(); // Correctly await the promise
+
+      res.status(200).json(data); // Use 200 status code and ensure to send the awaited data
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      console.error(error.message);
+      res.status(500).json({ message: error.message }); // Error handling remains the same
     }
-  }
+}
+
 
   async getById(req, res) {
     const { id } = req.params;
