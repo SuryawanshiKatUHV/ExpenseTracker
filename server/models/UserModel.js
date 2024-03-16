@@ -96,7 +96,7 @@ class UserModel {
               else {
                 const user = result[0];
 
-                const token = jwt.sign({ USRE_ID: user.USRE_ID }, process.env.JWT_SECRET, { expiresIn: '1h' });
+                const token = jwt.sign({ USER_ID: user.USER_ID }, process.env.JWT_SECRET, { expiresIn: '1h' });
                 console.log(`Login token generated ${token}`);
                 // When password is matched, then return the user record as successful login signal
                 // also send the json web token.
