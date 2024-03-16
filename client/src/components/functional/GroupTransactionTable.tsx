@@ -1,8 +1,29 @@
+import { useState } from "react";
+import GroupTransactionForm from "./GroupTransactionForm";
+
 interface Props {
     userId: number;
 }
 
 const GroupTransactionTable = ({userId}:Props) => {
+    /**
+     * Dummy data
+     */
+    const groups = [
+        {
+            id:1,
+            title:"2-Mar-24 Movie Night"
+        },
+        {
+            id:2,
+            title:"5-Dec-23 Trip to San Antonio"
+        },
+        {
+            id:3,
+            title:"10-Feb-24 Dining out"
+        }
+    ];
+
     const data = [
         {
             USER_GROUP_TRANSACTION_DATE:"2-Mar-2024", 
@@ -67,16 +88,55 @@ const GroupTransactionTable = ({userId}:Props) => {
             UnsettledDue:0.00
         }
     ];
+
+    /**
+     * State
+     */
+    const [formDisplayed, setFormDisplayed] = useState(false);
+    const [txGroupId, setTxGroupId] = useState('');
+
+    /**
+     * Operations
+     */
+
+    /**
+     * Event handlers
+     */
+
+    const AddNewClicked = () => {
+        setFormDisplayed(true);
+    }
+
+    const SaveClicked = (txCategoryId:number, txDate:string, txAmount:number, txMembers:number[], txNotes:string) => {
+        console.log(`SaveClicked(txCategoryId:${txCategoryId}, txDate:${txDate}, txAmount:${txAmount}, txMembers:${txMembers}, txNotes:${txNotes})`);
+        //TODO: Do the actual saving
+        setFormDisplayed(false);
+    }
+
+    const CancelClicked = () => {
+        setFormDisplayed(false);
+    }
+
     return (<>
-        <div>
-            <b>Group: </b>
-            <select>
-                <option>2-Mar-24 Movie Night</option>
-                <option>5-Dec-23 Trip to San Antonio</option>
-                <option>10-Feb-24 Dining out</option>
+        {new Date().toISOString()}
+
+        <div className="form-floating mb-3">
+            <select className="form-select" id="txGroupId" onChange={(e) => setTxGroupId(e.target.value)} value={txGroupId}>
+                {groups.map(group => (
+                    <option value={group.id}>{group.title}</option>
+                ))}
             </select>
+          <label htmlFor="txGroupId">Group</label>
         </div>
-        <hr/>
+
+        {/* Show add new button when the form is not shown*/}
+        {!formDisplayed && <button className="btn btn-success" onClick={AddNewClicked}>Add New</button>}
+
+        {/* Show the add new form*/}
+        {formDisplayed && <GroupTransactionForm saveHandler={SaveClicked} cancelHandler={CancelClicked}/>}
+
+        <h5 className="m-5">Group transaction</h5>
+        
         <table className="table table-hover">
             <thead>
                 <tr>
@@ -101,8 +161,7 @@ const GroupTransactionTable = ({userId}:Props) => {
                 ))}
             </tbody>
         </table>
-        <button className="btn btn-success">Add New</button>
-        <hr/>
+
         <h5>Settlement Summary</h5>
         <table className="table table-hover">
             <thead>
