@@ -1,3 +1,4 @@
+const CategoryModel = require("../models/CategoryModel");
 const categoryModel = require("../models/CategoryModel");
 
 
@@ -26,13 +27,18 @@ class CategoryController {
   }
 
   async create(req, res) {
-    const { key1, key2 } = req.body;
-    try {
-      res.status(201).json(catgeoryModel.create({key1, key2})); // Send the saved object as a JSON response
+    console.log("Category create is invoked...");
+
+    const categoryData = req.body;
+    const data = await CategoryModel.create(categoryData);
+
+    res.status(201).json(data); // Send the saved object as a JSON response
+      console.log(`Category is created ${data}`);
     } catch (error) {
+      console.error(error.message);
       res.status(500).json({ message: error.message });
     }
-  }
+
 
   async update(req, res) {
     const { id } = req.params;

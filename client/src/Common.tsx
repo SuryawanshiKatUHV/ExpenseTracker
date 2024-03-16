@@ -62,6 +62,45 @@ export async function post(url:string, payload:object) {
 }
 
 // export async function get(url: string) {}
+export async function get(url: string) {
+    console.log(`GET=${url}`);
+
+    const token = localStorage.getItem('login_token');
+
+    // Sending the GET request
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`, // Assuming the API requires authorization
+            'Content-Type': 'application/json'
+        }
+    });
+
+    console.log(`response.status=${response.status}`);
+    console.log(`response.statusText=${response.statusText}`);
+
+    // Attempting to parse the response
+    let data;
+    try {
+        data = await response.json();
+    } catch (error) {
+        console.error(`Error parsing JSON from response: ${error}`);
+        throw new Error(`Error parsing JSON from response: ${error}`);
+    }
+
+    console.log(`response.json()=${JSON.stringify(data)}`);
+
+    // Checking the response status
+    if (!response.ok) {
+        const message = `HTTP error ${response.status} - ${response.statusText} : ${data.message || 'Unknown error'}`;
+        console.error(message);
+        throw new Error(message);
+    }
+
+    // Returning the parsed data
+    return data;
+}
+
 
 // export async function put(url: string, payload:object) {}
 
