@@ -123,11 +123,11 @@ const GroupTransactionForm = (props : Props) => {
         
     <div style={{border:1}}>
         <h5 className="m-5">Add new group transaction</h5>
-        
+        {new Date().toISOString()}
         <div className="form-floating mb-3">
           <select className="form-select" id="txCategoryId" onChange={(e) => setTxCategoryId(parseInt(e.target.value))} value={txCategoryId}>
             {categories.map((category) => (
-                <option value={category.id}>{category.title}</option>
+                <option key={category.id} value={category.id}>{category.title}</option>
             ))}
           </select>
           <label htmlFor="txCategoryId">Category</label>
