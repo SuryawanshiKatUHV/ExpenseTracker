@@ -26,20 +26,24 @@ export const END_POINTS = {
 };
 
 /**
- * Invokes web servie with HTTP POST method 
- * @param url The endpoint for the web service
- * @param payload The json object which is input to the webservice
- * @returns json object as data when web service is successfully completed
+ * Invokes a web service with the specified HTTP method, URL, and payload.
+ *
+ * @async
+ * @param {string} method - The HTTP method to use (e.g., 'GET', 'POST', 'PUT', 'DELETE').
+ * @param {string} url - The URL of the web service endpoint.
+ * @param {Object} payload - The JSON payload to send with the request.
+ * @returns {Promise<Object>} A Promise that resolves with the JSON response data from the web service.
+ * @throws {Error} If the web service request fails, an Error is thrown with the HTTP status code and message.
  */
-export async function post(url:string, payload:object) {
-    console.log(`POST=${url}`);
+async function invokeWS(method:string, url:string, payload:object) {
+    console.log(`invokeWS(method=${method}, url=${url}, payload=${JSON.stringify(payload)})`);
 
     const strPayload = JSON.stringify(payload);
     console.log(`Payload=${strPayload}`);
 
     const token = localStorage.getItem('login_token');
     const response = await fetch(url, {
-        method:'POST',
+        method,
         headers: {
           'Content-Type':'application/json',
           'Authorization': `Bearer ${token}`
@@ -61,47 +65,48 @@ export async function post(url:string, payload:object) {
     return data;
 }
 
-// export async function get(url: string) {}
-export async function get(url: string) {
-    console.log(`GET=${url}`);
-
-    const token = localStorage.getItem('login_token');
-
-    // Sending the GET request
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`, // Assuming the API requires authorization
-            'Content-Type': 'application/json'
-        }
-    });
-
-    console.log(`response.status=${response.status}`);
-    console.log(`response.statusText=${response.statusText}`);
-
-    // Attempting to parse the response
-    let data;
-    try {
-        data = await response.json();
-    } catch (error) {
-        console.error(`Error parsing JSON from response: ${error}`);
-        throw new Error(`Error parsing JSON from response: ${error}`);
-    }
-
-    console.log(`response.json()=${JSON.stringify(data)}`);
-
-    // Checking the response status
-    if (!response.ok) {
-        const message = `HTTP error ${response.status} - ${response.statusText} : ${data.message || 'Unknown error'}`;
-        console.error(message);
-        throw new Error(message);
-    }
-
-    // Returning the parsed data
-    return data;
+/**
+ * Invokes a web service with the HTTP POST method.
+ *
+ * @param {string} url - The URL of the web service endpoint.
+ * @param {Object} payload - The JSON payload to send with the POST request.
+ * @returns {Promise<Object>} A Promise that resolves with the JSON response data from the web service.
+ * @throws {Error} If the web service request fails, an Error is thrown with the HTTP status code and message.
+ */
+export async function post(url:string, payload:object) {
+    return invokeWS("POST", url, payload);
 }
 
+/**
+ * Invokes a web service with the HTTP PUT method.
+ *
+ * @param {string} url - The URL of the web service endpoint.
+ * @param {Object} payload - The JSON payload to send with the PUT request.
+ * @returns {Promise<Object>} A Promise that resolves with the JSON response data from the web service.
+ * @throws {Error} If the web service request fails, an Error is thrown with the HTTP status code and message.
+ */
+export async function put(url:string, payload:object) {
+    return invokeWS("PUT", url, payload);
+}
 
-// export async function put(url: string, payload:object) {}
+/**
+ * Invokes a web service with the HTTP GET method.
+ *
+ * @param {string} url - The URL of the web service endpoint.
+ * @returns {Promise<Object>} A Promise that resolves with the JSON response data from the web service.
+ * @throws {Error} If the web service request fails, an Error is thrown with the HTTP status code and message.
+ */
+export async function get(url:string) {
+    return invokeWS("GET", url, {});
+}
 
-// export async function delete(url: string) {}
+/**
+ * Invokes a web service with the HTTP DELETE method.
+ *
+ * @param {string} url - The URL of the web service endpoint.
+ * @returns {Promise<Object>} A Promise that resolves with the JSON response data from the web service.
+ * @throws {Error} If the web service request fails, an Error is thrown with the HTTP status code and message.
+ */
+export async function del(url:string) {
+    return invokeWS("DELETE", url, {});
+}
