@@ -25,6 +25,15 @@ export const END_POINTS = {
     GroupTransactions:`/api/groupTransactions`
 };
 
+interface RequestParams {
+    method: string;
+    headers: {
+      'Content-Type': string;
+      Authorization: string;
+    };
+    body?: string; // Optional body property
+  }
+
 /**
  * Invokes a web service with the specified HTTP method, URL, and payload.
  *
@@ -35,21 +44,31 @@ export const END_POINTS = {
  * @returns {Promise<Object>} A Promise that resolves with the JSON response data from the web service.
  * @throws {Error} If the web service request fails, an Error is thrown with the HTTP status code and message.
  */
-async function invokeWS(method:string, url:string, payload:object) {
-    console.log(`invokeWS(method=${method}, url=${url}, payload=${JSON.stringify(payload)})`);
-
-    const strPayload = JSON.stringify(payload);
-    console.log(`Payload=${strPayload}`);
+async function invokeWS(method:string, url:string, payload?:object) {
+    if (payload) {
+        console.log(`invokeWS(method=${method}, url=${url}, payload=${JSON.stringify(payload)})`);
+    }
+    else {
+        console.log(`invokeWS(method=${method}, url=${url})`);
+    }
+    
 
     const token = localStorage.getItem('login_token');
-    const response = await fetch(url, {
+    let requestParams:RequestParams = {
         method,
         headers: {
           'Content-Type':'application/json',
           'Authorization': `Bearer ${token}`
-        },
-        body: strPayload,
-      });
+        }
+      };
+
+    if (payload) {
+        const strPayload = JSON.stringify(payload);
+        console.log(`Payload=${strPayload}`);
+        requestParams.body = strPayload;
+    }
+
+    const response = await fetch(url, requestParams);
     console.log(`response.status=${response.status}`);
     console.log(`response.statusText=${response.statusText}`);
 
@@ -74,7 +93,7 @@ async function invokeWS(method:string, url:string, payload:object) {
  * @throws {Error} If the web service request fails, an Error is thrown with the HTTP status code and message.
  */
 export async function post(url:string, payload:object) {
-    return invokeWS("POST", url, payload);
+    return await invokeWS("POST", url, payload);
 }
 
 /**
@@ -86,7 +105,7 @@ export async function post(url:string, payload:object) {
  * @throws {Error} If the web service request fails, an Error is thrown with the HTTP status code and message.
  */
 export async function put(url:string, payload:object) {
-    return invokeWS("PUT", url, payload);
+    return await invokeWS("PUT", url, payload);
 }
 
 /**
@@ -97,7 +116,7 @@ export async function put(url:string, payload:object) {
  * @throws {Error} If the web service request fails, an Error is thrown with the HTTP status code and message.
  */
 export async function get(url:string) {
-    return invokeWS("GET", url, {});
+    return await invokeWS("GET", url);
 }
 
 /**
@@ -108,5 +127,5 @@ export async function get(url:string) {
  * @throws {Error} If the web service request fails, an Error is thrown with the HTTP status code and message.
  */
 export async function del(url:string) {
-    return invokeWS("DELETE", url, {});
+    return await invokeWS("DELETE", url);
 }
