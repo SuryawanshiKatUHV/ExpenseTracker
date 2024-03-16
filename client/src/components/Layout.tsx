@@ -6,12 +6,11 @@ import { useState } from 'react';
 import { FUNCTIONS } from '../Common';
 
 interface Props {
-  userId: number;
   userFullName: string;
   logoutHandler : () => void;
 }
 
-const Layout = ({ userId, userFullName, logoutHandler } : Props) => {
+const Layout = ({ userFullName, logoutHandler } : Props) => {
   const [currentFunction, setCurrentFunction] = useState(FUNCTIONS.Dashboard);
 
   /**
@@ -32,7 +31,7 @@ const Layout = ({ userId, userFullName, logoutHandler } : Props) => {
       <Header userFullName={userFullName} logoutHandler={logoutHandler}/>
       <div style={{ display: 'flex' }}>
         <Navigation itemClickHandler={ItemClicked}/>
-        <Content userId={userId} selectedFunction={currentFunction}/>
+        <Content selectedFunction={currentFunction}/>
       </div>
     </div>
   );

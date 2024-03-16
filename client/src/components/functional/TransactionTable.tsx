@@ -1,9 +1,5 @@
-interface Props {
-    userId: number;
-}
-
-const TransactionTable = ({userId}:Props) => {
-    return <>Transactions table by user {userId}</>;
+const TransactionTable = () => {
+    return <>Transactions table by user</>;
 }
 
 export default TransactionTable;

@@ -1,8 +1,4 @@
-interface Props {
-    userId: number;
-}
-
-const GroupTable = ({userId}:Props) => {
+const GroupTable = () => {
     return <>Group table</>;
 }
 

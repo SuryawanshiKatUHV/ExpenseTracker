@@ -1,8 +1,4 @@
-interface Props {
-    userId: number;
-}
-
-const BudgetTable = ({userId}:Props) => {
+const BudgetTable = () => {
     return <>Budget table</>;
 }
 

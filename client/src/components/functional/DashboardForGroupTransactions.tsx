@@ -1,8 +1,4 @@
-interface Props {
-    userId: number;
-}
-
-const DashboardForGroupTransactions = ({userId}:Props) => {
+const DashboardForGroupTransactions = () => {
     return <>DashboardForGroupTransactions</>;
 }
 

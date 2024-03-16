@@ -1,8 +1,4 @@
-interface Props {
-    userId: number;
-}
-
-const CategoryTable = ({userId}:Props) => {
+const CategoryTable = () => {
     return <p>Category Table</p>;
 }
 

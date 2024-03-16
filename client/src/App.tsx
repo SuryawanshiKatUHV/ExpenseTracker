@@ -26,7 +26,7 @@ function App() {
       return <RegistrationForm registerHandler={RegisterClicked} showLoginHandler={ShowLoginClicked}/>;
     case VIEW.AppHome:
       return (
-        <Layout userId={loggedInUser.USER_ID} userFullName={loggedInUser.USER_FULL_NAME} logoutHandler={LogoutClicked}/>
+        <Layout userFullName={loggedInUser.USER_FULL_NAME} logoutHandler={LogoutClicked}/>
       );
     }
 

@@ -1,11 +1,7 @@
 import { useState } from "react";
 import GroupTransactionForm from "./GroupTransactionForm";
 
-interface Props {
-    userId: number;
-}
-
-const GroupTransactionTable = ({userId}:Props) => {
+const GroupTransactionTable = () => {
     /**
      * Dummy data
      */
