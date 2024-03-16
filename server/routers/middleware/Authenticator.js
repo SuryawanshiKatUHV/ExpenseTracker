@@ -18,7 +18,9 @@ const authenticateToken = (req, res, next) => {
     if (err) {
       return res.sendStatus(403); // If token is not valid, return Forbidden
     }
+
     req.user = user; // Set the user in the request object
+    console.log(`req.user=${JSON.stringify(req.user)}`);
     next(); // Proceed to the next middleware or request handler
   });
 };
