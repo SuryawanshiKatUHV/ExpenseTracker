@@ -1,12 +1,21 @@
 const Joi = require("joi");
+const connectionPool = require('../database');
 
 class CategoryModel {
-  dummyData = [
-  ];
-  idCounter = this.dummyData.length;
+
 
   getAll() {
-    return this.dummyData;
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT OWNER_ID, CATEGORY_TITLE, CATEGORY_DESCRIPTION FROM CATEGORY";
+      connectionPool.query(sql, [], (error, result) => {
+        if (error) {
+          reject (error);
+        }
+        else {
+          resolve(result);
+        }
+      });
+    });
   }
 
   getById(id) {
@@ -27,8 +36,8 @@ class CategoryModel {
 
   _validate(user) {
     const schema = Joi.object({
-      key1: Joi.string().required().min(3),
-      key2: Joi.string().required().min(3),
+      CATEGORY_TITLE: Joi.string().required().min(3).max(50),
+      CATEGORY_DESCRIPTION: Joi.string().required().min(3).max(50),
     });
 
     const validateResult = schema.validate(user);
