@@ -4,10 +4,14 @@ const connectionPool = require('../database');
 class CategoryModel {
 
 
-  getAll() {
+  getAll(userId) {
+    console.log(`CategoryModel.getAll(${userId})`);
+
     return new Promise((resolve, reject) => {
-      const sql = "SELECT OWNER_ID, CATEGORY_TITLE, CATEGORY_DESCRIPTION FROM CATEGORY";
-      connectionPool.query(sql, [], (error, result) => {
+      const sql = "SELECT * FROM CATEGORY WHERE OWNER_ID=?";
+      connectionPool.query(sql, [userId], (error, result) => {
+        console.log(`error=${error}`);
+        console.log(`result=${result}`);
         if (error) {
           reject (error);
         }
@@ -18,8 +22,22 @@ class CategoryModel {
     });
   }
 
-  getById(id) {
-    throw { message: `To be implemented` };
+  getById(userId, categoryId) {
+    console.log(`CategoryModel.getById(${userId}, ${categoryId})`);
+
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM CATEGORY WHERE OWNER_ID=? AND CATEGORY_ID=?";
+      connectionPool.query(sql, [userId, categoryId], (error, result) => {
+        console.log(`error=${error}`);
+        console.log(`result=${result}`);
+        if (error) {
+          reject (error);
+        }
+        else {
+          resolve(result);
+        }
+      });
+    });
   }
 
   create(categoryData) {
@@ -29,19 +47,22 @@ class CategoryModel {
   
           const sql = "INSERT INTO CATEGORY (OWNER_ID, CATEGORY_TITLE, CATEGORY_DESCRIPTION) VALUES (?, ?, ?)";
           connectionPool.query(sql, [categoryData.OWNER_ID, categoryData.CATEGORY_TITLE, categoryData.CATEGORY_DESCRIPTION], (error, result) => {
+            console.log(`error=${error}`);
+            console.log(`result=${result}`);
+
               if (error) {
                   reject(error);
               } 
-                  
-                  const sql = "SELECT * FROM CATEGORY WHERE OWNER_ID = ?";
-                  connectionPool.query(sql, [categoryData.OWNER_ID], (error, result) => {
+              else {    
+                  const sql = "SELECT * FROM CATEGORY WHERE OWNER_ID = ? AND CATEGORY_TITLE=?";
+                  connectionPool.query(sql, [categoryData.OWNER_ID, categoryData.CATEGORY_TITLE], (error, result) => {
                       if (error) {
                           reject(error);
                       } else {
                           resolve(result[0]); 
                       }
                   });
-              
+                }
           });
       });
   
