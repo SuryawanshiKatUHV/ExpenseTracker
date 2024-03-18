@@ -1,24 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GroupTransactionForm from "./GroupTransactionForm";
+import { END_POINTS, get } from "../../Common";
 
 const GroupTransactionTable = () => {
+    
     /**
      * Dummy data
      */
-    const groups = [
-        {
-            id:1,
-            title:"2-Mar-24 Movie Night"
-        },
-        {
-            id:2,
-            title:"5-Dec-23 Trip to San Antonio"
-        },
-        {
-            id:3,
-            title:"10-Feb-24 Dining out"
-        }
-    ];
 
     const data = [
         {
@@ -90,6 +78,16 @@ const GroupTransactionTable = () => {
      */
     const [formDisplayed, setFormDisplayed] = useState(false);
     const [txGroupId, setTxGroupId] = useState('');
+    const [groups, setGroups] = useState<any[]>([]);
+
+    useEffect(() =>{ 
+        async function fetchGroups() {
+            const groups = await get(END_POINTS.Groups);
+            setGroups(groups);
+        }
+        fetchGroups();
+    }, []);
+    
 
     /**
      * Operations
@@ -119,7 +117,7 @@ const GroupTransactionTable = () => {
         <div className="form-floating mb-3">
             <select className="form-select" id="txGroupId" onChange={(e) => setTxGroupId(e.target.value)} value={txGroupId}>
                 {groups.map(group => (
-                    <option key={group.id} value={group.id}>{group.title}</option>
+                    <option key={group.USER_GROUP_ID} value={group.USER_GROUP_ID}>{group.USER_GROUP_DATE}-{group.USER_GROUP_TITLE}</option>
                 ))}
             </select>
           <label htmlFor="txGroupId">Group</label>
