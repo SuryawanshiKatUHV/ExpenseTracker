@@ -1,4 +1,3 @@
-const CategoryModel = require("../models/CategoryModel");
 const categoryModel = require("../models/CategoryModel");
 
 
@@ -40,7 +39,7 @@ class CategoryController {
       const categoryData = req.body;
       console.log(`categoryData=${JSON.stringify(categoryData)}`);
 
-      const data = await CategoryModel.create(categoryData);
+      const data = await categoryModel.create(categoryData);
 
       res.status(201).json(data); // Send the saved object as a JSON response
       console.log(`Category is created ${JSON.stringify(data)}`);
@@ -51,22 +50,11 @@ class CategoryController {
   }
 
   async update(req, res) {
-    const { id } = req.params;
-    const { key1, key2 } = req.body;
-    try {
-      res.status(201).json(catgeoryModel.update(parseInt(id), { key1, key2 })); // Send the saved object as a JSON response
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    throw { message: `To be implemented` };
   }
 
   async delete(req, res) {
-    const { id } = req.params;
-    try {
-      res.status(201).json(catgeoryModel.delete(parseInt(id))); // Send the deleted object as a JSON response
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    throw { message: `To be implemented` };
   }
   
 }
