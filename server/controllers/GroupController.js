@@ -3,48 +3,43 @@ const groupModel = require("../models/GroupModel");
 class GroupController {
 
   async getAll(req, res) {
+    console.log("User Group getAll is invoked...");
     try {
-      res.json(groupModel.getAll()); // Send the categories as a JSON response
+      const user = req.user;
+      const data = await groupModel.getAll(user.USER_ID);
+
+      res.status(201).json(data); // Send the saved object as a JSON response
+      console.log(`User Groups found ${data}`);
     } catch (error) {
+      console.error(error.message);
       res.status(500).json({ message: error.message });
     }
   }
 
   async getById(req, res) {
-    const { id } = req.params;
-    try {
-      res.status(201).json(groupModel.getById(parseInt(id))); // Send the retrieved object as a JSON response
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    throw { message: `To be implemented` };
   }
 
   async create(req, res) {
-    const { key1, key2 } = req.body;
+    console.log("User Group create is invoked...");
     try {
-      res.status(201).json(groupModel.create({key1, key2})); // Send the saved object as a JSON response
+      const userGroupData = req.body;
+      const data = await groupModel.create(userGroupData);
+
+      res.status(201).json(data); // Send the saved object as a JSON response
+      console.log(`User Group is created ${data}`);
     } catch (error) {
+      console.error(error.message);
       res.status(500).json({ message: error.message });
     }
   }
 
   async update(req, res) {
-    const { id } = req.params;
-    const { key1, key2 } = req.body;
-    try {
-      res.status(201).json(groupModel.update(parseInt(id), { key1, key2 })); // Send the saved object as a JSON response
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    throw { message: `To be implemented` };
   }
 
   async delete(req, res) {
-    const { id } = req.params;
-    try {
-      res.status(201).json(groupModel.delete(parseInt(id))); // Send the deleted object as a JSON response
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    throw { message: `To be implemented` };
   }
   
 }
