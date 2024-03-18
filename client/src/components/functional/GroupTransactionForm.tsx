@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { END_POINTS, get } from "../../Common";
 
 interface Props {
     saveHandler: (txCategoryId:number, txDate:string, txAmount:number, txMembers:number[], txNotes:string) => void;
@@ -27,20 +28,6 @@ const GroupTransactionForm = (props : Props) => {
             fullName: "Sharma, Aaradhana"
         }
     ];
-    const categories = [
-        {
-            id:1,
-            title:"Dining Out"
-        },
-        {
-            id:2,
-            title:"Travel"
-        },
-        {
-            id:3,
-            title:"Entertainment"
-        }
-    ];
 
     /**
      * State
@@ -51,6 +38,16 @@ const GroupTransactionForm = (props : Props) => {
     const [txNotes, setTxNotes] = useState('');
     const [txMembers, setTxMembers] = useState<number[]>([]);
     const [errors, setErrors] = useState({txDate:'', txAmount:'', txMembers:''});
+
+    const [categories, setCategories] = useState<any[]>([]);
+
+    useEffect(() =>{ 
+        async function fetchGroups() {
+            const categories = await get(END_POINTS.Categories);
+            setCategories(categories);
+        }
+        fetchGroups();
+    }, []);
 
     /**
      * Operations
@@ -127,7 +124,7 @@ const GroupTransactionForm = (props : Props) => {
         <div className="form-floating mb-3">
           <select className="form-select" id="txCategoryId" onChange={(e) => setTxCategoryId(parseInt(e.target.value))} value={txCategoryId}>
             {categories.map((category) => (
-                <option key={category.id} value={category.id}>{category.title}</option>
+                <option key={category.CATEGORY_ID} value={category.CATEGORY_ID}>{category.CATEGORY_TITLE}</option>
             ))}
           </select>
           <label htmlFor="txCategoryId">Category</label>
