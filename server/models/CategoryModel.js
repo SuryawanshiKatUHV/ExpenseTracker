@@ -4,12 +4,12 @@ const connectionPool = require('../database');
 class CategoryModel {
 
 
-  getAll(userId) {
-    console.log(`CategoryModel.getAll(${userId})`);
+  getAll(ownerId) {
+    console.log(`CategoryModel.getAll(${ownerId})`);
 
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM CATEGORY WHERE OWNER_ID=?";
-      connectionPool.query(sql, [userId], (error, result) => {
+      connectionPool.query(sql, [ownerId], (error, result) => {
         console.log(`error=${error}`);
         console.log(`result=${result}`);
         if (error) {
@@ -22,12 +22,12 @@ class CategoryModel {
     });
   }
 
-  getById(userId, categoryId) {
-    console.log(`CategoryModel.getById(${userId}, ${categoryId})`);
+  getById(ownerId, categoryId) {
+    console.log(`CategoryModel.getById(${ownerId}, ${categoryId})`);
 
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM CATEGORY WHERE OWNER_ID=? AND CATEGORY_ID=?";
-      connectionPool.query(sql, [userId, categoryId], (error, result) => {
+      connectionPool.query(sql, [ownerId, categoryId], (error, result) => {
         console.log(`error=${error}`);
         console.log(`result=${result}`);
         if (error) {
