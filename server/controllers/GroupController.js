@@ -17,7 +17,17 @@ class GroupController {
   }
 
   async getById(req, res) {
-    throw new Error(`To be implemented`);
+    const user = req.user;
+    const { id } = req.params;
+    try {
+      const data = await groupModel.getById(user.USER_ID, parseInt(id));
+      console.log(`data=${JSON.stringify(data)}`);
+
+      res.status(201).json(data); // Send the retrieved object as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
   }
 
   async create(req, res) {

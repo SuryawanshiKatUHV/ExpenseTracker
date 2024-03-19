@@ -14,8 +14,30 @@ class GroupModel {
     }
   }
 
-  async getById(ownerId, id) {
-    throw new Error(`To be implemented`);
+  // CREATE TABLE USER_GROUP (
+  //   USER_GROUP_ID INT PRIMARY KEY AUTO_INCREMENT,
+  //   OWNER_ID INT NOT NULL,
+  //   USER_GROUP_DATE DATETIME NOT NULL,
+  //   USER_GROUP_TITLE VARCHAR(50) NOT NULL UNIQUE,
+  //   USER_GROUP_DESCRIPTION VARCHAR(100),
+
+  async getById(ownerId, groupId) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute("SELECT * FROM USER_GROUP WHERE OWNER_ID=? AND USER_GROUP_ID=?", [ownerId, groupId]);
+      if (!rows || rows.length == 0) {
+        throw new Error(`No category found for id ${groupId}`);
+      }
+
+      const group = rows[0];
+      const [rows2, fields2] = await connection.execute("SELECT USER_ID, USER_FNAME, USER_LNAME, USER_EMAIL FROM USER_GROUP_MEMBERSHIP JOIN USER ON USER.USER_ID = USER_GROUP_MEMBERSHIP.MEMBER_ID WHERE USER_GROUP_ID=?;", [groupId]);
+      group.USER_GROUP_MEMBERS = rows2;
+
+      return group;
+    }
+    finally {
+      connection.release();
+    }
   }
 
   // OWNER_ID INT NOT NULL,
