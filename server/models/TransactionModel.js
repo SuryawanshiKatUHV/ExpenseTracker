@@ -1,17 +1,13 @@
 const Joi = require("joi");
-const connectionPool = require("../database");
+const getConnection = require("../database");
 
 class TransactionModel {
-  dummyData = [
-  ];
-  idCounter = this.dummyData.length;
-
-  getAll() {
-    return this.dummyData;
+  async getAll() {
+    throw new Error(`To be implemented`);
   }
 
-  getById(id) {
-    throw { message: `To be implemented` };
+  async getById(id) {
+    throw new Error(`To be implemented`);
   }
 
   // CATEGORY_ID INT NOT NULL,
@@ -19,36 +15,27 @@ class TransactionModel {
   // TRANSACTION_DATE DATETIME NOT NULL,
   // TRANSACTION_AMOUNT DECIMAL(10,2) DEFAULT 0.00,
   // TRANSACTION_NOTES VARCHAR(100),
-  create(transactionData) {
-    return new Promise((resolve, reject) => {
-      this._validate(transactionData);
+  async create({CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES}) {
+    const connection = await getConnection();
+    try {
+      this._validate({CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES});
 
-      const sql = "INSERT INTO TRANSACTION (CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES) VALUES (?, ?, ?, ?, ?)";
-      connectionPool.query(sql, [transactionData.CATEGORY_ID, transactionData.TRANSACTION_TYPE, transactionData.TRANSACTION_DATE, transactionData.TRANSACTION_AMOUNT, transactionData.TRANSACTION_NOTES], (error, result) => {
-        if (error) {
-          reject(error);
-        }
+      const result = await connection.execute("INSERT INTO TRANSACTION (CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES) VALUES (?, ?, ?, ?, ?)", [CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES]);
+      console.log(`Transaction inserted with id ${result[0].insertId}`);
 
-        const sql = "SELECT * FROM TRANSACTION WHERE CATEGORY_ID=? AND TRANSACTION_TYPE=? AND TRANSACTION_DATE=? AND TRANSACTION_AMOUNT=? AND TRANSACTION_NOTES=?";
-        connectionPool.query(sql, [transactionData.CATEGORY_ID, transactionData.TRANSACTION_TYPE, transactionData.TRANSACTION_DATE, transactionData.TRANSACTION_AMOUNT, transactionData.TRANSACTION_NOTES], (error, result) => {
-
-          if (error) {
-            reject(error);
-          }
-          else {
-            resolve(result[0]);
-          }
-        });
-      });
-    });
+      return {TRANSACTION_ID:result[0].insertId};
+    }
+    finally {
+      connection.release();
+    }
   }
 
-  update(id, { key1, key2 }) {
-    throw { message: `To be implemented` };
+  async update(id, { key1, key2 }) {
+    throw new Error(`To be implemented`);
   }
 
-  delete(id) {
-    throw { message: `To be implemented` };
+  async delete(id) {
+    throw new Error(`To be implemented`);
   }
 
   // CATEGORY_ID INT NOT NULL,
