@@ -11,7 +11,7 @@
 			"name": "User",
 			"item": [
 				{
-					"name": "Create user",
+					"name": "Create user-Kapil",
 					"event": [
 						{
 							"listen": "test",
@@ -22,7 +22,8 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -31,7 +32,139 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"USER_FNAME\":\"Kapil\",\n    \"USER_LNAME\":\"Suryawanshi\",\n    \"USER_EMAIL\":\"kapil@kapil.com\",\n    \"USER_PASSWORD\":\"kapil123\"\n}",
+							"raw": "{\n\t\"USER_FNAME\":\"Kapil\",\n    \"USER_LNAME\":\"Suryawanshi\",\n    \"USER_EMAIL\":\"SuryawanshiK@uhv.edu\",\n    \"USER_PASSWORD\":\"kapil123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/users",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Create user-Suraj",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"USER_FNAME\":\"Suraj\",\n    \"USER_LNAME\":\"Odera\",\n    \"USER_EMAIL\":\"OderaS@uhv.edu\",\n    \"USER_PASSWORD\":\"suraj123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/users",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Create user-Shayan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"USER_FNAME\":\"Shayan\",\n    \"USER_LNAME\":\"Ali\",\n    \"USER_EMAIL\":\"AliS@uhv.edu.com\",\n    \"USER_PASSWORD\":\"shayan123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/users",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Create user-Aaradhana",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"USER_FNAME\":\"Aaradhana\",\n    \"USER_LNAME\":\"Sharma\",\n    \"USER_EMAIL\":\"SharmaA@uhv.edu.com\",\n    \"USER_PASSWORD\":\"aaradhana123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -60,7 +193,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"USER_EMAIL\":\"Suryawanshik@uhv.edu\",\r\n    \"USER_PASSWORD\":\"kapil123\"\r\n}",
+							"raw": "{\r\n    \"USER_EMAIL\":\"suryawanshik@uhv.edu\",\r\n    \"USER_PASSWORD\":\"kapil123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -93,7 +226,8 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -102,7 +236,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MTAzNzAzMjQsImV4cCI6MTcxMDM3MzkyNH0.USaxRoUDB2u51ALclsJJKj5Un4uM18tr_ydp4btNuvs",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4NzM3ODYsImV4cCI6MTcxMDg3NzM4Nn0.enVtLeLOjmU6XsEBvzQjMgrEwqylCccqAv7SoyM2B3c",
 								"type": "text"
 							}
 						],
@@ -132,15 +266,22 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Njc0MzgsImV4cCI6MTcxMDg3MTAzOH0.pky4NI0ztMFcnvT9hjG1BNJsGhC74s9mgsoNgP1sAdQ",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "localhost:3000/api/users/7",
+							"raw": "localhost:3000/api/users/1",
 							"host": [
 								"localhost"
 							],
@@ -148,7 +289,7 @@
 							"path": [
 								"api",
 								"users",
-								"7"
+								"1"
 							]
 						},
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -167,13 +308,20 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Njc0MzgsImV4cCI6MTcxMDg3MTAzOH0.pky4NI0ztMFcnvT9hjG1BNJsGhC74s9mgsoNgP1sAdQ",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"USER_FNAME\": \"Kapil Satish\",\n    \"USER_LNAME\": \"Suryawanshi\"\n}",
@@ -184,7 +332,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/api/users/9",
+							"raw": "localhost:3000/api/users/1",
 							"host": [
 								"localhost"
 							],
@@ -192,7 +340,7 @@
 							"path": [
 								"api",
 								"users",
-								"9"
+								"1"
 							]
 						},
 						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
@@ -211,13 +359,20 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Njc0MzgsImV4cCI6MTcxMDg3MTAzOH0.pky4NI0ztMFcnvT9hjG1BNJsGhC74s9mgsoNgP1sAdQ",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "",
@@ -228,7 +383,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/api/users/6",
+							"raw": "localhost:3000/api/users/2",
 							"host": [
 								"localhost"
 							],
@@ -236,7 +391,7 @@
 							"path": [
 								"api",
 								"users",
-								"6"
+								"2"
 							]
 						},
 						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
@@ -260,16 +415,23 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4NzM3ODYsImV4cCI6MTcxMDg3NzM4Nn0.enVtLeLOjmU6XsEBvzQjMgrEwqylCccqAv7SoyM2B3c",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+							"raw": "{\n\t\"OWNER_ID\":1, \n    \"CATEGORY_TITLE\":\"Travel\", \n    \"CATEGORY_DESCRIPTION\":\"traveling\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -302,13 +464,20 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Nzg3ODEsImV4cCI6MTcxMDg4MjM4MX0.Uv86q8jtzc0XGl7BHhILrbyIw-6d4TCeyzmJ532zWyM",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/api/categories",
 							"host": [
@@ -335,13 +504,20 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Njc0MzgsImV4cCI6MTcxMDg3MTAzOH0.pky4NI0ztMFcnvT9hjG1BNJsGhC74s9mgsoNgP1sAdQ",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/api/categories/1",
 							"host": [
@@ -370,13 +546,20 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Njc0MzgsImV4cCI6MTcxMDg3MTAzOH0.pky4NI0ztMFcnvT9hjG1BNJsGhC74s9mgsoNgP1sAdQ",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
@@ -666,16 +849,23 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Njc0MzgsImV4cCI6MTcxMDg3MTAzOH0.pky4NI0ztMFcnvT9hjG1BNJsGhC74s9mgsoNgP1sAdQ",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+							"raw": "{\n\t\"CATEGORY_ID\":1,\n    \"TRANSACTION_TYPE\":\"Expense\",\n    \"TRANSACTION_DATE\":\"2024-03-02\",\n    \"TRANSACTION_AMOUNT\":100,\n    \"TRANSACTION_NOTES\":\"notes\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -708,13 +898,20 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Nzg3ODEsImV4cCI6MTcxMDg4MjM4MX0.Uv86q8jtzc0XGl7BHhILrbyIw-6d4TCeyzmJ532zWyM",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/api/transactions",
 							"host": [
@@ -869,16 +1066,23 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Njc0MzgsImV4cCI6MTcxMDg3MTAzOH0.pky4NI0ztMFcnvT9hjG1BNJsGhC74s9mgsoNgP1sAdQ",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+							"raw": "{\n\t\"OWNER_ID\": 1,\n    \"USER_GROUP_DATE\":\"2024-03-01\",\n    \"USER_GROUP_TITLE\":\"Dinner\",\n    \"USER_GROUP_DESCRIPTION\":\"Dinner party\",\n    \"USER_GROUP_MEMBERS\": [1]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -911,13 +1115,20 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Nzg3ODEsImV4cCI6MTcxMDg4MjM4MX0.Uv86q8jtzc0XGl7BHhILrbyIw-6d4TCeyzmJ532zWyM",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/api/groups",
 							"host": [
@@ -944,15 +1155,22 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Njc0MzgsImV4cCI6MTcxMDg3MTAzOH0.pky4NI0ztMFcnvT9hjG1BNJsGhC74s9mgsoNgP1sAdQ",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "localhost:3000/api/groups/1",
+							"raw": "localhost:3000/api/groups/2",
 							"host": [
 								"localhost"
 							],
@@ -960,7 +1178,7 @@
 							"path": [
 								"api",
 								"groups",
-								"1"
+								"2"
 							]
 						},
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -1072,16 +1290,23 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Nzg3ODEsImV4cCI6MTcxMDg4MjM4MX0.Uv86q8jtzc0XGl7BHhILrbyIw-6d4TCeyzmJ532zWyM",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+							"raw": "{\n\t\"USER_GROUP_ID\": 1,\n    \"CATEGORY_ID\": 2,\n    \"TRANSACTION_DATE\":\"2024-03-01\",\n    \"TRANSACTION_AMOUNT\": 200.00,\n    \"TRANSACTION_NOTES\":\"my transaction notes\",\n    \"PAID_TO_USER_IDS\": [1,4,5,6]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1114,13 +1339,20 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4ODg0NjEsImV4cCI6MTcxMDg5MjA2MX0.JpiKjb2_bS3-hhcZTkYIII2RDclbjQCeVQp_6dYssJc",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/api/groupTransactions",
 							"host": [
@@ -1147,13 +1379,20 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4ODU4NDgsImV4cCI6MTcxMDg4OTQ0OH0.4G8CLBMYsF1WtXzfmxxGPobQdFeRbN-sZqVAAoVQjyU",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/api/groupTransactions/1",
 							"host": [
@@ -1167,94 +1406,6 @@
 							]
 						},
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
-					},
-					"response": []
-				},
-				{
-					"name": "Update",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Successful PUT request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:3000/api/groupTransactions/1",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"groupTransactions",
-								"1"
-							]
-						},
-						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
-					},
-					"response": []
-				},
-				{
-					"name": "Delete",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Successful DELETE request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:3000/api/groupTransactions/1",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"groupTransactions",
-								"1"
-							]
-						},
-						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
 					},
 					"response": []
 				}
