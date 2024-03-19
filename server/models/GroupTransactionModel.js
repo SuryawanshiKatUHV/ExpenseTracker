@@ -3,9 +3,47 @@ const getConnection = require("../database");
 const transactionModel = require("./TransactionModel");
 
 // SQL Queries
-const GET_ALL_SQL = "SELECT * FROM USER_GROUP_TRANSACTION WHERE USER_GROUP_ID IN (SELECT USER_GROUP_ID FROM USER_GROUP_MEMBERSHIP WHERE MEMBER_ID=?)";
-const GET_BY_ID_SQL = "SELECT * FROM USER_GROUP_TRANSACTION WHERE USER_GROUP_ID IN (SELECT USER_GROUP_ID FROM USER_GROUP_MEMBERSHIP WHERE MEMBER_ID=?) AND USER_GROUP_TRANSACTION_ID=?";
-const INSERT_SQL = "INSERT INTO USER_GROUP_TRANSACTION (USER_GROUP_ID, TRANSACTION_ID, PAID_BY_USER_ID, PAID_TO_USER_ID, USER_GROUP_TRANSACTION_DATE, USER_GROUP_TRANSACTION_AMOUNT, USER_GROUP_TRANSACTION_NOTES) VALUES (?, ?, ?, ?, ?, ?, ?)";
+const GET_ALL_SQL =
+  `SELECT 
+    USER_GROUP_TRANSACTION_ID, 
+    USER_GROUP_ID, 
+    TRANSACTION_ID,
+	  PAID_BY_USER_ID, 
+    CONCAT(U1.USER_LNAME, ', ', U1.USER_FNAME) AS PAID_BY_USER_FULLNAME,
+	  PAID_TO_USER_ID, 
+    CONCAT(U2.USER_LNAME, ', ', U2.USER_FNAME) AS PAID_TO_USER_FULLNAME,
+    USER_GROUP_TRANSACTION_DATE, 
+    USER_GROUP_TRANSACTION_AMOUNT, 
+    USER_GROUP_TRANSACTION_NOTES
+    FROM USER_GROUP_TRANSACTION
+	  JOIN USER u1 on USER_GROUP_TRANSACTION.PAID_BY_USER_ID = u1.USER_ID
+    JOIN USER u2 on USER_GROUP_TRANSACTION.PAID_TO_USER_ID = u2.USER_ID
+    WHERE USER_GROUP_ID IN (
+      SELECT USER_GROUP_ID 
+      FROM USER_GROUP_MEMBERSHIP 
+      WHERE MEMBER_ID=?
+    )`;
+const GET_ALL_BY_GROUP_SQL = `${GET_ALL_SQL} AND USER_GROUP_ID=?`;
+
+const GET_BY_ID_SQL = 
+  `SELECT * 
+    FROM USER_GROUP_TRANSACTION 
+    WHERE USER_GROUP_ID IN (
+      SELECT USER_GROUP_ID 
+      FROM USER_GROUP_MEMBERSHIP 
+      WHERE MEMBER_ID=?) AND 
+      USER_GROUP_TRANSACTION_ID=?`;
+
+const INSERT_SQL = 
+  `INSERT INTO USER_GROUP_TRANSACTION (
+    USER_GROUP_ID, 
+    TRANSACTION_ID, 
+    PAID_BY_USER_ID, 
+    PAID_TO_USER_ID, 
+    USER_GROUP_TRANSACTION_DATE, 
+    USER_GROUP_TRANSACTION_AMOUNT, 
+    USER_GROUP_TRANSACTION_NOTES) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
 /**
  * Class representing a Group Transaction Model.
@@ -15,18 +53,31 @@ class GroupTransactionModel {
   /**
    * Retrieve all group transactions for a user.
    * @param {number} userId - The user ID.
+   * @param {number} groupId - The group ID.
    * @returns {Promise<Array<Object>>} An array of group transaction objects.
    */
-  async getAll(userId) {
-    const validationResult = Joi.number().required().validate(userId);
+  async getAll(userId, groupId) {
+
+    const validationResult = Joi.object(
+      {
+        userId: Joi.number().required(),
+        groupId: Joi.number().optional()
+      }
+    ).validate({ userId, groupId });
     if (validationResult.error) {
       throw validationResult.error;
     }
 
     const connection = await getConnection();
     try {
-      const [rows, fields] = await connection.execute(GET_ALL_SQL, [userId]);
-      return rows;
+      if (groupId) {
+        const [rows, fields] = await connection.execute(GET_ALL_BY_GROUP_SQL, [userId, groupId]);
+        return rows;
+      }
+      else {
+        const [rows, fields] = await connection.execute(GET_ALL_SQL, [userId]);
+        return rows;
+      }
     }
     finally {
       connection.release();
