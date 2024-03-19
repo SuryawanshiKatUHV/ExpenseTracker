@@ -3,6 +3,12 @@ const getConnection = require('../database');
 
 class CategoryModel {
 
+  /**
+   * Get all categories owned by a user.
+   *
+   * @param {number} ownerId - The user ID.
+   * @returns {Promise<Array>} An array of category objects.
+   */
   async getAll(ownerId) {
     const connection = await getConnection();
     try {
@@ -14,6 +20,14 @@ class CategoryModel {
     }
   }
 
+  /**
+   * Get a category by ID.
+   *
+   * @param {number} ownerId - The user ID.
+   * @param {number} categoryId - The category ID.
+   * @returns {Promise<Object>} The category object.
+   * @throws {Error} If the category is not found.
+   */
   async getById(ownerId, categoryId) {
     const connection = await getConnection();
     try {
@@ -29,6 +43,13 @@ class CategoryModel {
     }
   }
 
+  /**
+   * Create a new category.
+   *
+   * @param {{OWNER_ID: number, CATEGORY_TITLE: string, CATEGORY_DESCRIPTION: string}} categoryData - The category data.
+   * @returns {Promise<Object>} An object containing the new category's ID.
+   * @throws {Error} If the data is not valid.
+   */
   async create({OWNER_ID, CATEGORY_TITLE, CATEGORY_DESCRIPTION}) {
     const connection = await getConnection();
     try {
@@ -52,14 +73,21 @@ class CategoryModel {
     throw new Error(`To be implemented`);
   }
 
-  _validate(user) {
+  /**
+   * Validate category data.
+   *
+   * @param {{OWNER_ID: number, CATEGORY_TITLE: string, CATEGORY_DESCRIPTION: string}} categoryData - The category data.
+   * @throws {Error} If the data is not valid.
+   * @private
+   */
+  _validate(categoryData) {
     const schema = Joi.object({
       OWNER_ID: Joi.number().required(),
       CATEGORY_TITLE: Joi.string().required().min(3).max(50),
       CATEGORY_DESCRIPTION: Joi.string().required().min(3).max(100),
     });
 
-    const validateResult = schema.validate(user);
+    const validateResult = schema.validate(categoryData);
     if (validateResult.error) {
       console.log(validateResult.error);
       throw validateResult.error;

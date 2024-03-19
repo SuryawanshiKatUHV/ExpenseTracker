@@ -3,6 +3,12 @@ const getConnection = require("../database");
 
 class GroupModel {
 
+  /**
+   * Get all groups owned by a user.
+   *
+   * @param {number} ownerId - The user ID.
+   * @returns {Promise<Array>} An array of group objects.
+   */
   async getAll(ownerId) {
     const connection = await getConnection();
     try {
@@ -14,19 +20,20 @@ class GroupModel {
     }
   }
 
-  // CREATE TABLE USER_GROUP (
-  //   USER_GROUP_ID INT PRIMARY KEY AUTO_INCREMENT,
-  //   OWNER_ID INT NOT NULL,
-  //   USER_GROUP_DATE DATETIME NOT NULL,
-  //   USER_GROUP_TITLE VARCHAR(50) NOT NULL UNIQUE,
-  //   USER_GROUP_DESCRIPTION VARCHAR(100),
-
+  /**
+   * Get a group by ID.
+   *
+   * @param {number} ownerId - The user ID.
+   * @param {number} groupId - The group ID.
+   * @returns {Promise<Object>} The group object.
+   * @throws {Error} If the group is not found.
+   */
   async getById(ownerId, groupId) {
     const connection = await getConnection();
     try {
       const [rows, fields] = await connection.execute("SELECT * FROM USER_GROUP WHERE OWNER_ID=? AND USER_GROUP_ID=?", [ownerId, groupId]);
       if (!rows || rows.length == 0) {
-        throw new Error(`No category found for id ${groupId}`);
+        throw new Error(`No group found for id ${groupId}`);
       }
 
       const group = rows[0];
@@ -40,11 +47,13 @@ class GroupModel {
     }
   }
 
-  // OWNER_ID INT NOT NULL,
-  // USER_GROUP_DATE DATETIME NOT NULL,
-  // USER_GROUP_TITLE VARCHAR(50) NOT NULL UNIQUE,
-  // USER_GROUP_DESCRIPTION VARCHAR(100),
-  // USER_GROUP_MEMBERS=[1,2,3]
+  /**
+   * Create a new group.
+   *
+   * @param {{OWNER_ID: number, USER_GROUP_DATE: string, USER_GROUP_TITLE: string, USER_GROUP_DESCRIPTION: string, USER_GROUP_MEMBERS: Array<number>}} userGroupData - The group data.
+   * @returns {Promise<Object>} An object containing the new group's ID.
+   * @throws {Error} If the data is not valid.
+   */
   async create({OWNER_ID, USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION, USER_GROUP_MEMBERS}) {
     const connection = await getConnection();
     try {
@@ -57,15 +66,15 @@ class GroupModel {
 
         const USER_GROUP_ID = result[0].insertId;
 
-        let members = USER_GROUP_MEMBERS;
+        let memberIds = USER_GROUP_MEMBERS;
         // Owner would be the member of the group by default
-        if (!members.includes(OWNER_ID)) {
-          members = [OWNER_ID, ...members];
+        if (!memberIds.includes(OWNER_ID)) {
+          memberIds = [OWNER_ID, ...memberIds];
         }
 
-        members.forEach(async (memberId) => {
+        for (const memberId of memberIds) {
           await connection.execute("INSERT INTO USER_GROUP_MEMBERSHIP (USER_GROUP_ID, MEMBER_ID) VALUES (?,?)", [USER_GROUP_ID, memberId]);
-        });
+        };
 
         await connection.commit();
 
@@ -81,19 +90,38 @@ class GroupModel {
     }
   }
 
+  /**
+   * Update a group.
+   *
+   * @param {number} userId - The user ID.
+   * @param {number} userGroupId - The group ID.
+   * @param {{USER_GROUP_DATE: string, USER_GROUP_TITLE: string, USER_GROUP_DESCRIPTION: string, USER_GROUP_MEMBERS: Array<number>}} userGroupData - The new group data.
+   * @returns {Promise<void>}
+   * @throws {Error} To be implemented.
+   */
   async update(userId, userGroupId, userGroupData) {
     throw new Error(`To be implemented`);
   }
 
+  /**
+   * Delete a group.
+   *
+   * @param {number} userId - The user ID.
+   * @param {number} userGroupId - The group ID.
+   * @returns {Promise<void>}
+   * @throws {Error} To be implemented.
+   */
   async delete(userId, userGroupId) {
     throw new Error(`To be implemented`);
   }
 
-  // OWNER_ID INT NOT NULL,
-  // USER_GROUP_DATE DATETIME NOT NULL,
-  // USER_GROUP_TITLE VARCHAR(50) NOT NULL UNIQUE,
-  // USER_GROUP_DESCRIPTION VARCHAR(100),
-  //TODO Also add users as members
+  /**
+   * Validate group data.
+   *
+   * @param {{OWNER_ID: number, USER_GROUP_DATE: string, USER_GROUP_TITLE: string, USER_GROUP_DESCRIPTION: string, USER_GROUP_MEMBERS: Array<number>}} userGroupData - The group data.
+   * @throws {Error} If the data is not valid.
+   * @private
+   */
   _validate(userGroupData) {
     const schema = Joi.object({
       OWNER_ID: Joi.number().required(),
