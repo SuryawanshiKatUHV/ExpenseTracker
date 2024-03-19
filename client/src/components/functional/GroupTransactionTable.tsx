@@ -79,14 +79,28 @@ const GroupTransactionTable = () => {
     const [formDisplayed, setFormDisplayed] = useState(false);
     const [selectedGroupId, setSelectedGroupId] = useState(0);
     const [groups, setGroups] = useState<any[]>([]);
+    const [groupTransactions, setGroupTransactions] = useState<any[]>([]);
 
     useEffect(() =>{ 
-        async function fetchGroups() {
+        async function fetchData() {
             const groups = await get(END_POINTS.Groups);
             setGroups(groups);
+
+            // First in the list of group is a selected group
+            if (groups && groups.length > 0) {
+                setSelectedGroupId(groups[0].USER_GROUP_ID);
+            }
         }
-        fetchGroups();
+        fetchData();
     }, []);
+
+    useEffect(() =>{
+        async function fetchGroupTransactions() {
+            const groupTransactions = await get(`${END_POINTS.GroupTransactions}?groupId=${selectedGroupId}`);
+            setGroupTransactions(groupTransactions);
+        }
+        fetchGroupTransactions();
+    }, [selectedGroupId]);
     
 
     /**
@@ -129,8 +143,7 @@ const GroupTransactionTable = () => {
         {/* Show the add new form*/}
         {formDisplayed && <GroupTransactionForm groupId={selectedGroupId} saveHandler={SaveClicked} cancelHandler={CancelClicked}/>}
 
-        <h5 className="m-5">Group transaction</h5>
-        
+        <h5>Group transactions</h5>
         <table className="table table-hover">
             <thead>
                 <tr>
@@ -142,19 +155,19 @@ const GroupTransactionTable = () => {
                 </tr>
             </thead>
             <tbody>
-                {data.map((item)=> (
+                {groupTransactions.map((item)=> (
                     <tr>
                         <td>{item.USER_GROUP_TRANSACTION_DATE}</td>
                         <td>{item.USER_GROUP_TRANSACTION_AMOUNT}</td>
-                        <td>{item.PAID_BY_USER}</td>
-                        <td>{item.PAID_TO_USER}</td>
+                        <td>{item.PAID_BY_USER_FULLNAME}</td>
+                        <td>{item.PAID_TO_USER_FULLNAME}</td>
                         <td>{item.USER_GROUP_TRANSACTION_NOTES}</td>
                     </tr>                
                 ))}
             </tbody>
         </table>
 
-        <h5>Settlement Summary</h5>
+        <h5>Settlement Summary (dummy data)</h5>
         <table className="table table-hover">
             <thead>
                 <tr>
