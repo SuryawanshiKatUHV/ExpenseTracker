@@ -17,7 +17,7 @@ class GroupController {
   }
 
   async getById(req, res) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
 
   async create(req, res) {
@@ -35,11 +35,11 @@ class GroupController {
   }
 
   async update(req, res) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
 
   async delete(req, res) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
   
 }
