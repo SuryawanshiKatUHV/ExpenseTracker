@@ -1,167 +1,109 @@
 const Joi = require("joi");
-const connectionPool = require('../database');
+const getConnection = require('../database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 class UserModel {
 
-  getAll() {
-    return new Promise((resolve, reject) => {
-      const sql = "SELECT USER_ID, USER_EMAIL, USER_FNAME, USER_LNAME FROM USER";
-      connectionPool.query(sql, [], (error, result) => {
-        if (error) {
-          reject (error);
-        }
-        else {
-          resolve(result);
-        }
-      });
-    });
+  async getAll() {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute("SELECT * FROM USER", []);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
   }
 
-  getById(id) {
-    return new Promise((resolve, reject) => {
-      const sql = "SELECT USER_ID, USER_EMAIL, USER_FNAME, USER_LNAME FROM USER WHERE USER_ID=?";
-      connectionPool.query(sql, [id], (error, result) => {
-        if (error) {
-          reject(error);
-        }
-        else {
-          resolve (result);
-        }
-      });
-    });
+  async getById(id) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute("SELECT * FROM USER WHERE USER_ID=?", [id]);
+      if (!rows || rows.length == 0) {
+        throw new Error(`No user found for id ${id}`);
+      }
+
+      return rows[0];
+    }
+    finally {
+      connection.release();
+    }
   }
 
-  create(userData) {
-    return new Promise((resolve, reject) => {
-      this._validate(userData);
+  async create({USER_EMAIL, USER_FNAME, USER_LNAME, USER_PASSWORD}) {
+    const connection = await getConnection();
+    try {
+      this._validate({USER_EMAIL, USER_FNAME, USER_LNAME, USER_PASSWORD});
+      USER_PASSWORD = await bcrypt.hash(USER_PASSWORD, 10);
 
-      // Hash the password
-      bcrypt.hash(userData.USER_PASSWORD, 10, (err, hash) => {
-        if (err) {
-          reject(err);
-        }
-        else {
-          console.log(`hash=${hash}`);
-          userData.USER_PASSWORD = hash;
+      const result = await connection.execute("INSERT INTO USER (USER_EMAIL, USER_FNAME, USER_LNAME, USER_PASSWORD) VALUES (?, ?, ?, ?)", [USER_EMAIL, USER_FNAME, USER_LNAME, USER_PASSWORD]);
+      console.log(`User inserted with id ${result[0].insertId}`);
 
-          const sql = "INSERT INTO USER (USER_EMAIL, USER_FNAME, USER_LNAME, USER_PASSWORD) VALUES (?, ?, ?, ?)";
-          connectionPool.query(sql, [userData.USER_EMAIL, userData.USER_FNAME, userData.USER_LNAME, userData.USER_PASSWORD], (error, result) => {
-            if (error) {
-              reject(error);
-            }
-
-            const sql = "SELECT * FROM USER WHERE USER_EMAIL=?";
-            connectionPool.query(sql, [userData.USER_EMAIL], (error, result) => {
-
-              if (error) {
-                reject(error);
-              }
-              else {
-                resolve(result[0]);
-              }
-            });
-          });
-        }
-      });
-    });
+      return {USER_ID:result[0].insertId};
+    }
+    finally {
+      connection.release();
+    }
   }
 
-  login({ USER_EMAIL, USER_PASSWORD }) {
-    return new Promise((resolve, reject)=>{
+  async login({ USER_EMAIL, USER_PASSWORD }) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute("SELECT * FROM USER WHERE LOWER(USER_EMAIL)=LOWER(?)", [USER_EMAIL]);
+      if (!rows || rows.length == 0) {
+        throw new Error(`User account with this email does not exist.`);
+      }
+      const user = rows[0];
 
-      const sql = "SELECT * FROM USER WHERE LOWER(USER_EMAIL)=LOWER(?)";
-      connectionPool.query(sql, [USER_EMAIL], (error, result) => {
-        console.log(`error=${error}`);
-        console.log(`result=${result}`);
+      const comparison = await bcrypt.compare(USER_PASSWORD, user.USER_PASSWORD);
+      if (comparison === false) {
+        throw new Error(`Authentication failed.`);
+      }
 
-        if (error) {
-          reject(error);
-        }
-        else if (result) {
-          console.log(`result.length ${result.length}`);
-          if (result.length == 0) {
-            reject(new Error(`User account with this email does not exist.`));
-          }
-          else {
-            // Compare the encrypted password
-            bcrypt.compare(USER_PASSWORD, result[0].USER_PASSWORD, (err, comparison) => {
-              if (err) {
-                reject(err);
-              }
-              else if (comparison === false) {
-                reject(new Error(`Authentication failed.`));
-              }
-              else {
-                const user = result[0];
+      const token = jwt.sign({ USER_ID: user.USER_ID }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      console.log(`Login token generated ${token}`);
+      // When password is matched, then return the user record as successful login signal
+      // also send the json web token.
+      // The client stores the token locally (e.g., in localStorage or sessionStorage) and 
+      // includes it in the Authorization header for subsequent requests that require authentication.
+      user.token = token;
 
-                const token = jwt.sign({ USER_ID: user.USER_ID }, process.env.JWT_SECRET, { expiresIn: '1h' });
-                console.log(`Login token generated ${token}`);
-                // When password is matched, then return the user record as successful login signal
-                // also send the json web token.
-                // The client stores the token locally (e.g., in localStorage or sessionStorage) and 
-                // includes it in the Authorization header for subsequent requests that require authentication.
-                user.token = token;
-                resolve(user);
-              }
-            });
-          }
-        }
-        else {
-          reject(new Error(`The query result is undefined.`));
-        }
-      });
-    });
+      return user;
+    }
+    finally {
+      connection.release();
+    }
   }
 
-  update(id, { USER_FNAME, USER_LNAME }) {
-    return new Promise((resolve, reject) => {
-      this.getById(id)
-      .then(result => {
-        if(result.length == 0) {
-          throw new Error(`No record found for id ${id}`);
-        }
-        
-        const sql = "UPDATE USER SET USER_FNAME=?, USER_LNAME=? WHERE USER_ID=?";
-        connectionPool.query(sql, [USER_FNAME, USER_LNAME, id], (error, result) => {
-          if (error) {
-            reject(error);
-          }
-          else {
-            resolve(result);
-          }
-        });
-      })
-      .catch(error => {
-        reject(error);
-      });
-    });
-    
+  async update(id, { USER_FNAME, USER_LNAME }) {
+    const connection = await getConnection();
+    try {
+      //Ensure that user exists with this id
+      const user = await this.getById(id);
+
+      const result = await connection.execute("UPDATE USER SET USER_FNAME=?, USER_LNAME=? WHERE USER_ID=?", [USER_FNAME, USER_LNAME, id]);
+
+      return result;
+    }
+    finally {
+      connection.release();
+    }
   }
 
-  delete(id) {
-    return new Promise((resolve, reject) => {
-      this.getById(id)
-      .then(result => {
-        if(result.length == 0) {
-          throw new Error(`No record found for id ${id}`);
-        }
-        
-        const sql = "DELETE FROM USER WHERE USER_ID=?";
-        connectionPool.query(sql, [id], (error, result) => {
-          if (error) {
-            reject(error);
-          }
-          else {
-            resolve(result);
-          }
-        });
-      })
-      .catch(error => {
-        reject(error);
-      });
-    });
+  async delete(id) {
+    const connection = await getConnection();
+    try {
+      //Ensure that user exists with this id
+      const user = await this.getById(id);
+
+      const result = await connection.execute("DELETE FROM USER WHERE USER_ID=?", [id]);
+
+      return result;
+    }
+    finally {
+      connection.release();
+    }
   }
 
   _validate(user) {
