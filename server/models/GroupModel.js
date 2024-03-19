@@ -1,25 +1,21 @@
 const Joi = require("joi");
-const connectionPool = require("../database");
+const getConnection = require("../database");
 
 class GroupModel {
 
-  getAll(userId) {
-    return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM USER_GROUP WHERE USER_GROUP_ID IN (SELECT USER_GROUP_ID FROM USER_GROUP_MEMBERSHIP WHERE MEMBER_ID=?)";
-      connectionPool.query(sql, [userId], (error, result) => {
-        if(error) {
-          reject(error);
-        }
-        else {
-          resolve(result);
-        }
-      });
-        
-    });
+  async getAll(ownerId) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute("SELECT * FROM USER_GROUP WHERE USER_GROUP_ID IN (SELECT USER_GROUP_ID FROM USER_GROUP_MEMBERSHIP WHERE MEMBER_ID=?)", [ownerId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
   }
 
-  getById(userId, id) {
-    throw { message: `To be implemented` };
+  async getById(ownerId, id) {
+    throw new Error(`To be implemented`);
   }
 
   // OWNER_ID INT NOT NULL,
@@ -27,174 +23,48 @@ class GroupModel {
   // USER_GROUP_TITLE VARCHAR(50) NOT NULL UNIQUE,
   // USER_GROUP_DESCRIPTION VARCHAR(100),
   // USER_GROUP_MEMBERS=[1,2,3]
-  create(userGroupData) {
-    return new Promise((resolve, reject) => {
-      this._validate(userGroupData);
+  async create({OWNER_ID, USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION, USER_GROUP_MEMBERS}) {
+    const connection = await getConnection();
+    try {
+      this._validate({OWNER_ID, USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION, USER_GROUP_MEMBERS});
 
-      connectionPool.getConnection((error, connection) => {
-        if (error) {
-          reject(error);
+      await connection.beginTransaction();
+      try {
+        const result = await connection.execute("INSERT INTO USER_GROUP (OWNER_ID, USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION) VALUES (?, ?, ?, ?)", [OWNER_ID, USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION]);
+        console.log(`Group inserted with id ${result[0].insertId}`);
+
+        const USER_GROUP_ID = result[0].insertId;
+
+        let members = USER_GROUP_MEMBERS;
+        // Owner would be the member of the group by default
+        if (!members.includes(OWNER_ID)) {
+          members = [OWNER_ID, ...members];
         }
-        else {
 
-          connection.beginTransaction((error) => {
-            if (error) {
-              connection.release();
-              reject(error);
-            }
-            else {
-              console.log(`Transaction started...`);
+        members.forEach(async (memberId) => {
+          await connection.execute("INSERT INTO USER_GROUP_MEMBERSHIP (USER_GROUP_ID, MEMBER_ID) VALUES (?,?)", [USER_GROUP_ID, memberId]);
+        });
 
-              const sql = "INSERT INTO USER_GROUP (OWNER_ID, USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION) VALUES (?, ?, ?, ?)";
-              connection.query(sql, [userGroupData.OWNER_ID, userGroupData.USER_GROUP_DATE, userGroupData.USER_GROUP_TITLE, userGroupData.USER_GROUP_DESCRIPTION], (error, result) => {
-                if (error) {
-                  connection.rollback(() => {
-                    console.log(`Transaction rolled back`);
-                    connection.release();
-                    reject(error);
-                  });
-                }
-                else {
+        await connection.commit();
 
-                  const sql = "SELECT * FROM USER_GROUP WHERE OWNER_ID=? AND USER_GROUP_DATE=? AND USER_GROUP_TITLE=?";
-                  connection.query(sql, [userGroupData.OWNER_ID, userGroupData.USER_GROUP_DATE, userGroupData.USER_GROUP_TITLE], (error, result) => {
-                    if (error) {
-                      connection.rollback(() => {
-                        console.log(`Transaction rolled back`);
-                        connection.release();
-                        reject(error);
-                      });
-                    }
-                    else {
-
-                      const userGroup = result[0];
-          
-                      let members = userGroupData.USER_GROUP_MEMBERS;
-                      // Owner would be the member of the group by default
-                      if (!members.includes(userGroupData.OWNER_ID)) {
-                        members = [userGroupData.OWNER_ID, ...members];
-                      }
-
-                      const addMemberPromises = members.map((memberId) => {
-                        return new Promise((resolve, reject) => {
-                          const sql = "INSERT INTO USER_GROUP_MEMBERSHIP (USER_GROUP_ID, MEMBER_ID) VALUES (?,?)";
-                          connection.query(sql, [userGroup.USER_GROUP_ID, memberId], (error, result) => {
-                            if (error) {
-                              reject(error);
-                            } else {
-                              resolve();
-                            }
-                          });
-                        });
-                      });
-
-                      Promise.all(addMemberPromises)
-                        .then(() => {
-                          connection.commit((error) => {
-                            if (error) {
-                              connection.rollback(() => {
-                                connection.release();
-                                reject(error);
-                              });
-                            } else {
-                              console.log(`Transaction committed.`);
-                              connection.release();
-                              resolve(userGroup);
-                            }
-                          }); // commit
-                        })
-                        .catch((error) => {
-                          connection.rollback(() => {
-                            connection.release();
-                            reject(error);
-                          });
-                        });
-
-                    }
-                  });
-
-                }
-              }); //INSERT INTO USER_GROUP
-
-            }
-          }); // beginTransaction
-        } 
-      }); // getConnection
-
-    });
+        return {USER_GROUP_ID};
+      }
+      catch(error) {
+        await connection.rollback();
+        throw error;
+      }
+    }
+    finally {
+      connection.release();
+    }
   }
 
-
-  // create(userGroupData) {
-  //   return new Promise((resolve, reject) => {
-  //     this._validate(userGroupData);
-  
-  //     connectionPool.getConnection()
-  //       .then((connection) => {
-  //         console.log('Connection acquired');
-  //         return connection.beginTransaction();
-  //       })
-  //       .then((connection) => {
-  //         console.log('Transaction started');
-  //         const sql = "INSERT INTO USER_GROUP (OWNER_ID, USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION) VALUES (?, ?, ?, ?)";
-  //         return connection.query(sql, [userGroupData.OWNER_ID, userGroupData.USER_GROUP_DATE, userGroupData.USER_GROUP_TITLE, userGroupData.USER_GROUP_DESCRIPTION])
-  //           .then((result) => {
-  //             const sql = "SELECT * FROM USER_GROUP WHERE OWNER_ID=? AND USER_GROUP_DATE=? AND USER_GROUP_TITLE=?";
-  //             return connection.query(sql, [userGroupData.OWNER_ID, userGroupData.USER_GROUP_DATE, userGroupData.USER_GROUP_TITLE]);
-  //           })
-  //           .then((result) => {
-  //             const userGroup = result[0];
-  //             let members = userGroupData.USER_GROUP_MEMBERS;
-  //             if (!members.includes(userGroupData.OWNER_ID)) {
-  //               members = [userGroupData.OWNER_ID, ...members];
-  //             }
-  
-  //             const addMemberPromises = members.map((memberId) => {
-  //               const sql = "INSERT INTO USER_GROUP_MEMBERSHIP (USER_GROUP_ID, MEMBER_ID) VALUES (?,?)";
-  //               return connection.query(sql, [userGroup.USER_GROUP_ID, memberId]);
-  //             });
-  
-  //             return Promise.all(addMemberPromises)
-  //               .then(() => {
-  //                 connection.commit()
-  //                   .then(() => {
-  //                     console.log('Transaction committed');
-  //                     connection.release();
-  //                     resolve(userGroup);    
-  //                   })
-  //                   .catch((error) => {
-  //                     connection.release();
-  //                     reject(error);
-  //                   });
-  //               });
-  //           })
-  //           .catch((error) => {
-  //             console.log('Transaction rolled back');
-  //             connection.rollback()
-  //               .then(() => {
-  //                 connection.release();
-  //                 reject(error);
-  //               })
-  //               .catch((rollbackError) => {
-  //                 connection.release();
-  //                 reject(rollbackError);
-  //               });
-  //           });
-  //       })
-  //       .catch((error) => {
-  //         console.error('Error acquiring connection or starting transaction:', error);
-  //         reject(error);
-  //       });
-  //   });
-  // }
-
-
-  update(userId, userGroupId, userGroupData) {
-    throw { message: `To be implemented` };
+  async update(userId, userGroupId, userGroupData) {
+    throw new Error(`To be implemented`);
   }
 
-  delete(userId, userGroupId) {
-    throw { message: `To be implemented` };
+  async delete(userId, userGroupId) {
+    throw new Error(`To be implemented`);
   }
 
   // OWNER_ID INT NOT NULL,
