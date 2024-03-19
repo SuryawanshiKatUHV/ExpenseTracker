@@ -2,33 +2,12 @@ import { useEffect, useState } from "react";
 import { END_POINTS, get } from "../../Common";
 
 interface Props {
+    groupId : number;
     saveHandler: (txCategoryId:number, txDate:string, txAmount:number, txMembers:number[], txNotes:string) => void;
     cancelHandler: () => void;
 }
 
 const GroupTransactionForm = (props : Props) => {
-    /**
-     * Dummy data
-     */
-    const members = [
-        {
-            id:1,
-            fullName: "Suryawanshi, Kapil"
-        },
-        {
-            id:2,
-            fullName: "Odera, Suraj"
-        },
-        {
-            id:3,
-            fullName: "Ali, Shayan"
-        },
-        {
-            id:4,
-            fullName: "Sharma, Aaradhana"
-        }
-    ];
-
     /**
      * State
      */
@@ -40,13 +19,17 @@ const GroupTransactionForm = (props : Props) => {
     const [errors, setErrors] = useState({txDate:'', txAmount:'', txMembers:''});
 
     const [categories, setCategories] = useState<any[]>([]);
+    const [selectedGroupMembers, setSelectedGroupMembers] = useState<any[]>([]);
 
     useEffect(() =>{ 
-        async function fetchGroups() {
+        async function fetchData() {
             const categories = await get(END_POINTS.Categories);
             setCategories(categories);
+
+            const selectedGroup = await get(`${END_POINTS.Groups}/${props.groupId}`);
+            setSelectedGroupMembers(selectedGroup.USER_GROUP_MEMBERS);
         }
-        fetchGroups();
+        fetchData();
     }, []);
 
     /**
@@ -148,14 +131,15 @@ const GroupTransactionForm = (props : Props) => {
         </div>
 
         <div>Paid for members</div>
-        {members.map((member) => (
+        {selectedGroupMembers.map((selectedGroupMember) => (
             <div className="form-check form-check-inline">
                 <input className="form-check-input" 
                     type="checkbox" 
-                    value={member.id}
-                    checked={txMembers.includes(member.id)}
-                    onChange={() => handleMemberSelect(member.id)}/>
-                <label className="form-check-label" htmlFor={"paidForMember" + member.id}>{member.fullName}</label>
+                    id={"paidForMember" + selectedGroupMember.USER_ID}
+                    value={selectedGroupMember.USER_ID}
+                    checked={txMembers.includes(selectedGroupMember.USER_ID)}
+                    onChange={() => handleMemberSelect(selectedGroupMember.USER_ID)}/>
+                <label className="form-check-label" htmlFor={"paidForMember" + selectedGroupMember.USER_ID}>{`${selectedGroupMember.USER_LNAME}, ${selectedGroupMember.USER_FNAME}`}</label>
             </div>    
         ))}
         {errors.txMembers && <p style={{color:'red'}}>{errors.txMembers}</p>}
