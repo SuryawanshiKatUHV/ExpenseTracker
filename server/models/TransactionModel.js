@@ -2,8 +2,21 @@ const Joi = require("joi");
 const getConnection = require("../database");
 
 class TransactionModel {
-  async getAll() {
-    throw new Error(`To be implemented`);
+  /**
+   * Get all groups owned by a user.
+   *
+   * @param {number} ownerId - The user ID.
+   * @returns {Promise<Array>} An array of group objects.
+   */
+  async getAll(ownerId) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute("SELECT * FROM TRANSACTION WHERE CATEGORY_ID IN (SELECT CATEGORY_ID FROM CATEGORY WHERE OWNER_ID=?)", [ownerId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
   }
 
   async getById(id) {
