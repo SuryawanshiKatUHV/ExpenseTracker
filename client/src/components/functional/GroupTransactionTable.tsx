@@ -77,7 +77,7 @@ const GroupTransactionTable = () => {
      * State
      */
     const [formDisplayed, setFormDisplayed] = useState(false);
-    const [txGroupId, setTxGroupId] = useState('');
+    const [selectedGroupId, setSelectedGroupId] = useState(0);
     const [groups, setGroups] = useState<any[]>([]);
 
     useEffect(() =>{ 
@@ -115,19 +115,19 @@ const GroupTransactionTable = () => {
         {new Date().toISOString()}
 
         <div className="form-floating mb-3">
-            <select className="form-select" id="txGroupId" onChange={(e) => setTxGroupId(e.target.value)} value={txGroupId}>
+            <select className="form-select" id="selectedGroupId" onChange={(e) => setSelectedGroupId(parseInt(e.target.value))} value={selectedGroupId}>
                 {groups.map(group => (
                     <option key={group.USER_GROUP_ID} value={group.USER_GROUP_ID}>{group.USER_GROUP_DATE}-{group.USER_GROUP_TITLE}</option>
                 ))}
             </select>
-          <label htmlFor="txGroupId">Group</label>
+          <label htmlFor="selectedGroupId">Group</label>
         </div>
 
         {/* Show add new button when the form is not shown*/}
         {!formDisplayed && <button className="btn btn-success" onClick={AddNewClicked}>Add New</button>}
 
         {/* Show the add new form*/}
-        {formDisplayed && <GroupTransactionForm saveHandler={SaveClicked} cancelHandler={CancelClicked}/>}
+        {formDisplayed && <GroupTransactionForm groupId={selectedGroupId} saveHandler={SaveClicked} cancelHandler={CancelClicked}/>}
 
         <h5 className="m-5">Group transaction</h5>
         
