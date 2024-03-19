@@ -3,11 +3,11 @@ const transactionModel = require("../models/TransactionModel");
 class TransactionController {
 
   async getAll(req, res) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
 
   async getById(req, res) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
 
   async create(req, res) {
@@ -25,11 +25,11 @@ class TransactionController {
   }
 
   async update(req, res) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
 
   async delete(req, res) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
   
 }
