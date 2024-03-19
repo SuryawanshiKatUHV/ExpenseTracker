@@ -3,7 +3,17 @@ const transactionModel = require("../models/TransactionModel");
 class TransactionController {
 
   async getAll(req, res) {
-    throw new Error(`To be implemented`);
+    console.log("Transaction getAll is invoked...");
+    try {
+      const user = req.user;
+      const data = await transactionModel.getAll(user.USER_ID);
+
+      res.status(200).json(data); // Send the saved object as a JSON response
+      console.log(`Transactions found ${JSON.stringify(data)}`);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
   }
 
   async getById(req, res) {
