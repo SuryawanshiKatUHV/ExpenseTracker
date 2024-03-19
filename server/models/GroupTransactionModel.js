@@ -1,28 +1,25 @@
 const Joi = require("joi");
 
 class GroupTransactionModel {
-  dummyData = [
-  ];
-  idCounter = this.dummyData.length;
 
   getAll() {
-    return this.dummyData;
+    throw new Error(`To be implemented`);
   }
 
   getById(id) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
 
   create({ key1, key2 }) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
 
   update(id, { key1, key2 }) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
 
   delete(id) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
 
   _validate(user) {
