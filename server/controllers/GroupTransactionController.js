@@ -15,7 +15,9 @@ class GroupTransactionController {
     console.log("Group Transaction getAll is invoked...");
     try {
       const user = req.user;
-      const data = await groupTransactionModel.getAll(user.USER_ID);
+      const groupId = req.query.groupId;
+
+      const data = await groupTransactionModel.getAll(user.USER_ID, groupId);
 
       res.status(200).json(data); // Send the saved object as a JSON response
       console.log(`Group Transactions found ${JSON.stringify(data)}`);
