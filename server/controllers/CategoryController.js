@@ -25,7 +25,7 @@ class CategoryController {
       const data = await categoryModel.getById(user.USER_ID, parseInt(id));
       console.log(`data=${JSON.stringify(data)}`);
 
-      res.status(201).json(data); // Send the retrieved object as a JSON response
+      res.status(200).json(data); // Send the retrieved object as a JSON response
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ message: error.message });

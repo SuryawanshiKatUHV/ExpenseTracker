@@ -4,7 +4,7 @@ class BudgetController {
 
   async getAll(req, res) {
     try {
-      res.json(budgetModel.getAll()); // Send the categories as a JSON response
+      res.status(200).json(budgetModel.getAll()); // Send the categories as a JSON response
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -13,7 +13,7 @@ class BudgetController {
   async getById(req, res) {
     const { id } = req.params;
     try {
-      res.status(201).json(budgetModel.getById(parseInt(id))); // Send the retrieved object as a JSON response
+      res.status(200).json(budgetModel.getById(parseInt(id))); // Send the retrieved object as a JSON response
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

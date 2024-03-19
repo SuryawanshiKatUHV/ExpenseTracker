@@ -7,7 +7,7 @@ class UserController {
     try {
       const data = await userModel.getAll();
 
-      res.status(201).json(data); // Send the users as a JSON response
+      res.status(200).json(data); // Send the users as a JSON response
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ message: error.message });
@@ -22,7 +22,7 @@ class UserController {
 
       const data = await userModel.getById(parseInt(id));
 
-      res.status(201).json(data); // Send the retrieved object as a JSON response
+      res.status(200).json(data); // Send the retrieved object as a JSON response
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ message: error.message });
@@ -49,7 +49,7 @@ class UserController {
       const { USER_EMAIL, USER_PASSWORD } = req.body;
       const data = await userModel.login({USER_EMAIL, USER_PASSWORD});
 
-      res.status(201).json(data); // Send the saved object as a JSON response
+      res.status(200).json(data); // Send the saved object as a JSON response
       console.log(`User is logged in ${data}`);
     } catch (error) {
       console.error(error.message);
