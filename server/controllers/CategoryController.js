@@ -16,8 +16,7 @@ class CategoryController {
       console.error(error.message);
       res.status(500).json({ message: error.message }); // Error handling remains the same
     }
-}
-
+  }
 
   async getById(req, res) {
     const user = req.user;
@@ -50,11 +49,11 @@ class CategoryController {
   }
 
   async update(req, res) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
 
   async delete(req, res) {
-    throw { message: `To be implemented` };
+    throw new Error(`To be implemented`);
   }
   
 }
