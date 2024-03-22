@@ -1,7 +1,17 @@
 const userModel = require("../models/UserModel");
 
+/**
+ * UserController class responsible for handling user-related operations.
+ */
 class UserController {
 
+   /**
+   * Retrieve all users.
+   *
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getAll(req, res) {
     console.log("User getAll is invoked...");
     try {
@@ -14,6 +24,13 @@ class UserController {
     }
   }
 
+   /**
+   * Retrieve a user by ID.
+   *
+   * @param {Object} req - Express request object. req.params contains the id of the object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getById(req, res) {
     console.log("User getById is invoked...");
     try {
@@ -29,6 +46,13 @@ class UserController {
     }
   }
 
+   /**
+   * Create a new user.
+   *
+   * @param {Object} req - Express request object. req.body contains the user data object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async create(req, res) {
     console.log("User create is invoked...");
     try {
@@ -43,6 +67,13 @@ class UserController {
     }
   }
 
+  /**
+   * Log in a user. req.body contains the user credential object.
+   *
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async login(req, res) {
     console.log("User login is invoked...");
     try {
@@ -57,6 +88,13 @@ class UserController {
     }
   }
 
+  /**
+   * Update a user.
+   *
+   * @param {Object} req - Express request object. req.params contains the id of the object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async update(req, res) {
     console.log("User update is invoked...");
     try {
@@ -75,15 +113,28 @@ class UserController {
     }
   }
 
+  /**
+   * Delete a user.
+   *
+   * @param {Object} req - Express request object. req.params contains the id of the object.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async delete(req, res) {
     console.log("User delete is invoked...");
     try {
       const { id } = req.params;
       console.log("id=", id);
 
-      const data = await userModel.delete(parseInt(id));
+      const user = req.user;
 
-      res.status(201).json(data); // Send the saved object as a JSON response
+      if (user.USER_ID == parseInt(id)) {
+        throw new Error(`User cannot delete self account.`);
+      }
+      else {
+        const data = await userModel.delete(parseInt(id));
+        res.status(200).json(data); // Send the saved object as a JSON response
+      }
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ message: error.message });

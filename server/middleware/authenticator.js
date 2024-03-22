@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 // Middleware to authenticate the token
-const authenticateToken = (req, res, next) => {
+const authenticator = (req, res, next) => {
   console.log(`Invoked authenticateToken...`);
   // Retrieve the token from the Authorization header
   const authHeader = req.headers['authorization'];
@@ -25,4 +25,4 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-module.exports = authenticateToken;
+module.exports = authenticator;
