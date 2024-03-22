@@ -65,12 +65,34 @@ class CategoryModel {
     }
   }
 
-  async update(id, { key1, key2 }) {
-    throw new Error(`To be implemented`);
+  async update(id, { CATEGORY_TITLE, CATEGORY_DESCRIPTION }) {
+    const connection = await getConnection();
+    try {
+      const result = await connection.execute("UPDATE CATEGORY SET CATEGORY_TITLE=?, CATEGORY_DESCRIPTION=? WHERE CATEGORY_ID=?", [CATEGORY_TITLE, CATEGORY_DESCRIPTION, id]);
+  
+      if (result.affectedRows === 0) {
+        throw new Error(`No category found for id ${id}`);
+      }
+  
+      return result;
+    } finally {
+      connection.release();
+    }
   }
 
   async delete(id) {
-    throw new Error(`To be implemented`);
+    const connection = await getConnection();
+    try {
+      const result = await connection.execute("DELETE FROM CATEGORY WHERE CATEGORY_ID=?", [id]);
+  
+      if (result.affectedRows === 0) {
+        throw new Error(`No category found for id ${id}`);
+      }
+  
+      return result;
+    } finally {
+      connection.release();
+    }
   }
 
   /**
