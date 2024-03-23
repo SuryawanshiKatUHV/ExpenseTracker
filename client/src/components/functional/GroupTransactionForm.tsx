@@ -19,7 +19,7 @@ const GroupTransactionForm = (props : Props) => {
     const [errors, setErrors] = useState({txDate:'', txAmount:'', txMembers:''});
 
     const [categories, setCategories] = useState<any[]>([]);
-    const [selectedGroupMembers, setSelectedGroupMembers] = useState<any[]>([]);
+    const [availableGroupMembers, setAvailableGroupMembers] = useState<any[]>([]);
 
     useEffect(() =>{ 
         async function fetchData() {
@@ -27,7 +27,7 @@ const GroupTransactionForm = (props : Props) => {
             setCategories(categories);
 
             const selectedGroup = await get(`${END_POINTS.Groups}/${props.groupId}`);
-            setSelectedGroupMembers(selectedGroup.USER_GROUP_MEMBERS);
+            setAvailableGroupMembers(selectedGroup.USER_GROUP_MEMBERS);
         }
         fetchData();
     }, []);
@@ -131,15 +131,15 @@ const GroupTransactionForm = (props : Props) => {
         </div>
 
         <div>Paid for members</div>
-        {selectedGroupMembers.map((selectedGroupMember) => (
+        {availableGroupMembers.map((availableGroupMember) => (
             <div className="form-check form-check-inline">
                 <input className="form-check-input" 
                     type="checkbox" 
-                    id={"paidForMember" + selectedGroupMember.USER_ID}
-                    value={selectedGroupMember.USER_ID}
-                    checked={txMembers.includes(selectedGroupMember.USER_ID)}
-                    onChange={() => handleMemberSelect(selectedGroupMember.USER_ID)}/>
-                <label className="form-check-label" htmlFor={"paidForMember" + selectedGroupMember.USER_ID}>{`${selectedGroupMember.USER_LNAME}, ${selectedGroupMember.USER_FNAME}`}</label>
+                    id={"paidForMember" + availableGroupMember.USER_ID}
+                    value={availableGroupMember.USER_ID}
+                    checked={txMembers.includes(availableGroupMember.USER_ID)}
+                    onChange={() => handleMemberSelect(availableGroupMember.USER_ID)}/>
+                <label className="form-check-label" htmlFor={"paidForMember" + availableGroupMember.USER_ID}>{`${availableGroupMember.USER_LNAME}, ${availableGroupMember.USER_FNAME}`}</label>
             </div>    
         ))}
         {errors.txMembers && <p style={{color:'red'}}>{errors.txMembers}</p>}
