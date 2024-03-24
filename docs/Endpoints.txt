@@ -5,12 +5,12 @@ put		/api/users
 delete	/api/users/:id
 
 get		/api/users/:id/categories
-get		/api/users/:id/budgets
 get		/api/users/:id/transactions
 get		/api/users/:id/groups
-
 get		/api/users/:userId/groups/:groupId/paid_transactions
 get		/api/users/:userId/groups/:groupId/received_transactions
+
+===========
 
 get		/api/users/:id/transactions/:type/:year/:month/groupByCategories
 get		/api/users/:id/budgets/:type/:year/:month/groupByCategories
