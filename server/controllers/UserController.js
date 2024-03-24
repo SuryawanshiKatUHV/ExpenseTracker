@@ -140,7 +140,77 @@ class UserController {
       res.status(500).json({ message: error.message });
     }
   }
+
+  async getCategories(req, res) {
+    console.log("User getCategories is invoked...");
+    try {
+      const { id } = req.params;
+      console.log("id=", id);
+      const data = await userModel.getCategories(parseInt(id));
+
+      res.status(200).json(data); // Send the users as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
   
+  async getTransactions(req, res) {
+    console.log("User getTransactions is invoked...");
+    try {
+      const { id } = req.params;
+      console.log("id=", id);
+      const data = await userModel.getTransactions(parseInt(id));
+
+      res.status(200).json(data); // Send the users as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async getGroups(req, res) {
+    console.log("User getGroups is invoked...");
+    try {
+      const { id } = req.params;
+      console.log("id=", id);
+      const data = await userModel.getGroups(parseInt(id));
+
+      res.status(200).json(data); // Send the users as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async getGroupTransactionsPaid(req, res) {
+    console.log("User getGroupTransactionsPaid is invoked...");
+    try {
+      const { userId, groupId } = req.params;
+      console.log(`userId=${userId} groupId=${groupId}`);
+      const data = await userModel.getGroupTransactionsPaid(parseInt(userId), parseInt(groupId));
+
+      res.status(200).json(data); // Send the users as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async getGroupTransactionsReceived(req, res) {
+    console.log("User getGroupTransactionsReceived is invoked...");
+    try {
+      const { userId, groupId } = req.params;
+      console.log(`userId=${userId} groupId=${groupId}`);
+      const data = await userModel.getGroupTransactionsReceived(parseInt(userId), parseInt(groupId));
+
+      res.status(200).json(data); // Send the users as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
 }
 
 module.exports = new UserController();

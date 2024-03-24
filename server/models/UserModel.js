@@ -150,6 +150,94 @@ class UserModel {
     }
   }
 
+  async getCategories(userId) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(
+        `SELECT * 
+        FROM CATEGORY 
+        WHERE OWNER_ID=?
+        ORDER BY CATEGORY_TITLE ASC`, [userId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
+  async getTransactions(userId) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(
+        `SELECT T.*, C.CATEGORY_TITLE, C.CATEGORY_DESCRIPTION
+          FROM TRANSACTION T
+          JOIN CATEGORY C ON T.CATEGORY_ID = C.CATEGORY_ID
+          WHERE C.OWNER_ID=?
+          ORDER BY T.TRANSACTION_DATE DESC`, 
+          [userId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
+  async getGroups(userId) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(
+        `SELECT UG.*
+        FROM USER_GROUP UG
+        JOIN USER_GROUP_MEMBERSHIP UGM ON UG.USER_GROUP_ID = UGM.USER_GROUP_ID
+        WHERE UGM.MEMBER_ID=?
+        ORDER BY UG.USER_GROUP_DATE DESC`, 
+        [userId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
+  async getGroupTransactionsPaid(userId, groupId) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(
+        `SELECT UGT.*, CONCAT(U1.USER_LNAME, ", ", U1.USER_FNAME) AS PAID_BY_USER_FULLNAME, CONCAT(U2.USER_LNAME, ", ", U2.USER_FNAME) AS PAID_TO_USER_FULLNAME, UG.USER_GROUP_DATE, UG.USER_GROUP_TITLE
+        FROM USER_GROUP_TRANSACTION UGT
+        JOIN USER U1 ON UGT.PAID_BY_USER_ID=U1.USER_ID
+        JOIN USER U2 ON UGT.PAID_TO_USER_ID=U2.USER_ID
+        JOIN USER_GROUP UG ON UGT.USER_GROUP_ID=UG.USER_GROUP_ID
+        WHERE UGT.PAID_BY_USER_ID=? AND UGT.USER_GROUP_ID=?
+        ORDER BY UGT.USER_GROUP_TRANSACTION_DATE DESC`, [userId, groupId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
+  async getGroupTransactionsReceived(userId, groupId) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(
+        `SELECT UGT.*, CONCAT(U1.USER_LNAME, ", ", U1.USER_FNAME) AS PAID_BY_USER_FULLNAME, CONCAT(U2.USER_LNAME, ", ", U2.USER_FNAME) AS PAID_TO_USER_FULLNAME, UG.USER_GROUP_DATE, UG.USER_GROUP_TITLE
+        FROM USER_GROUP_TRANSACTION UGT
+        JOIN USER U1 ON UGT.PAID_BY_USER_ID=U1.USER_ID
+        JOIN USER U2 ON UGT.PAID_TO_USER_ID=U2.USER_ID
+        JOIN USER_GROUP UG ON UGT.USER_GROUP_ID=UG.USER_GROUP_ID
+        WHERE UGT.PAID_TO_USER_ID=? AND UGT.USER_GROUP_ID=?
+        ORDER BY UGT.USER_GROUP_TRANSACTION_DATE DESC`, [userId, groupId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
+
+
+
   /**
    * Validate a user.
    *
