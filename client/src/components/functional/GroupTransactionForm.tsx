@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { END_POINTS, get } from "../../Common";
+import { END_POINTS, get, post } from "../../Common";
 
 interface Props {
+    userId: number;
     groupId : number;
-    saveHandler: (txCategoryId:number, txDate:string, txAmount:number, txMembers:number[], txNotes:string) => void;
+    saveHandler: () => void;
     cancelHandler: () => void;
 }
 
 const GroupTransactionForm = (props : Props) => {
+    console.log(`GroupTransactionForm received userId=${props.userId}, groupId=${props.groupId}`);
+
     /**
      * State
      */
@@ -16,18 +19,35 @@ const GroupTransactionForm = (props : Props) => {
     const [txAmount, setTxAmount] = useState(0.00);
     const [txNotes, setTxNotes] = useState('');
     const [txMembers, setTxMembers] = useState<number[]>([]);
-    const [errors, setErrors] = useState({txDate:'', txAmount:'', txMembers:''});
+
+    const [validationErrors, setValidationErrors] = useState({txDate:'', txAmount:'', txMembers:'', txNotes:''});
+    const [error, setError] = useState('');
 
     const [categories, setCategories] = useState<any[]>([]);
     const [availableGroupMembers, setAvailableGroupMembers] = useState<any[]>([]);
 
+    async function loadCategories() {
+        await get(`${END_POINTS.Users}/${props.userId}/categories`)
+        .then((availableCategories) =>{
+            setCategories(availableCategories);
+            // Select the first property by default
+            if (availableCategories && availableCategories.length > 0) {
+                setTxCategoryId(availableCategories[0].CATEGORY_ID);
+            }
+        });
+    }
+
+    async function loadGroupMembers() {
+        await get(`${END_POINTS.Groups}/${props.groupId}/members`)
+        .then((groupMembers) => {
+            setAvailableGroupMembers(groupMembers);
+        });
+    }
+
     useEffect(() =>{ 
         async function fetchData() {
-            const categories = await get(END_POINTS.Categories);
-            setCategories(categories);
-
-            const selectedGroup = await get(`${END_POINTS.Groups}/${props.groupId}`);
-            setAvailableGroupMembers(selectedGroup.USER_GROUP_MEMBERS);
+            await loadCategories();
+            await loadGroupMembers();
         }
         fetchData();
     }, []);
@@ -36,10 +56,10 @@ const GroupTransactionForm = (props : Props) => {
      * Operations
      */
     const validateInput = () : boolean => {
-        let errors = {txDate:'', txAmount:'', txMembers:''};
+        let validationErrors = {txDate:'', txAmount:'', txMembers:'', txNotes:''};
 
         if (txDate == "") {
-            errors["txDate"] = "Date is required.";
+            validationErrors["txDate"] = "Date is required.";
         }
         else {
             // Future date is not allowed check
@@ -59,31 +79,52 @@ const GroupTransactionForm = (props : Props) => {
             );
 
             if (selectedDateWithoutTimezone > currentDateWithoutTimezone) {
-                errors["txDate"] = "Date must not be in future.";
+                validationErrors["txDate"] = "Date must not be in future.";
             }
         }
 
         if (txAmount + '' == '' || txAmount == 0) {
-            errors["txAmount"] = "Amount is required.";
+            validationErrors["txAmount"] = "Amount is required.";
         }
         else if (txAmount < 0) {
-            errors["txAmount"] = "Amount cannot be negative value.";
+            validationErrors["txAmount"] = "Amount cannot be negative value.";
         }
 
         if (txMembers.length == 0) {
-            errors['txMembers'] = "Must select at least one member.";
+            validationErrors['txMembers'] = "Must select at least one member.";
         }
 
-        setErrors(errors);
-        return !(errors.txDate || errors.txAmount || errors.txMembers);
+        if (txNotes == '') {
+            validationErrors['txNotes'] = "Transaction notes are required.";
+        }
+
+        setValidationErrors(validationErrors);
+        return !(validationErrors.txDate || validationErrors.txAmount || validationErrors.txMembers || validationErrors.txNotes);
     }
 
     /**
      * Event Handlers
      */
-    const SaveClicked = () => {
+    const SaveClicked = async () => {
         if(validateInput()) {
-            props.saveHandler(txCategoryId, txDate, txAmount, txMembers, txNotes);
+            try {
+                const payload = {
+                    USER_GROUP_ID: props.groupId, 
+                    CATEGORY_ID: txCategoryId, 
+                    TRANSACTION_DATE: txDate, 
+                    TRANSACTION_AMOUNT: txAmount, 
+                    TRANSACTION_NOTES: txNotes, 
+                    PAID_BY_USER_ID: props.userId, 
+                    PAID_TO_USER_IDS:txMembers
+                };
+                await post(END_POINTS.GroupTransactions, payload)
+                .then(() => {
+                    props.saveHandler();
+                });
+            }
+            catch (error : any) {
+                setError(error.message);
+            }
         }
     }
 
@@ -103,7 +144,7 @@ const GroupTransactionForm = (props : Props) => {
         
     <div style={{border:1}}>
         <h5 className="m-5">Add new group transaction</h5>
-        {new Date().toISOString()}
+
         <div className="form-floating mb-3">
           <select className="form-select" id="txCategoryId" onChange={(e) => setTxCategoryId(parseInt(e.target.value))} value={txCategoryId}>
             {categories.map((category) => (
@@ -116,18 +157,19 @@ const GroupTransactionForm = (props : Props) => {
         <div className="form-floating mb-3">
           <input type="date" className="form-control" id="txDate" value={txDate} onChange={(e) => setTxDate(e.target.value)}/>
           <label htmlFor="txDate">Date</label>
-          {errors.txDate && <p style={{color:'red'}}>{errors.txDate}</p>}
+          {validationErrors.txDate && <p style={{color:'red'}}>{validationErrors.txDate}</p>}
         </div>
 
         <div className="form-floating mb-3">
           <input type="number" className="form-control" id="txAmount" value={txAmount} onChange={(e) => setTxAmount(parseFloat(e.target.value))}/>
           <label htmlFor="txAmount">Amount ($)</label>
-          {errors.txAmount && <p style={{color:'red'}}>{errors.txAmount}</p>}
+          {validationErrors.txAmount && <p style={{color:'red'}}>{validationErrors.txAmount}</p>}
         </div>
 
         <div className="form-floating mb-3">
           <textarea className="form-control" id="txNotes" onChange={(e) => setTxNotes(e.target.value)} value={txNotes}></textarea>
           <label htmlFor="txNotes">Notes</label>
+          {validationErrors.txNotes && <p style={{color:'red'}}>{validationErrors.txNotes}</p>}
         </div>
 
         <div>Paid for members</div>
@@ -135,14 +177,14 @@ const GroupTransactionForm = (props : Props) => {
             <div className="form-check form-check-inline">
                 <input className="form-check-input" 
                     type="checkbox" 
-                    id={"paidForMember" + availableGroupMember.USER_ID}
-                    value={availableGroupMember.USER_ID}
-                    checked={txMembers.includes(availableGroupMember.USER_ID)}
-                    onChange={() => handleMemberSelect(availableGroupMember.USER_ID)}/>
-                <label className="form-check-label" htmlFor={"paidForMember" + availableGroupMember.USER_ID}>{`${availableGroupMember.USER_LNAME}, ${availableGroupMember.USER_FNAME}`}</label>
+                    id={"paidForMember" + availableGroupMember.MEMBER_ID}
+                    value={availableGroupMember.MEMBER_ID}
+                    checked={txMembers.includes(availableGroupMember.MEMBER_ID)}
+                    onChange={() => handleMemberSelect(availableGroupMember.MEMBER_ID)}/>
+                <label className="form-check-label" htmlFor={"paidForMember" + availableGroupMember.MEMBER_ID}>{availableGroupMember.USER_FULLNAME}</label>
             </div>    
         ))}
-        {errors.txMembers && <p style={{color:'red'}}>{errors.txMembers}</p>}
+        {validationErrors.txMembers && <p style={{color:'red'}}>{validationErrors.txMembers}</p>}
 
         <div>
             <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
