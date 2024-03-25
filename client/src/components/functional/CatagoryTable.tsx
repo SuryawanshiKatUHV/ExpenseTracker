@@ -2,18 +2,24 @@ import { useEffect, useState } from "react";
 import CategoryForm from "./CategoryForm";
 import { END_POINTS, get } from "../../Common";
 
+interface Props {
+    userId: number;
+}
 
-const CategoryTable = () => {
+const CategoryTable = ( {userId} : Props) => {
 
     const [formDisplayed, setFormDisplayed] = useState(false);
     const [categories, setCategories] = useState<any[]>([]);
-    const [selectedUserId, setSelectedUserId] = useState(0);
+    const [error, setError] = useState('');
+
+    async function loadCategories() {
+        const categories = await get(`${END_POINTS.Users}/${userId}/categories`);
+        setCategories(categories);
+    }
 
     useEffect(() =>{ 
         async function fetchData() {
-            const categories = await get(END_POINTS.Categories);
-            setCategories(categories);
-
+            await loadCategories();
         }
         fetchData();
     }, []);
@@ -22,60 +28,31 @@ const CategoryTable = () => {
         setFormDisplayed(true);
     }
 
-    const SaveClicked = async (categoryTitle:string, categoryDescription:string) => {
-        console.log(`SaveClicked(CategoryTitle:${categoryTitle}, CategoryDescription:${categoryDescription}), OwnerId:${selectedUserId}`);
-        //TODO: Do the actual saving
-
-        const r = categories.map(item => item.OWNER_ID);
-
-        const categoryData = {
-            OWNER_ID: r[0],
-            CATEGORY_TITLE: categoryTitle,
-            CATEGORY_DESCRIPTION: categoryDescription
-        };
-
+    const SaveClicked = async () => {
         try {
-            const token = localStorage.getItem('login_token');
-            const response = await fetch(END_POINTS.Categories, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify(categoryData),
-              
-            });
-        
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-        
-            // Optionally, fetch categories again to update the list
-            // fetchData();
-        
-          } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
-          }
-
-        setFormDisplayed(false);
+            await loadCategories(); // Refresh the table
+            setFormDisplayed(false);
+        } 
+        catch (error : any) {
+            setError(error.message);
+        }
     }
 
     const CancelClicked = () => {
         setFormDisplayed(false);
     }
 
-
     return (
         <div className="form-floating mb-3">
 
-            <h5>Categories</h5>
-
             {/* Show add new button when the form is not shown*/}
             {!formDisplayed && <button className="btn btn-success" onClick={AddNewClicked}>Add New</button>}
+
             {/* Show the add new form*/}
-            {formDisplayed && <CategoryForm userId={selectedUserId} saveHandler={SaveClicked} cancelHandler={CancelClicked}/>}
+            {formDisplayed && <CategoryForm userId={userId} saveHandler={SaveClicked} cancelHandler={CancelClicked}/>}
             
-            
+            {error && <p style={{color:'red'}}>{error}</p>}
+
             <table className="table table-hover">
                 <thead>
                     <tr>
