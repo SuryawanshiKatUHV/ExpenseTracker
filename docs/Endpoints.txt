@@ -1,50 +1,49 @@
-get		/api/users
-get		/api/users/:id
-post	/api/users
-put		/api/users
-delete	/api/users/:id
+x get		/api/users
+x get		/api/users/:id
+x post		/api/users
+x put		/api/users
+x delete	/api/users/:id
+ 
+x get		/api/users/:id/categories
+x get		/api/users/:id/transactions
+x get		/api/users/:id/groups
+x get		/api/users/:userId/groups/:groupId/paid_transactions
+x get		/api/users/:userId/groups/:groupId/received_transactions
+ 
+. get		/api/users/:id/transactions/:type/:year/:month/groupByCategories
+. get		/api/users/:id/budgets/:type/:year/:month/groupByCategories
+ 
+x get		/api/categories
+x get		/api/categories/:id
+x get		/api/categories/:id/transactions
+x get		/api/categories/:id/budgets
+x post		/api/categories
+x put		/api/categories
+x delete	/api/categories/:id
+ 
+. get		/api/budgets
+. get		/api/budgets/:id
+. post		/api/budgets
+. put		/api/budgets
+. delete	/api/budgets/:id
 
-get		/api/users/:id/categories
-get		/api/users/:id/transactions
-get		/api/users/:id/groups
-get		/api/users/:userId/groups/:groupId/paid_transactions
-get		/api/users/:userId/groups/:groupId/received_transactions
+x get		/api/transactions
+. get		/api/transactions/:id
+. get		/api/transactions/:id/groupTransactions
+. post		/api/transactions
+. put		/api/transactions
+. delete	/api/transactions/:id
+ 
+x get		/api/groups
+x get		/api/groups/:id
+x get		/api/groups/:id/members
+x get		/api/groups/:id/transactions
+x get		/api/groups/:id/settlementSummary
+x post		/api/groups
+. put		/api/groups
+. delete	/api/groups/:id
 
-===========
-
-get		/api/users/:id/transactions/:type/:year/:month/groupByCategories
-get		/api/users/:id/budgets/:type/:year/:month/groupByCategories
-
-get		/api/categories
-get		/api/categories/:id
-get		/api/categories/:id/transactions
-get		/api/categories/:id/budgets
-post	/api/categories
-put		/api/categories
-delete	/api/categories/:id
-
-get		/api/budgets
-get		/api/budgets/:id
-post	/api/budgets
-put		/api/budgets
-delete	/api/budgets/:id
-
-get		/api/transactions
-get		/api/transactions/:id
-get		/api/transactions/:id/groupTransactions
-post	/api/transactions
-put		/api/transactions
-delete	/api/transactions/:id
-
-get		/api/groups
-get		/api/groups/:id
-get		/api/groups/:id/members
-post	/api/groups
-put		/api/groups
-delete	/api/groups/:id
-
-get		/api/groupTransactions
-get		/api/groupTransactions/:id
-post	/api/groupTransactions
-put		/api/groupTransactions
-delete	/api/groupTransactions/:id
+x get		/api/groupTransactions
+x get		/api/groupTransactions/:id
+x post		/api/groupTransactions
+ 
