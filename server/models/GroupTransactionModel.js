@@ -16,23 +16,12 @@ const GET_ALL_SQL =
     USER_GROUP_TRANSACTION_AMOUNT, 
     USER_GROUP_TRANSACTION_NOTES
     FROM USER_GROUP_TRANSACTION
-	  JOIN USER u1 on USER_GROUP_TRANSACTION.PAID_BY_USER_ID = u1.USER_ID
-    JOIN USER u2 on USER_GROUP_TRANSACTION.PAID_TO_USER_ID = u2.USER_ID
-    WHERE USER_GROUP_ID IN (
-      SELECT USER_GROUP_ID 
-      FROM USER_GROUP_MEMBERSHIP 
-      WHERE MEMBER_ID=?
-    )`;
-const GET_ALL_BY_GROUP_SQL = `${GET_ALL_SQL} AND USER_GROUP_ID=?`;
+      JOIN USER u1 on USER_GROUP_TRANSACTION.PAID_BY_USER_ID = u1.USER_ID
+      JOIN USER u2 on USER_GROUP_TRANSACTION.PAID_TO_USER_ID = u2.USER_ID`;
 
 const GET_BY_ID_SQL = 
-  `SELECT * 
-    FROM USER_GROUP_TRANSACTION 
-    WHERE USER_GROUP_ID IN (
-      SELECT USER_GROUP_ID 
-      FROM USER_GROUP_MEMBERSHIP 
-      WHERE MEMBER_ID=?) AND 
-      USER_GROUP_TRANSACTION_ID=?`;
+  ` ${GET_ALL_SQL}
+      WHERE USER_GROUP_TRANSACTION_ID=?`;
 
 const INSERT_SQL = 
   `INSERT INTO USER_GROUP_TRANSACTION (
@@ -50,64 +39,21 @@ const INSERT_SQL =
  */
 class GroupTransactionModel {
 
-  /**
-   * Retrieve all group transactions for a user.
-   * @param {number} userId - The user ID.
-   * @param {number} groupId - The group ID.
-   * @returns {Promise<Array<Object>>} An array of group transaction objects.
-   */
-  async getAll(userId, groupId) {
-
-    const validationResult = Joi.object(
-      {
-        userId: Joi.number().required(),
-        groupId: Joi.number().optional()
-      }
-    ).validate({ userId, groupId });
-    if (validationResult.error) {
-      throw validationResult.error;
-    }
-
+  async getAll() {
     const connection = await getConnection();
     try {
-      if (groupId) {
-        const [rows, fields] = await connection.execute(GET_ALL_BY_GROUP_SQL, [userId, groupId]);
+        const [rows, fields] = await connection.execute(GET_ALL_SQL, []);
         return rows;
-      }
-      else {
-        const [rows, fields] = await connection.execute(GET_ALL_SQL, [userId]);
-        return rows;
-      }
     }
     finally {
       connection.release();
     }
   }
 
-  /**
-   * Retrieve a single group transaction by ID for a user.
-   * @param {number} userId - The user ID.
-   * @param {number} groupTransactionId - The group transaction ID.
-   * @returns {Promise<Object>} A group transaction object.
-   */
-  async getById(userId, groupTransactionId) {
-    const validationResult = Joi.object(
-      {
-        userId: Joi.number().required(),
-        groupTransactionId: Joi.number().required()
-      }
-    ).validate({ userId, groupTransactionId });
-    if (validationResult.error) {
-      throw validationResult.error;
-    }
-
+  async getById(id) {
     const connection = await getConnection();
     try {
-      const [rows, fields] = await connection.execute(GET_BY_ID_SQL, [userId, groupTransactionId]);
-      if (!rows || rows.length == 0) {
-        throw new Error(`No group transaction found for id ${groupTransactionId}`);
-      }
-
+      const [rows, fields] = await connection.execute(GET_BY_ID_SQL, [id]);
       return rows[0];
     }
     finally {
