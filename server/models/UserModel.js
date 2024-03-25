@@ -186,11 +186,11 @@ class UserModel {
     const connection = await getConnection();
     try {
       const [rows, fields] = await connection.execute(
-        `SELECT UG.*
+        `SELECT UG.*, DATE_FORMAT(UG.USER_GROUP_DATE, '%Y-%m-%d') AS USER_GROUP_DATE
         FROM USER_GROUP UG
         JOIN USER_GROUP_MEMBERSHIP UGM ON UG.USER_GROUP_ID = UGM.USER_GROUP_ID
         WHERE UGM.MEMBER_ID=?
-        ORDER BY UG.USER_GROUP_DATE DESC`, 
+        ORDER BY UG.USER_GROUP_DATE DESC, UG.USER_GROUP_TITLE ASC`, 
         [userId]);
       return rows;
     }
