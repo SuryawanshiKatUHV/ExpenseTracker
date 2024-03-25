@@ -6,111 +6,70 @@ interface Props {
     userId: number;
 }
 
-const GroupTransactionTable = ({userId} : Props) => {
-    
-    /**
-     * Dummy data
-     */
-
-    const data = [
-        {
-            USER_GROUP_TRANSACTION_DATE:"2-Mar-2024", 
-            USER_GROUP_TRANSACTION_AMOUNT:"$10.00", 
-            PAID_BY_USER:"Kapil Suryawanshi", 
-            PAID_TO_USER:"Shayan Ali", 
-            USER_GROUP_TRANSACTION_NOTES:"Dining out at Taco Bell"
-        },
-        {
-            USER_GROUP_TRANSACTION_DATE:"2-Mar-2024", 
-            USER_GROUP_TRANSACTION_AMOUNT:"$10.00", 
-            PAID_BY_USER:"Kapil Suryawanshi", 
-            PAID_TO_USER:"Aaradhana Sharma", 
-            USER_GROUP_TRANSACTION_NOTES:"Dining out at Taco Bell"
-        },
-        {
-            USER_GROUP_TRANSACTION_DATE:"3-Mar-2024", 
-            USER_GROUP_TRANSACTION_AMOUNT:"$5.00", 
-            PAID_BY_USER:"Aaradhana Sharma", 
-            PAID_TO_USER:"Kapil Suryawanshi", 
-            USER_GROUP_TRANSACTION_NOTES:"Partial refund of dining out share"
-        },
-        {
-            USER_GROUP_TRANSACTION_DATE:"4-Mar-2024", 
-            USER_GROUP_TRANSACTION_AMOUNT:"$10.00", 
-            PAID_BY_USER:"Suraj Odera", 
-            PAID_TO_USER:"Kapil Suryawanshi", 
-            USER_GROUP_TRANSACTION_NOTES:"Refund of dining out share"
-        },
-        {
-            USER_GROUP_TRANSACTION_DATE:"5-Mar-2024", 
-            USER_GROUP_TRANSACTION_AMOUNT:"$20.00", 
-            PAID_BY_USER:"Shayan Ali", 
-            PAID_TO_USER:"Kapil Suryawanshi", 
-            USER_GROUP_TRANSACTION_NOTES:"Refund and overpayment of dining out share"
-        },
-    ];
-
-    const settlementSummary = [
-        {
-            Member:"Kapil Suryawanshi",
-            TotalPaid:"$30.00",
-            TotalReceived: "$35.00",
-            UnsettledDue:-5.00
-        },
-        {
-            Member:"Shayan Ali",
-            TotalPaid:"$20.00",
-            TotalReceived: "$10.00",
-            UnsettledDue:10.00
-        },
-        {
-            Member:"Aaradhana Sharma",
-            TotalPaid:"$5.00",
-            TotalReceived: "$10.00",
-            UnsettledDue:-5.00
-        },
-        {
-            Member:"Suraj Odera",
-            TotalPaid:"$10.00",
-            TotalReceived: "$10.00",
-            UnsettledDue:0.00
-        }
-    ];
-
+const GroupTransactionTable = (props : Props) => {
     /**
      * State
      */
-    const [formDisplayed, setFormDisplayed] = useState(false);
-    const [selectedGroupId, setSelectedGroupId] = useState(0);
-    const [groups, setGroups] = useState<any[]>([]);
-    const [groupTransactions, setGroupTransactions] = useState<any[]>([]);
+    const [groups, setGroups] = useState<any[]>([]);    // All the groups this user is member of
+    const [selectedGroupId, setSelectedGroupId] = useState(0);  // The selected group from the list for displaying the information
+    const [formDisplayed, setFormDisplayed] = useState(false);  // Flag to display the create form
+    const [groupTransactions, setGroupTransactions] = useState<any[]>([]);  // All the group transactions from the selected group
+    const [settlementSummary, setSettlementSummary] = useState<any[]>([]);  // The settlement summary data for the selected group
+    const [error, setError] = useState(''); // Any error captured during the processing
 
-    useEffect(() =>{ 
-        async function fetchData() {
-            const groups = await get(END_POINTS.Groups);
+    /**
+     * Opertions
+     */
+    async function loadGroups() {
+        await get(`${END_POINTS.Users}/${props.userId}/groups`)
+        .then(groups => {
             setGroups(groups);
-
             // First in the list of group is a selected group
             if (groups && groups.length > 0) {
                 setSelectedGroupId(groups[0].USER_GROUP_ID);
+                loadTables();
             }
+        })
+    }
+
+    async function loadGroupTransactions() {
+        if (selectedGroupId == 0) {
+            setGroupTransactions([]);
         }
-        fetchData();
+        else {
+            await get(`${END_POINTS.Groups}/${selectedGroupId}/transactions`)
+            .then((groupTransactions) =>{
+                setGroupTransactions(groupTransactions);
+            });
+        }
+    }
+
+    async function loadSettlementSummary() {
+        if (selectedGroupId == 0) {
+            setSettlementSummary([]);
+        }
+        else {
+            await get(`${END_POINTS.Groups}/${selectedGroupId}/settlementSummary`)
+            .then((settlementSummary) =>{
+                setSettlementSummary(settlementSummary);
+            });
+        }
+        
+    }
+
+    async function loadTables() {
+        await loadGroupTransactions();
+        await loadSettlementSummary();
+    }
+
+    useEffect(() =>{ 
+        loadGroups();
     }, []);
 
     useEffect(() =>{
-        async function fetchGroupTransactions() {
-            const groupTransactions = await get(`${END_POINTS.GroupTransactions}?groupId=${selectedGroupId}`);
-            setGroupTransactions(groupTransactions);
-        }
-        fetchGroupTransactions();
-    }, [selectedGroupId]);
+        loadTables();
+    }, [groups, selectedGroupId]);
     
-
-    /**
-     * Operations
-     */
-
     /**
      * Event handlers
      */
@@ -119,39 +78,35 @@ const GroupTransactionTable = ({userId} : Props) => {
         setFormDisplayed(true);
     }
 
-    const SaveClicked = (txCategoryId:number, txDate:string, txAmount:number, txMembers:number[], txNotes:string) => {
-        console.log(`SaveClicked(txCategoryId:${txCategoryId}, txDate:${txDate}, txAmount:${txAmount}, txMembers:${txMembers}, txNotes:${txNotes})`);
-        //TODO: Do the actual saving
-        setFormDisplayed(false);
-    }
-
-    const CancelClicked = () => {
-        setFormDisplayed(false);
+    const refresh = async () => { 
+        await loadTables() // Refresh the table
+        .then(() => {
+            setFormDisplayed(false);
+        })
+        .catch((error) => {
+            setError(error.message);
+        });
     }
 
     return (<>
-        {new Date().toISOString()}
-
         <div className="form-floating mb-3">
             <select className="form-select" id="selectedGroupId" onChange={(e) => setSelectedGroupId(parseInt(e.target.value))} value={selectedGroupId}>
+                <option key="0" value="0">Select group</option>
                 {groups.map(group => (
-                    <option key={group.USER_GROUP_ID} value={group.USER_GROUP_ID}>{group.USER_GROUP_DATE}-{group.USER_GROUP_TITLE}</option>
+                    <option key={group.USER_GROUP_ID} value={group.USER_GROUP_ID}>{group.USER_GROUP_DATE} {group.USER_GROUP_TITLE} ({group.USER_GROUP_DESCRIPTION})</option>
                 ))}
             </select>
           <label htmlFor="selectedGroupId">Group</label>
-          <div>
-            <b>Group Members:</b>
-            {JSON.stringify(groups.filter(group => group.USER_GROUP_ID == selectedGroupId))}
-          </div>
         </div>
 
         {/* Show add new button when the form is not shown*/}
         {!formDisplayed && <button className="btn btn-success" onClick={AddNewClicked}>Add New</button>}
 
         {/* Show the add new form*/}
-        {formDisplayed && <GroupTransactionForm groupId={selectedGroupId} saveHandler={SaveClicked} cancelHandler={CancelClicked}/>}
+        {formDisplayed && <GroupTransactionForm userId={props.userId} groupId={selectedGroupId} saveHandler={refresh} cancelHandler={refresh}/>}
 
-        <h5>Group transactions</h5>
+        {error && <p style={{color:'red'}}>{error}</p>}
+
         <table className="table table-hover">
             <thead>
                 <tr>
@@ -166,7 +121,7 @@ const GroupTransactionTable = ({userId} : Props) => {
                 {groupTransactions.map((item)=> (
                     <tr>
                         <td>{item.USER_GROUP_TRANSACTION_DATE}</td>
-                        <td>{item.USER_GROUP_TRANSACTION_AMOUNT}</td>
+                        <td>${item.USER_GROUP_TRANSACTION_AMOUNT}</td>
                         <td>{item.PAID_BY_USER_FULLNAME}</td>
                         <td>{item.PAID_TO_USER_FULLNAME}</td>
                         <td>{item.USER_GROUP_TRANSACTION_NOTES}</td>
@@ -175,7 +130,10 @@ const GroupTransactionTable = ({userId} : Props) => {
             </tbody>
         </table>
 
-        <h5>Settlement Summary (dummy data)</h5>
+        {groupTransactions.length == 0 && <p>No records found.</p>}
+
+        <h5>Settlement Summary</h5>
+
         <table className="table table-hover">
             <thead>
                 <tr>
@@ -188,14 +146,19 @@ const GroupTransactionTable = ({userId} : Props) => {
             <tbody>
                 {settlementSummary.map((item)=> (
                     <tr>
-                        <td>{item.Member}</td>
-                        <td>{item.TotalPaid}</td>
-                        <td>{item.TotalReceived}</td>
-                        <td>{item.UnsettledDue}</td>
+                        <td>{item.USER_FULLNAME}</td>
+                        <td>${item.TOTAL_AMOUNT_PAID}</td>
+                        <td>${item.TOTAL_AMOUNT_RECEIVED}</td>
+                        {item.UNSETTLED_DUE < 0 && <td style={{color:'red'}}>${item.UNSETTLED_DUE}</td>}
+                        {item.UNSETTLED_DUE == 0 && <td></td>}
+                        {item.UNSETTLED_DUE > 0 && <td>${item.UNSETTLED_DUE}</td>}
                     </tr>                
                 ))}
             </tbody>
         </table>
+        
+        {settlementSummary.length == 0 && <p>No records found.</p>}
+
         <i>* Negative unsettled due indicates that the member needs to pay to other member.</i>
     </>);
 }
