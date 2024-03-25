@@ -1,16 +1,11 @@
-const CategoryModel = require("../models/CategoryModel");
 const categoryModel = require("../models/CategoryModel");
-
 
 class CategoryController {
 
   async getAll(req, res) {
     console.log("Category getAll is invoked...");
     try {
-      const user = req.user;
-
-      console.log(`Received req.user=${JSON.stringify(req.user)}`);
-      const data = await categoryModel.getAll(user.USER_ID); // Correctly await the promise
+      const data = await categoryModel.getAll(); // Correctly await the promise
 
       res.status(200).json(data); // Use 200 status code and ensure to send the awaited data
     } catch (error) {
@@ -20,10 +15,9 @@ class CategoryController {
   }
 
   async getById(req, res) {
-    const user = req.user;
     const { id } = req.params;
     try {
-      const data = await categoryModel.getById(user.USER_ID, parseInt(id));
+      const data = await categoryModel.getById(parseInt(id));
       console.log(`data=${JSON.stringify(data)}`);
 
       res.status(200).json(data); // Send the retrieved object as a JSON response
@@ -37,9 +31,7 @@ class CategoryController {
     console.log("Category create is invoked...");
     try {
       const categoryData = req.body;
-      const ownerId = res.USER_ID;
       console.log(`categoryData=${JSON.stringify(categoryData)}`);
-      console.log(`categoryData=${JSON.stringify(ownerId)}`);
 
       const data = await categoryModel.create(categoryData);
 
@@ -61,7 +53,7 @@ class CategoryController {
       const { CATEGORY_TITLE, CATEGORY_DESCRIPTION } = req.body;
       console.log(`CATEGORY_TITLE=${CATEGORY_TITLE} CATEGORY_DESCRIPTION=${CATEGORY_DESCRIPTION}`);
 
-      const data = await CategoryModel.update(parseInt(id), {CATEGORY_TITLE, CATEGORY_DESCRIPTION});
+      const data = await categoryModel.update(parseInt(id), {CATEGORY_TITLE, CATEGORY_DESCRIPTION});
 
       res.status(201).json(data);
     }catch (error) {
@@ -76,7 +68,7 @@ class CategoryController {
       const { id } = req.params;
       console.log("id=", id);
 
-      const data = await CategoryModel.delete(parseInt(id));
+      const data = await categoryModel.delete(parseInt(id));
 
       res.status(201).json(data); // Send the saved object as a JSON response
     } catch (error) {
