@@ -5,19 +5,10 @@ const groupTransactionModel = require("../models/GroupTransactionModel");
  */
 class GroupTransactionController {
 
-  /**
-   * Retrieve all group transactions for a user.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   * @returns {Promise<Object>} A Promise that resolves to an array of group transactions if successful.
-   */
   async getAll(req, res) {
     console.log("Group Transaction getAll is invoked...");
     try {
-      const user = req.user;
-      const groupId = req.query.groupId;
-
-      const data = await groupTransactionModel.getAll(user.USER_ID, groupId);
+      const data = await groupTransactionModel.getAll();
 
       res.status(200).json(data); // Send the saved object as a JSON response
       console.log(`Group Transactions found ${JSON.stringify(data)}`);
@@ -27,18 +18,10 @@ class GroupTransactionController {
     }
   }
 
-  /**
-   * Retrieve a single group transaction by ID for a user.
-   * @param {Object} req - The request object.
-   * @param {Object} res - The response object.
-   * @returns {Promise<Object>} A Promise that resolves to a single group transaction object if successful.
-   */
-
   async getById(req, res) {
-    const user = req.user;
     const { id } = req.params;
     try {
-      const data = await groupTransactionModel.getById(user.USER_ID, parseInt(id));
+      const data = await groupTransactionModel.getById(parseInt(id));
       console.log(`data=${JSON.stringify(data)}`);
 
       res.status(200).json(data); // Send the retrieved object as a JSON response
