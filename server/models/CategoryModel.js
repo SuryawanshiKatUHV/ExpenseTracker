@@ -6,13 +6,12 @@ class CategoryModel {
   /**
    * Get all categories owned by a user.
    *
-   * @param {number} ownerId - The user ID.
    * @returns {Promise<Array>} An array of category objects.
    */
-  async getAll(ownerId) {
+  async getAll() {
     const connection = await getConnection();
     try {
-      const [rows, fields] = await connection.execute("SELECT * FROM CATEGORY WHERE OWNER_ID=?", [ownerId]);
+      const [rows, fields] = await connection.execute("SELECT * FROM CATEGORY ORDER BY CATEGORY_TITLE ASC", []);
       return rows;
     }
     finally {
@@ -23,15 +22,14 @@ class CategoryModel {
   /**
    * Get a category by ID.
    *
-   * @param {number} ownerId - The user ID.
    * @param {number} categoryId - The category ID.
    * @returns {Promise<Object>} The category object.
    * @throws {Error} If the category is not found.
    */
-  async getById(ownerId, categoryId) {
+  async getById(categoryId) {
     const connection = await getConnection();
     try {
-      const [rows, fields] = await connection.execute("SELECT * FROM CATEGORY WHERE OWNER_ID=? AND CATEGORY_ID=?", [ownerId, categoryId]);
+      const [rows, fields] = await connection.execute("SELECT * FROM CATEGORY WHERE CATEGORY_ID=?", [categoryId]);
       if (!rows || rows.length == 0) {
         throw new Error(`No category found for id ${categoryId}`);
       }
