@@ -5,8 +5,7 @@ class TransactionController {
   async getAll(req, res) {
     console.log("Transaction getAll is invoked...");
     try {
-      const user = req.user;
-      const data = await transactionModel.getAll(user.USER_ID);
+      const data = await transactionModel.getAll();
 
       res.status(200).json(data); // Send the saved object as a JSON response
       console.log(`Transactions found ${JSON.stringify(data)}`);
