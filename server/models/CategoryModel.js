@@ -1,10 +1,13 @@
 const Joi = require("joi");
 const getConnection = require('../database');
 
+/**
+ * CategoryModel class to interact with the 'CATEGORY' database table.
+ */
 class CategoryModel {
 
   /**
-   * Get all categories owned by a user.
+   * Get all categories.
    *
    * @returns {Promise<Array>} An array of category objects.
    */
@@ -22,16 +25,16 @@ class CategoryModel {
   /**
    * Get a category by ID.
    *
-   * @param {number} categoryId - The category ID.
+   * @param {number} id - The category ID.
    * @returns {Promise<Object>} The category object.
    * @throws {Error} If the category is not found.
    */
-  async getById(categoryId) {
+  async getById(id) {
     const connection = await getConnection();
     try {
-      const [rows, fields] = await connection.execute("SELECT * FROM CATEGORY WHERE CATEGORY_ID=?", [categoryId]);
+      const [rows, fields] = await connection.execute("SELECT * FROM CATEGORY WHERE CATEGORY_ID=?", [id]);
       if (!rows || rows.length == 0) {
-        throw new Error(`No category found for id ${categoryId}`);
+        throw new Error(`No category found for id ${id}`);
       }
 
       return rows[0];
@@ -63,6 +66,14 @@ class CategoryModel {
     }
   }
 
+  /**
+   * Update a category.
+   *
+   * @param {number} id - The category ID.
+   * @param {{CATEGORY_TITLE: string, CATEGORY_DESCRIPTION: string}} updates - The category updates.
+   * @returns {Promise<Object>} The result of the update operation.
+   * @throws {Error} If the category is not found.
+   */
   async update(id, { CATEGORY_TITLE, CATEGORY_DESCRIPTION }) {
     const connection = await getConnection();
     try {
@@ -78,6 +89,13 @@ class CategoryModel {
     }
   }
 
+   /**
+   * Delete a category.
+   *
+   * @param {number} id - The category ID.
+   * @returns {Promise<Object>} The result of the delete operation.
+   * @throws {Error} If the category is not found.
+   */
   async delete(id) {
     const connection = await getConnection();
     try {
@@ -89,6 +107,40 @@ class CategoryModel {
   
       return result;
     } finally {
+      connection.release();
+    }
+  }
+
+  /**
+   * Get transactions for a category.
+   *
+   * @param {number} id - The category ID.
+   * @returns {Promise<Array>} An array of transaction objects.
+   */
+  async getTransactions(id) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute("SELECT * FROM TRANSACTION WHERE CATEGORY_ID=?", [id]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
+   /**
+   * Get budgets for a category.
+   *
+   * @param {number} id - The category ID.
+   * @returns {Promise<Array>} An array of budget objects.
+   */
+  async getBudgets(id) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute("SELECT * FROM BUDGET WHERE CATEGORY_ID=?", [id]);
+      return rows;
+    }
+    finally {
       connection.release();
     }
   }

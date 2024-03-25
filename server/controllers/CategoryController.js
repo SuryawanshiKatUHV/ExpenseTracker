@@ -77,6 +77,32 @@ class CategoryController {
     }
   }
   
+  async getTransactions(req, res) {
+    const { id } = req.params;
+    try {
+      const data = await categoryModel.getTransactions(parseInt(id));
+      console.log(`data=${JSON.stringify(data)}`);
+
+      res.status(200).json(data); // Send the retrieved object as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async getBudgets(req, res) {
+    const { id } = req.params;
+    try {
+      const data = await categoryModel.getBudgets(parseInt(id));
+      console.log(`data=${JSON.stringify(data)}`);
+
+      res.status(200).json(data); // Send the retrieved object as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
 }
 
 module.exports = new CategoryController();
