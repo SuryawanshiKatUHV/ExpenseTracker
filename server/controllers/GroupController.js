@@ -5,8 +5,7 @@ class GroupController {
   async getAll(req, res) {
     console.log("User Group getAll is invoked...");
     try {
-      const user = req.user;
-      const data = await groupModel.getAll(user.USER_ID);
+      const data = await groupModel.getAll();
 
       res.status(200).json(data); // Send the saved object as a JSON response
       console.log(`User Groups found ${data}`);
@@ -17,10 +16,9 @@ class GroupController {
   }
 
   async getById(req, res) {
-    const user = req.user;
     const { id } = req.params;
     try {
-      const data = await groupModel.getById(user.USER_ID, parseInt(id));
+      const data = await groupModel.getById(parseInt(id));
       console.log(`data=${JSON.stringify(data)}`);
 
       res.status(200).json(data); // Send the retrieved object as a JSON response
@@ -52,6 +50,45 @@ class GroupController {
     throw new Error(`To be implemented`);
   }
   
+  async getMembers(req, res) {
+    const { id } = req.params;
+    try {
+      const data = await groupModel.getMembers(parseInt(id));
+      console.log(`data=${JSON.stringify(data)}`);
+
+      res.status(200).json(data); // Send the retrieved object as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async getTransactions(req, res) {
+    const { id } = req.params;
+    try {
+      const data = await groupModel.getTransactions(parseInt(id));
+      console.log(`data=${JSON.stringify(data)}`);
+
+      res.status(200).json(data); // Send the retrieved object as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async getSettlementSummary(req, res) {
+    const { id } = req.params;
+    try {
+      const data = await groupModel.getSettlementSummary(parseInt(id));
+      console.log(`data=${JSON.stringify(data)}`);
+
+      res.status(200).json(data); // Send the retrieved object as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
 }
 
 module.exports = new GroupController();

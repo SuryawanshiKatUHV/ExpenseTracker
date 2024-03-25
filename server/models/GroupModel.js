@@ -3,16 +3,10 @@ const getConnection = require("../database");
 
 class GroupModel {
 
-  /**
-   * Get all groups owned by a user.
-   *
-   * @param {number} ownerId - The user ID.
-   * @returns {Promise<Array>} An array of group objects.
-   */
-  async getAll(ownerId) {
+  async getAll() {
     const connection = await getConnection();
     try {
-      const [rows, fields] = await connection.execute("SELECT * FROM USER_GROUP WHERE USER_GROUP_ID IN (SELECT USER_GROUP_ID FROM USER_GROUP_MEMBERSHIP WHERE MEMBER_ID=?)", [ownerId]);
+      const [rows, fields] = await connection.execute("SELECT *, DATE_FORMAT(USER_GROUP_DATE, '%Y-%m-%d') AS USER_GROUP_DATE FROM USER_GROUP", []);
       return rows;
     }
     finally {
@@ -20,24 +14,16 @@ class GroupModel {
     }
   }
 
-  /**
-   * Get a group by ID.
-   *
-   * @param {number} ownerId - The user ID.
-   * @param {number} groupId - The group ID.
-   * @returns {Promise<Object>} The group object.
-   * @throws {Error} If the group is not found.
-   */
-  async getById(ownerId, groupId) {
+  async getById(groupId) {
     const connection = await getConnection();
     try {
-      const [rows, fields] = await connection.execute("SELECT * FROM USER_GROUP WHERE OWNER_ID=? AND USER_GROUP_ID=?", [ownerId, groupId]);
+      const [rows, fields] = await connection.execute(`SELECT * FROM USER_GROUP WHERE USER_GROUP_ID=?`, [groupId]);
       if (!rows || rows.length == 0) {
         throw new Error(`No group found for id ${groupId}`);
       }
 
       const group = rows[0];
-      const [rows2, fields2] = await connection.execute("SELECT USER_ID, USER_FNAME, USER_LNAME, USER_EMAIL FROM USER_GROUP_MEMBERSHIP JOIN USER ON USER.USER_ID = USER_GROUP_MEMBERSHIP.MEMBER_ID WHERE USER_GROUP_ID=?;", [groupId]);
+      const [rows2, fields2] = await connection.execute(`SELECT USER_ID, USER_FNAME, USER_LNAME, USER_EMAIL FROM USER_GROUP_MEMBERSHIP JOIN USER ON USER.USER_ID = USER_GROUP_MEMBERSHIP.MEMBER_ID WHERE USER_GROUP_ID=?`, [groupId]);
       group.USER_GROUP_MEMBERS = rows2;
 
       return group;
@@ -113,6 +99,99 @@ class GroupModel {
    */
   async delete(userId, userGroupId) {
     throw new Error(`To be implemented`);
+  }
+
+  async getMembers(groupId) {
+    const SQL =
+    `SELECT UGM.USER_GROUP_ID, UGM.MEMBER_ID, CONCAT(U.USER_LNAME, ", ", U.USER_FNAME) AS USER_FULLNAME
+    FROM USER_GROUP_MEMBERSHIP UGM
+    JOIN USER U ON U.USER_ID = UGM.MEMBER_ID
+    JOIN USER_GROUP UG ON UG.USER_GROUP_ID = UGM.USER_GROUP_ID
+    WHERE UG.USER_GROUP_ID=?
+    ORDER BY USER_FULLNAME ASC`;
+  
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(SQL, [groupId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
+  async getTransactions(groupId) {
+    const SQL =
+    `SELECT 
+      USER_GROUP_TRANSACTION_ID, 
+      USER_GROUP_ID, 
+      TRANSACTION_ID,
+      PAID_BY_USER_ID, 
+      CONCAT(U1.USER_LNAME, ', ', U1.USER_FNAME) AS PAID_BY_USER_FULLNAME,
+      PAID_TO_USER_ID, 
+      CONCAT(U2.USER_LNAME, ', ', U2.USER_FNAME) AS PAID_TO_USER_FULLNAME,
+      DATE_FORMAT(USER_GROUP_TRANSACTION_DATE, '%Y-%m-%d') AS USER_GROUP_TRANSACTION_DATE, 
+      USER_GROUP_TRANSACTION_AMOUNT, 
+      USER_GROUP_TRANSACTION_NOTES
+      FROM USER_GROUP_TRANSACTION
+        JOIN USER u1 on USER_GROUP_TRANSACTION.PAID_BY_USER_ID = u1.USER_ID
+        JOIN USER u2 on USER_GROUP_TRANSACTION.PAID_TO_USER_ID = u2.USER_ID
+      WHERE USER_GROUP_ID=?
+      ORDER BY USER_GROUP_TRANSACTION_DATE DESC`;
+  
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(SQL, [groupId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
+  async getSettlementSummary(groupId) {
+    const SQL =
+    `SELECT
+        u.USER_ID,
+        CONCAT(u.USER_LNAME, ", ", u.USER_FNAME) AS USER_FULLNAME,
+        COALESCE(SUM(p.amount_paid), 0) AS TOTAL_AMOUNT_PAID,
+        COALESCE(SUM(r.amount_received), 0) AS TOTAL_AMOUNT_RECEIVED,
+        (COALESCE(SUM(p.amount_paid), 0) - COALESCE(SUM(r.amount_received), 0)) AS UNSETTLED_DUE
+    FROM
+        USER u
+    LEFT JOIN
+        (SELECT
+            USER_GROUP_ID,
+            PAID_BY_USER_ID AS USER_ID,
+            SUM(USER_GROUP_TRANSACTION_AMOUNT) AS amount_paid
+        FROM
+            USER_GROUP_TRANSACTION
+      GROUP BY
+        USER_GROUP_ID, PAID_BY_USER_ID) p
+    ON
+        u.USER_ID = p.USER_ID AND p.USER_GROUP_ID = ?
+    LEFT JOIN
+        (SELECT
+            USER_GROUP_ID,
+            PAID_TO_USER_ID AS USER_ID,
+            SUM(USER_GROUP_TRANSACTION_AMOUNT) AS amount_received
+        FROM
+            USER_GROUP_TRANSACTION
+      GROUP BY
+        USER_GROUP_ID, PAID_TO_USER_ID) r
+    ON
+        u.USER_ID = r.USER_ID AND r.USER_GROUP_ID = ?
+    GROUP BY
+        u.USER_ID`;
+  
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(SQL, [groupId, groupId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
   }
 
   /**
