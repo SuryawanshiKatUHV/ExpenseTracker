@@ -3,7 +3,11 @@ import { FUNCTIONS } from "../../Common";
 import DashboardForTransactions from "./DashboardForTransactions";
 import DashboardForGroupTransactions from "./DashboardForGroupTransactions";
 
-function Dashboard() {
+interface Props {
+  userId: number;
+}
+
+function Dashboard({userId} : Props) {
   const [currentDashboard, setCurrentDashboard] = useState(FUNCTIONS.DashboardForTransactions);
 
   /**
@@ -11,9 +15,9 @@ function Dashboard() {
    */
   const loadDashboard = () : ReactNode => {
     if (currentDashboard == FUNCTIONS.DashboardForTransactions)
-      return <DashboardForTransactions/>;
+      return <DashboardForTransactions userId={userId}/>;
 
-    return <DashboardForGroupTransactions/>;
+    return <DashboardForGroupTransactions userId={userId}/>;
   }
 
   /**

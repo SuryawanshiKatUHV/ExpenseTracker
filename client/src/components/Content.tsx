@@ -8,34 +8,23 @@ import GroupTransactionTable from "./functional/GroupTransactionTable";
 import TransactionTable from "./functional/TransactionTable";
 
 interface Props {
-  selectedFunction: string;  
+  userId : number;
+  selectedFunction: string;
 }
 
-const Content = ({ selectedFunction }: Props) => {
-  
-  /**
-   * Following code of listing the users should be removed afterwards
-   */
-  // const [users, setUsers] = useState<any[]>([]);
-  // useEffect(() =>{ 
-  //   async function fetchUsers() {
-  //     const users = await get(END_POINTS.Users);
-  //     setUsers(users);
-  //   }
-  //   fetchUsers();
-  // }, []);
+const Content = ({userId, selectedFunction }: Props) => {
 
   /**
    * Operations
    */
   const loadContent = () : ReactNode => {
     switch(selectedFunction) {
-      case FUNCTIONS.Dashboard: return <Dashboard/>;
-      case FUNCTIONS.Categories: return <CategoryTable/>;
-      case FUNCTIONS.Budgets: return <BudgetTable/>;
-      case FUNCTIONS.Transactions: return <TransactionTable/>;
-      case FUNCTIONS.Groups: return <GroupTable/>;
-      case FUNCTIONS.GroupTransactions: return <GroupTransactionTable/>;
+      case FUNCTIONS.Dashboard: return <Dashboard userId={userId}/>;
+      case FUNCTIONS.Categories: return <CategoryTable userId={userId}/>;
+      case FUNCTIONS.Budgets: return <BudgetTable userId={userId}/>;
+      case FUNCTIONS.Transactions: return <TransactionTable userId={userId}/>;
+      case FUNCTIONS.Groups: return <GroupTable userId={userId}/>;
+      case FUNCTIONS.GroupTransactions: return <GroupTransactionTable userId={userId}/>;
     }
     
     return "Clicked unknown item.";
@@ -46,27 +35,6 @@ const Content = ({ selectedFunction }: Props) => {
       <div style={{ flex: 1, padding: '20px' }}>
         {loadContent()}
       </div>
-      {/* <br/>
-      <table className="table table-hover">
-          <thead>
-              <tr>
-                  <th scope="col">ID</th>
-                  <th scope="col">First Name</th>
-                  <th scope="col">Last Name</th>
-                  <th scope="col">Email</th>
-              </tr>
-          </thead>
-          <tbody>
-              {users.map((user)=> (
-                  <tr>
-                      <td>{user.USER_ID}</td>
-                      <td>{user.USER_FNAME}</td>
-                      <td>{user.USER_LNAME}</td>
-                      <td>{user.USER_EMAIL}</td>
-                  </tr>                
-              ))}
-          </tbody>
-      </table> */}
     </>
   );
 };

@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import GroupTransactionForm from "./GroupTransactionForm";
 import { END_POINTS, get } from "../../Common";
 
-const GroupTransactionTable = () => {
+interface Props {
+    userId: number;
+}
+
+const GroupTransactionTable = ({userId} : Props) => {
     
     /**
      * Dummy data
@@ -135,6 +139,10 @@ const GroupTransactionTable = () => {
                 ))}
             </select>
           <label htmlFor="selectedGroupId">Group</label>
+          <div>
+            <b>Group Members:</b>
+            {JSON.stringify(groups.filter(group => group.USER_GROUP_ID == selectedGroupId))}
+          </div>
         </div>
 
         {/* Show add new button when the form is not shown*/}
