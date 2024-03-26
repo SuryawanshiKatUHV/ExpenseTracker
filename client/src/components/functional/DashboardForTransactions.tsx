@@ -1,4 +1,6 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts';
+import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
+
 
 interface Props {
     userId: number;
@@ -8,7 +10,14 @@ const DashboardForTransactions = ({userId} : Props) => {
      /**
      * Dummy data
      */
-     const data = [
+     const data01 = [
+        { name: 'Group A', value: 400 },
+        { name: 'Group B', value: 300 },
+        { name: 'Group C', value: 300 },
+        { name: 'Group D', value: 200 },
+      ];
+
+     const data02 = [
         {
             name: 'Suryawanshi, Kapil',
             pv: 2400,
@@ -32,17 +41,29 @@ const DashboardForTransactions = ({userId} : Props) => {
             <table width="100%">
                 <thead>
                     <tr>
-                        <th>Receivable to me</th>
-                        <th>Payable by me</th>
+                        <th>Income</th>
+                        <th>Expense</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>
+                            <PieChart width={500} height={300}>
+                                <Pie data={data01} dataKey="value" cx="50%" cy="50%" outerRadius={80} fill="green" label/>
+                            </PieChart>
+                        </td>
+                        <td>
+                            <PieChart width={500} height={300}>
+                                <Pie data={data01} dataKey="value" cx="50%" cy="50%" outerRadius={80} fill="red" label/>
+                            </PieChart>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <BarChart
                                 width={500}
                                 height={300}
-                                data={data}
+                                data={data02}
                                 margin={{
                                     top: 5,
                                     right: 30,
@@ -55,6 +76,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 <YAxis />
                                 <Tooltip />
                                 <CartesianGrid strokeDasharray="3 3" />
+                                <Bar dataKey="pv" fill="orange"/>
                                 <Bar dataKey="pv" fill="green"/>
                             </BarChart>
                         </td>
@@ -62,7 +84,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                             <BarChart
                                 width={500}
                                 height={300}
-                                data={data}
+                                data={data02}
                                 margin={{
                                     top: 5,
                                     right: 30,
@@ -75,6 +97,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 <YAxis />
                                 <Tooltip />
                                 <CartesianGrid strokeDasharray="3 3" />
+                                <Bar dataKey="pv" fill="orange"/>
                                 <Bar dataKey="pv" fill="red"/>
                             </BarChart>
                         </td>
