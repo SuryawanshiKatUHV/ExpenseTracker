@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 
 interface Props {
     userId: number;
@@ -44,18 +44,20 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
                                 height={300}
                                 data={data}
                                 margin={{
-                                    top: 5,
-                                    right: 30,
+                                    top: 20,
+                                    right: 20,
                                     left: 20,
-                                    bottom: 5,
+                                    bottom: 20,
                                 }}
                                 barSize={20}
                                 >
-                                <XAxis dataKey="name" scale="point" padding={{ left: 50, right: 50 }} />
+                                <XAxis dataKey="name" scale="point" padding={{ left: 50, right: 50 }} angle={30}/>
                                 <YAxis />
                                 <Tooltip />
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <Bar dataKey="pv" fill="green"/>
+                                <Bar dataKey="pv" fill="green">
+                                    <LabelList dataKey="pv" position="top"/>
+                                </Bar>
                             </BarChart>
                         </td>
                         <td>
@@ -64,18 +66,20 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
                                 height={300}
                                 data={data}
                                 margin={{
-                                    top: 5,
-                                    right: 30,
+                                    top: 20,
+                                    right: 20,
                                     left: 20,
-                                    bottom: 5,
+                                    bottom: 20,
                                 }}
                                 barSize={20}
                                 >
-                                <XAxis dataKey="name" scale="point" padding={{ left: 50, right: 50 }} />
+                                <XAxis dataKey="name" scale="point" padding={{ left: 50, right: 50 }} angle={30}/>
                                 <YAxis />
                                 <Tooltip />
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <Bar dataKey="pv" fill="red"/>
+                                <Bar dataKey="pv" fill="red">
+                                    <LabelList dataKey="pv" position="top"/>
+                                </Bar>
                             </BarChart>
                         </td>
                     </tr>
