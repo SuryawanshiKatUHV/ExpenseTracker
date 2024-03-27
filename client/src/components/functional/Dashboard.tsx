@@ -34,7 +34,7 @@ function Dashboard({userId} : Props) {
 
   return (
     <div>
-        <button className="btn btn-link" onClick={DashboardForTransactionsClicked}>Transactions</button> | <button className="btn btn-link" onClick={DashboardForGroupTransactionsClicked}>Group Transactions</button>
+        <button className={currentDashboard === FUNCTIONS.DashboardForTransactions? "btn btn-primary":"btn btn-link"} onClick={DashboardForTransactionsClicked}>Transactions</button> | <button className={currentDashboard === FUNCTIONS.DashboardForGroupTransactions? "btn btn-primary":"btn btn-link"} onClick={DashboardForGroupTransactionsClicked}>Group Transactions</button>
         <hr/>
         {loadDashboard()}
     </div>
