@@ -1,17 +1,18 @@
 import { useState } from "react";
-import { END_POINTS, post } from "../../Common";
+import { END_POINTS, post, put } from "../../Common";
 
 interface Props {
     userId: number;
     saveHandler: () => void;
     cancelHandler: () => void;
+    editingCategory?: { CATEGORY_ID: number; CATEGORY_TITLE: string; CATEGORY_DESCRIPTION: string }; 
 }
 
 const CategoryForm = (props : Props) => {
 
     // State for category input form
-    const [categoryTitle, setCategoryTitle] = useState('');
-    const [categoryDescription, setCategoryDescription] = useState('');
+    const [categoryTitle, setCategoryTitle] = useState(props.editingCategory?.CATEGORY_TITLE);
+    const [categoryDescription, setCategoryDescription] = useState(props.editingCategory?.CATEGORY_DESCRIPTION);
     const [validationErrors, setValidationErrors] = useState({categoryTitle: '', categoryDescription: ''});
     const [error, setError] = useState('');
 
@@ -43,8 +44,16 @@ const CategoryForm = (props : Props) => {
             };
     
             try {
-                const result = await post(END_POINTS.Categories, categoryData);
-                console.log(`Category created with id ${result.CATEGORY_ID}`);
+
+                if (props.editingCategory?.CATEGORY_ID) {
+                    // Update the existing category
+                    await put(`${END_POINTS.Categories}/${props.editingCategory.CATEGORY_ID}`, categoryData);
+                    console.log(`Category updated with id ${props.editingCategory.CATEGORY_ID}`);
+                } else {
+                    // Create a new category
+                    const result = await post(END_POINTS.Categories, categoryData);
+                    console.log(`Category created with id ${result.CATEGORY_ID}`);
+                }
 
                 props.saveHandler();
             } 
@@ -58,9 +67,14 @@ const CategoryForm = (props : Props) => {
         props.cancelHandler();
     }
 
+    const handleSubmit = (e: React.SyntheticEvent) => {
+        e.preventDefault();
+        SaveClicked();
+      };
+
     return (
         
-        <div style={{border:1}}>
+        <div onSubmit={handleSubmit} style={{border:1}}>
             <h5 className="m-5">Add new category</h5>
 
             <div className="form-floating mb-3">
