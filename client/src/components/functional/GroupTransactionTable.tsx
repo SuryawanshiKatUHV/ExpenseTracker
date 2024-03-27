@@ -88,6 +88,14 @@ const GroupTransactionTable = (props : Props) => {
         });
     }
 
+    async function SaveClicked() {
+        await refresh();
+    }
+
+    async function CancelClicked() {
+        await refresh();
+    }
+
     return (<>
         <div className="form-floating mb-3">
             <select className="form-select" id="selectedGroupId" onChange={(e) => setSelectedGroupId(parseInt(e.target.value))} value={selectedGroupId}>
@@ -103,7 +111,7 @@ const GroupTransactionTable = (props : Props) => {
         {!formDisplayed && <button className="btn btn-success" onClick={AddNewClicked}>Add New</button>}
 
         {/* Show the add new form*/}
-        {formDisplayed && <GroupTransactionForm userId={props.userId} groupId={selectedGroupId} saveHandler={refresh} cancelHandler={refresh}/>}
+        {formDisplayed && <GroupTransactionForm userId={props.userId} groupId={selectedGroupId} saveHandler={SaveClicked} cancelHandler={CancelClicked}/>}
 
         {error && <p style={{color:'red'}}>{error}</p>}
 
