@@ -32,8 +32,8 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
             <table width="100%">
                 <thead>
                     <tr>
-                        <th>Receivable to me</th>
-                        <th>Payable by me</th>
+                        <th>Money owed to me</th>
+                        <th>Money I need to pay</th>
                     </tr>
                 </thead>
                 <tbody>
