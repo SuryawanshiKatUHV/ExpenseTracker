@@ -45,12 +45,12 @@ const CategoryTable = ( {userId} : Props) => {
         setEditingCategory(null);
     }
 
-    const handleEdit =  (categories: any) => {
+    const EditClicked =  (categories: any) => {
         setEditingCategory(categories);
         setFormDisplayed(true);
     }
 
-    const handleDelete = async (categoryId: number) => {
+    const DeleteClicked = async (categoryId: number) => {
         // Simple confirmation dialog
         const isConfirmed = window.confirm("Are you sure you want to delete?");
         if (isConfirmed) {
@@ -92,8 +92,8 @@ const CategoryTable = ( {userId} : Props) => {
                             <td>{item.CATEGORY_TITLE}</td>
                             <td>{item.CATEGORY_DESCRIPTION}</td>
                             <td>
-                                <PencilSquare onClick={() => handleEdit(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
-                                <TrashFill onClick={() => handleDelete(item.CATEGORY_ID)} style={{cursor: 'pointer'}}/> {/* Delete icon */}
+                                <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
+                                <TrashFill onClick={() => DeleteClicked(item.CATEGORY_ID)} style={{cursor: 'pointer'}}/> {/* Delete icon */}
                             </td>
                         </tr>
                     ))}
