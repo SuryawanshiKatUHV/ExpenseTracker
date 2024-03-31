@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CategoryForm from "./CategoryForm";
-import { END_POINTS, get } from "../../Common";
+import { END_POINTS, get, del, put } from "../../Common";
+import { PencilSquare, TrashFill } from 'react-bootstrap-icons';
 
 interface Props {
     userId: number;
@@ -10,6 +11,7 @@ const CategoryTable = ( {userId} : Props) => {
 
     const [formDisplayed, setFormDisplayed] = useState(false);
     const [categories, setCategories] = useState<any[]>([]);
+    const [editingCategory, setEditingCategory] = useState<any>([]);
     const [error, setError] = useState('');
 
     async function loadCategories() {
@@ -40,7 +42,31 @@ const CategoryTable = ( {userId} : Props) => {
 
     const CancelClicked = () => {
         setFormDisplayed(false);
+        setEditingCategory(null);
     }
+
+    const handleEdit =  (categories: any) => {
+        setEditingCategory(categories);
+        setFormDisplayed(true);
+    }
+
+    const handleDelete = async (categoryId: number) => {
+        // Simple confirmation dialog
+        const isConfirmed = window.confirm("Are you sure you want to delete?");
+        if (isConfirmed) {
+            try {
+                await del(`${END_POINTS.Categories}/${categoryId}`);
+                console.log("Item deleted");
+                await loadCategories(); // Refresh the list after deleting
+                setError("");
+            } catch (error) {
+                console.error("Failed to delete the item:", error);
+                setError('Failed to delete category'); 
+            }
+        } else {
+            console.log("Delete operation cancelled");
+        }
+    };
 
     return (
         <div className="form-floating mb-3">
@@ -49,7 +75,7 @@ const CategoryTable = ( {userId} : Props) => {
             {!formDisplayed && <button className="btn btn-success" onClick={AddNewClicked}>Add New</button>}
 
             {/* Show the add new form*/}
-            {formDisplayed && <CategoryForm userId={userId} saveHandler={SaveClicked} cancelHandler={CancelClicked}/>}
+            {formDisplayed && <CategoryForm userId={userId} saveHandler={SaveClicked} cancelHandler={CancelClicked} editingCategory={editingCategory}/>}
             
             {error && <p style={{color:'red'}}>{error}</p>}
 
@@ -65,6 +91,10 @@ const CategoryTable = ( {userId} : Props) => {
                         <tr>
                             <td>{item.CATEGORY_TITLE}</td>
                             <td>{item.CATEGORY_DESCRIPTION}</td>
+                            <td>
+                                <PencilSquare onClick={() => handleEdit(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
+                                <TrashFill onClick={() => handleDelete(item.CATEGORY_ID)} style={{cursor: 'pointer'}}/> {/* Delete icon */}
+                            </td>
                         </tr>
                     ))}
                 </tbody>
