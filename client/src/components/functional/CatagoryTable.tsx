@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CategoryForm from "./CategoryForm";
-import { END_POINTS, get, del, put } from "../../Common";
+import { END_POINTS, get, del } from "../../Common";
 import { PencilSquare, TrashFill } from 'react-bootstrap-icons';
 
 interface Props {
