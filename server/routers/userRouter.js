@@ -31,4 +31,8 @@ router.get("/:userId/groups/:groupId/paidTransactions", authenticator, controlle
 
 router.get("/:userId/groups/:groupId/receivedTransactions", authenticator, controller.getGroupTransactionsReceived);
 
+router.get("/:id/groupTransactions/moneyOwedToMe", authenticator, controller.getGroupTransactionsMoneyOwedToMe);
+
+router.get("/:id/groupTransactions/moneyINeedToPay", authenticator, controller.getGroupTransactionsMoneyINeedToPay);
+
 module.exports = router;
