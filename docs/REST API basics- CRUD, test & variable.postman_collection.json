@@ -503,7 +503,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTEyNTQ3NzQsImV4cCI6MTcxMTI1ODM3NH0.ZLazPDVIxx7lPIcprJXtRejlxUBuyYgBwIDLxvk-gLg",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTEzODY4MjQsImV4cCI6MTcxMTM5MDQyNH0.6oSUn6hqcq3ROYoLT4l0BrhN-Xkx7mM54JanBqpeCrI",
 								"type": "text"
 							}
 						],
@@ -611,6 +611,92 @@
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
 					},
 					"response": []
+				},
+				{
+					"name": "getGroupTransactionsMoneyOwedToMe",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTE5MjYwNjYsImV4cCI6MTcxMTkyOTY2Nn0.Z9yK0S8nSPYrfMublXAV2yefnaRVsQLffFM8qbG1C4w",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/api/users/1/groupTransactions/moneyOwedToMe",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"1",
+								"groupTransactions",
+								"moneyOwedToMe"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "getGroupTransactionsMoneyINeedToPay",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTE5MjYwNjYsImV4cCI6MTcxMTkyOTY2Nn0.Z9yK0S8nSPYrfMublXAV2yefnaRVsQLffFM8qbG1C4w",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/api/users/1/groupTransactions/moneyINeedToPay",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"1",
+								"groupTransactions",
+								"moneyINeedToPay"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
 				}
 			]
 		},
@@ -688,7 +774,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTA4Nzg3ODEsImV4cCI6MTcxMDg4MjM4MX0.Uv86q8jtzc0XGl7BHhILrbyIw-6d4TCeyzmJ532zWyM",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTEzMzgwNTIsImV4cCI6MTcxMTM0MTY1Mn0.N1HMhDWHvwICX8iXc6laPIQxNCz47HqX0fZxdaIIIoQ",
 								"type": "text"
 							}
 						],
@@ -1423,7 +1509,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTExNDM4NTksImV4cCI6MTcxMTE0NzQ1OX0.u8qYrjvx6SYgGyiWqhzkv1miltHBnxpAfOZI5UZEmks",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSX0lEIjoxLCJpYXQiOjE3MTEzODY4MjQsImV4cCI6MTcxMTM5MDQyNH0.6oSUn6hqcq3ROYoLT4l0BrhN-Xkx7mM54JanBqpeCrI",
 								"type": "text"
 							}
 						],
