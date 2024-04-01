@@ -9,6 +9,8 @@ x get		/api/users/:id/transactions
 x get		/api/users/:id/groups
 x get		/api/users/:userId/groups/:groupId/paid_transactions
 x get		/api/users/:userId/groups/:groupId/received_transactions
+x get		/api/users/:id/groupTransactions/moneyOwedToMe
+x get		/api/users/:id/groupTransactions/moneyINeedToPay
  
 . get		/api/users/:id/transactions/:type/:year/:month/groupByCategories
 . get		/api/users/:id/budgets/:type/:year/:month/groupByCategories
