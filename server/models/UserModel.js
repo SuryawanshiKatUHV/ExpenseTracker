@@ -235,7 +235,47 @@ class UserModel {
     }
   }
 
+  async getGroupTransactionsMoneyOwedToMe(userId) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(
+        `SELECT UGT.PAID_BY_USER_FULLNAME, UGT.PAID_TO_USER_FULLNAME, SUM(UGT.USER_GROUP_TRANSACTION_AMOUNT) AS MONEY_OWED_TO_ME
+        FROM (
+          SELECT CONCAT(U1.USER_LNAME, ", ", U1.USER_FNAME) AS PAID_BY_USER_FULLNAME, CONCAT(U2.USER_LNAME, ", ", U2.USER_FNAME) AS PAID_TO_USER_FULLNAME, USER_GROUP_TRANSACTION_AMOUNT
+          FROM USER_GROUP_TRANSACTION
+            JOIN USER U1 ON U1.USER_ID = PAID_BY_USER_ID
+            JOIN USER U2 ON U2.USER_ID = PAID_TO_USER_ID
+            WHERE PAID_BY_USER_ID != PAID_TO_USER_ID AND PAID_BY_USER_ID=?
+        ) UGT
+        GROUP BY UGT.PAID_BY_USER_FULLNAME, UGT.PAID_TO_USER_FULLNAME`, 
+          [userId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
 
+  async getGroupTransactionsMoneyINeedToPay(userId) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(
+        `SELECT UGT.PAID_BY_USER_FULLNAME, UGT.PAID_TO_USER_FULLNAME, SUM(UGT.USER_GROUP_TRANSACTION_AMOUNT) AS MONEY_I_NEED_TO_PAY
+        FROM (
+          SELECT CONCAT(U1.USER_LNAME, ", ", U1.USER_FNAME) AS PAID_BY_USER_FULLNAME, CONCAT(U2.USER_LNAME, ", ", U2.USER_FNAME) AS PAID_TO_USER_FULLNAME, USER_GROUP_TRANSACTION_AMOUNT
+          FROM USER_GROUP_TRANSACTION
+            JOIN USER U1 ON U1.USER_ID = PAID_BY_USER_ID
+            JOIN USER U2 ON U2.USER_ID = PAID_TO_USER_ID
+            WHERE PAID_BY_USER_ID != PAID_TO_USER_ID AND PAID_TO_USER_ID=?
+        ) UGT
+        GROUP BY UGT.PAID_BY_USER_FULLNAME, UGT.PAID_TO_USER_FULLNAME`, 
+          [userId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
 
 
   /**

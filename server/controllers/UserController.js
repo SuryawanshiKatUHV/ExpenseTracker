@@ -211,6 +211,33 @@ class UserController {
     }
   }
 
+  async getGroupTransactionsMoneyOwedToMe(req, res) {
+    console.log("User getGroupTransactionsMoneyOwedToMe is invoked...");
+    try {
+      const { id } = req.params;
+      console.log("id=", id);
+      const data = await userModel.getGroupTransactionsMoneyOwedToMe(parseInt(id));
+
+      res.status(200).json(data); // Send the users as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async getGroupTransactionsMoneyINeedToPay(req, res) {
+    console.log("User getGroupTransactionsMoneyINeedToPay is invoked...");
+    try {
+      const { id } = req.params;
+      console.log("id=", id);
+      const data = await userModel.getGroupTransactionsMoneyINeedToPay(parseInt(id));
+
+      res.status(200).json(data); // Send the users as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
 }
 
 module.exports = new UserController();
