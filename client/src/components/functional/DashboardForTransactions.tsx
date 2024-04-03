@@ -17,22 +17,44 @@ const DashboardForTransactions = ({userId} : Props) => {
         { name: 'Group D', value: 200 },
       ];
 
-     const data02 = [
+     const expenseData = [
         {
-            name: 'Suryawanshi, Kapil',
-            pv: 2400,
+            category: 'Utilities',
+            budget: 700,
+            expense: 100,
         },
         {
-          name: 'Odera, Suraj',
-          pv: 1398,
+            category: 'Travel',
+            budget: 300,
+            expense: 400,
         },
         {
-          name: 'Ali, Shayan',
-          pv: 9800,
+            category: 'Education',
+            budget: 1500,
+            expense: 1100,
         },
         {
-          name: 'Sharma, Aaradhana',
-          pv: 3908,
+            category: 'Food',
+            budget: 500,
+            expense: 450,
+        }
+      ];
+
+      const incomeData = [
+        {
+            category: 'Salary',
+            budget: 2500,
+            income: 2500,
+        },
+        {
+            category: 'Business',
+            budget: 3000,
+            income: 2500,
+        },
+        {
+            category: 'Real Estate',
+            budget: 15000,
+            income: 11000,
         }
       ];
 
@@ -65,7 +87,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                             <BarChart
                                 width={500}
                                 height={300}
-                                data={data02}
+                                data={incomeData}
                                 margin={{
                                     top: 20,
                                     right: 20,
@@ -74,22 +96,24 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 }}
                                 barSize={20}
                                 >
-                                <XAxis dataKey="name" scale="point" padding={{ left: 50, right: 50}} angle={30}/>
+                                <XAxis dataKey="category" scale="point" padding={{ left: 50, right: 50}} angle={30}/>
                                 <YAxis />
                                 <Tooltip />
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <Bar dataKey="pv" fill="orange">
+                                <Bar dataKey="budget" fill="orange">
+                                    <LabelList dataKey="budget" position="top" />
                                 </Bar>
-                                <Bar dataKey="pv" fill="green">
-                                    <LabelList dataKey="pv" position="top" />
+                                <Bar dataKey="income" fill="green">
+                                    <LabelList dataKey="income" position="top" />
                                 </Bar>
+                                <Legend/>
                             </BarChart>
                         </td>
                         <td>
-                            <BarChart
+                        <BarChart
                                 width={500}
                                 height={300}
-                                data={data02}
+                                data={expenseData}
                                 margin={{
                                     top: 20,
                                     right: 20,
@@ -98,15 +122,17 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 }}
                                 barSize={20}
                                 >
-                                <XAxis dataKey="name" scale="point" padding={{ left: 50, right: 50 }} angle={30}/>
+                                <XAxis dataKey="category" scale="point" padding={{ left: 50, right: 50}} angle={30}/>
                                 <YAxis />
                                 <Tooltip />
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <Bar dataKey="pv" fill="orange">
+                                <Bar dataKey="budget" fill="orange">
+                                    <LabelList dataKey="budget" position="top" />
                                 </Bar>
-                                <Bar dataKey="pv" fill="red">
-                                    <LabelList dataKey="pv" position="top"/>
+                                <Bar dataKey="expense" fill="red">
+                                    <LabelList dataKey="expense" position="top" />
                                 </Bar>
+                                <Legend/>
                             </BarChart>
                         </td>
                     </tr>
