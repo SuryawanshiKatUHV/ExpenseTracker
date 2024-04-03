@@ -10,51 +10,44 @@ const DashboardForTransactions = ({userId} : Props) => {
      /**
      * Dummy data
      */
-     const data01 = [
-        { name: 'Group A', value: 400 },
-        { name: 'Group B', value: 300 },
-        { name: 'Group C', value: 300 },
-        { name: 'Group D', value: 200 },
-      ];
-
      const expenseData = [
         {
-            category: 'Utilities',
-            budget: 700,
-            expense: 100,
+            Category: 'Utilities',
+            Budget: 700,
+            Expense: 100,
         },
         {
-            category: 'Travel',
-            budget: 300,
-            expense: 400,
+            Category: 'Travel',
+            Budget: 300,
+            Expense: 400,
         },
         {
-            category: 'Education',
-            budget: 1500,
-            expense: 1100,
+            Category: 'Education',
+            Budget: 1500,
+            Expense: 1100,
         },
         {
-            category: 'Food',
-            budget: 500,
-            expense: 450,
+            Category: 'Food',
+            Budget: 500,
+            Expense: 450,
         }
       ];
 
       const incomeData = [
         {
-            category: 'Salary',
-            budget: 2500,
-            income: 2500,
+            Category: 'Salary',
+            Budget: 2500,
+            Income: 2500,
         },
         {
-            category: 'Business',
-            budget: 3000,
-            income: 2500,
+            Category: 'Business',
+            Budget: 3000,
+            Income: 2500,
         },
         {
-            category: 'Real Estate',
-            budget: 15000,
-            income: 11000,
+            Category: 'Real Estate',
+            Budget: 15000,
+            Income: 11000,
         }
       ];
 
@@ -72,13 +65,13 @@ const DashboardForTransactions = ({userId} : Props) => {
                         <td>
                             <PieChart width={500} height={300}>
                                 <Tooltip />
-                                <Pie data={data01} dataKey="value" cx="50%" cy="50%" outerRadius={80} fill="green" label/>
+                                <Pie data={incomeData} dataKey="Income" cx="50%" cy="50%" outerRadius={80} fill="green" label/>
                             </PieChart>
                         </td>
                         <td>
                             <PieChart width={500} height={300}>
                                 <Tooltip />
-                                <Pie data={data01} dataKey="value" cx="50%" cy="50%" outerRadius={80} fill="red" label/>
+                                <Pie data={expenseData} dataKey="Expense" cx="50%" cy="50%" outerRadius={80} fill="red" label/>
                             </PieChart>
                         </td>
                     </tr>
@@ -96,15 +89,15 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 }}
                                 barSize={20}
                                 >
-                                <XAxis dataKey="category" scale="point" padding={{ left: 50, right: 50}} angle={30}/>
+                                <XAxis dataKey="Category" scale="point" padding={{ left: 50, right: 50}} angle={30}/>
                                 <YAxis />
                                 <Tooltip />
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <Bar dataKey="budget" fill="orange">
-                                    <LabelList dataKey="budget" position="top" />
+                                <Bar dataKey="Budget" fill="orange">
+                                    <LabelList dataKey="Budget" position="top" />
                                 </Bar>
-                                <Bar dataKey="income" fill="green">
-                                    <LabelList dataKey="income" position="top" />
+                                <Bar dataKey="Income" fill="green">
+                                    <LabelList dataKey="Income" position="top" />
                                 </Bar>
                                 <Legend/>
                             </BarChart>
@@ -122,15 +115,15 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 }}
                                 barSize={20}
                                 >
-                                <XAxis dataKey="category" scale="point" padding={{ left: 50, right: 50}} angle={30}/>
+                                <XAxis dataKey="Category" scale="point" padding={{ left: 50, right: 50}} angle={30}/>
                                 <YAxis />
                                 <Tooltip />
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <Bar dataKey="budget" fill="orange">
-                                    <LabelList dataKey="budget" position="top" />
+                                <Bar dataKey="Budget" fill="orange">
+                                    <LabelList dataKey="Budget" position="top" />
                                 </Bar>
-                                <Bar dataKey="expense" fill="red">
-                                    <LabelList dataKey="expense" position="top" />
+                                <Bar dataKey="Expense" fill="red">
+                                    <LabelList dataKey="Expense" position="top" />
                                 </Bar>
                                 <Legend/>
                             </BarChart>
