@@ -1,4 +1,16 @@
 {
+  "name": "ExpenseTracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest --detectOpenHandles"
+  },
+  
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  
   "dependencies": {
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
@@ -6,5 +18,9 @@
     "joi": "^17.12.1",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.9.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.2.2"
   }
 }
