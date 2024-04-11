@@ -7,12 +7,12 @@ const app = express();
 app.use(express.json());
 
 // Import routes
-const userRouter = require("./routers/userRouter");
-const categoryRouter = require("./routers/categoryRouter");
-const budgetRouter = require("./routers/budgetRouter");
-const transactionRouter = require("./routers/transactionRouter");
-const groupRouter = require("./routers/groupRouter");
-const groupTransactionRouter = require("./routers/groupTransactionRouter");
+const userRouter = require("./routers/user");
+const categoryRouter = require("./routers/category");
+const budgetRouter = require("./routers/budget");
+const transactionRouter = require("./routers/transaction");
+const groupRouter = require("./routers/group");
+const groupTransactionRouter = require("./routers/groupTransaction");
 
 // Use routes
 app.get("/", (req, res) => {

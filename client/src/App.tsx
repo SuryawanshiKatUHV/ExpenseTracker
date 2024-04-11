@@ -1,11 +1,11 @@
 import { ReactNode, useState } from 'react';
 import './App.css'
-import Layout from './components/Layout';
-import LoginForm from './components/functional/LoginForm';
-import RegistrationForm from './components/functional/RegistrationForm';
-import {VIEW, post} from './Common';
-import Alert from './components/Alert';
-import { END_POINTS } from './Common';
+import Layout from './layout/Layout';
+import LoginForm from './functional/user/LoginForm';
+import RegistrationForm from './functional/user/RegistrationForm';
+import {VIEW, post} from './common/Utilities';
+import Alert from './common/Alert';
+import { END_POINTS } from './common/Utilities';
 
 function App() {
   
