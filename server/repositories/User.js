@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const getConnection = require('../database');
+const getConnection = require('../common/database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
