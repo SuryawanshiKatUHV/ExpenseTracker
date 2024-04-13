@@ -56,7 +56,11 @@ describe('Category web service', () => {
     const res = await common.httpDelete(`/api/categories/${categoryId}`);
     
     expect(res.status).toBe(201);
-    expect(Array.isArray(res.body)).toBe(false);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length > 0).toBe(true);
+
+    const data = res.body;
+    expect(data[0].affectedRows).toBe(1);
   });
 
 }); // describe
