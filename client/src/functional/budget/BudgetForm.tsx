@@ -50,7 +50,17 @@ const BudgetForm = (props :Props) => {
     }
 
     const SaveClicked = () => {
-        props.saveHandler();
+        if (validateInput()) {
+            try {
+                //TODO Save the data
+
+                // Call the parents' event handler
+                props.saveHandler();
+            } 
+            catch (error : any) {
+                setError(error.message);
+            }
+        }
     }
     
     return (
@@ -83,7 +93,7 @@ const BudgetForm = (props :Props) => {
                 <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
                 <button className="btn btn-danger" onClick={CancelClicked}>Cancel</button>
             </div>
-
+            {error && <p style={{color:'red'}}>{error}</p>}
         </div>
 
     );
