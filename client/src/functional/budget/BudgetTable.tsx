@@ -21,7 +21,7 @@ const BudgetTable = ({userId}:Props) => {
     }
 
     const SaveClicked = () => {
-        setFormDisplayed(true);
+        setFormDisplayed(false);
     }
 
 
