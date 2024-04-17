@@ -3,6 +3,12 @@ const getConnection = require('../common/database');
 
 class Transaction {
 
+
+  /**
+   * Get all Transactions.
+   *
+   * @returns {Promise<Array>} An array of transaction objects.
+   */
   async getAll() {
     const connection = await getConnection();
     try {
@@ -14,8 +20,26 @@ class Transaction {
     }
   }
 
+  /**
+   * Get a transaction by ID.
+   *
+   * @param {number} id - The transaction ID.
+   * @returns {Promise<Object>} The transaction object.
+   * @throws {Error} If the transaction is not found.
+   */
   async getById(id) {
-    throw new Error(`To be implemented`);
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute("SELECT * FROM TRANSACTION WHERE TRANSACTION_ID=?", [id]);
+      if (!rows || rows.length == 0) {
+        throw new Error(`No transaction found for the id ${id}`);
+      }
+
+      return rows[0];
+    }
+    finally {
+      connection.release();
+    }
   }
 
   /**
@@ -40,12 +64,49 @@ class Transaction {
     }
   }
 
-  async update(id, { key1, key2 }) {
-    throw new Error(`To be implemented`);
+  /**
+   * Update a transaction.
+   *
+   * @param {number} id - The transaction ID.
+   * @param {{TRANSACTION_TYPE: string, TRANSACTION_DATE: Date, TRANSACTION_AMOUNT: Number, TRANSACTION_NOTES: string}} updates - The transaction updates.
+   * @returns {Promise<Object>} The result of the update operation.
+   * @throws {Error} If the transaction is not found.
+   */
+  async update(id, { TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES }) {
+    const connection = await getConnection();
+    try {
+      const result = await connection.execute("UPDATE TRANSACTION SET TRANSACTION_TYPE=?, TRANSACTION_DATE=?, TRANSACTION_AMOUNT=?, TRANSACTION_NOTES=? WHERE TRANSACTION_ID=?", [TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES, id]);
+  
+      if (result.affectedRows === 0) {
+        throw new Error(`No transaction found for id ${id}`);
+      }
+  
+      return result;
+    } finally {
+      connection.release();
+    }
   }
 
+     /**
+   * Delete a category.
+   *
+   * @param {number} id - The transaction ID.
+   * @returns {Promise<Object>} The result of the delete operation.
+   * @throws {Error} If the transaction is not found.
+   */
   async delete(id) {
-    throw new Error(`To be implemented`);
+    const connection = await getConnection();
+    try {
+      const result = await connection.execute("DELETE FROM TRANSACTION WHERE TRANSACTION_ID=?", [id]);
+  
+      if (result.affectedRows === 0) {
+        throw new Error(`No transaction found for id ${id}`);
+      }
+  
+      return result;
+    } finally {
+      connection.release();
+    }
   }
 
   /**

@@ -34,6 +34,7 @@ const CategoryForm = (props : Props) => {
         return isValid;
     };
 
+
     const SaveClicked = async () => {
         if(validateInput()) {
 
@@ -67,14 +68,10 @@ const CategoryForm = (props : Props) => {
         props.cancelHandler();
     }
 
-    const handleSubmit = (e: React.SyntheticEvent) => {
-        e.preventDefault();
-        SaveClicked();
-      };
 
     return (
         
-        <div onSubmit={handleSubmit} style={{border:1}}>
+        <div  style={{border:1}}>
             <h5 className="m-5">Add new category</h5>
 
             <div className="form-floating mb-3">

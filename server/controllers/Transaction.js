@@ -16,7 +16,16 @@ class Transaction {
   }
 
   async getById(req, res) {
-    throw new Error(`To be implemented`);
+    const { id } = req.params;
+    try {
+      const data = await repository.getById(parseInt(id));
+      console.log(`data=${JSON.stringify(data)}`);
+
+      res.status(200).json(data); // Send the retrieved object as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
   }
 
   async create(req, res) {
@@ -34,11 +43,37 @@ class Transaction {
   }
 
   async update(req, res) {
-    throw new Error(`To be implemented`);
+    console.log("Transaction update is invoked");
+
+    try {
+      const{id} = req.params;
+      console.log("id=", id);
+
+      const { TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES} = req.body;
+      console.log(`TRANSACTION_TYPE=${TRANSACTION_TYPE} TRANSACTION_DATE=${TRANSACTION_DATE} TRANSACTION_AMOUNT=${TRANSACTION_AMOUNT} TRANSACTION_NOTES=${TRANSACTION_NOTES}`);
+
+      const data = await repository.update(parseInt(id), {TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES});
+
+      res.status(201).json(data);
+    }catch (error) {
+      console.error(error.message);
+      res.status(500).json({message: error.message});
+    }
   }
 
   async delete(req, res) {
-    throw new Error(`To be implemented`);
+    console.log("Transaction delete is invoked...");
+    try {
+      const { id } = req.params;
+      console.log("id=", id);
+
+      const data = await repository.delete(parseInt(id));
+
+      res.status(201).json(data); // Send the saved object as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
   }
   
 }

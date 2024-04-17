@@ -27,6 +27,7 @@ const CategoryTable = ( {userId} : Props) => {
     }, []);
 
     const AddNewClicked = () => {
+        setEditingCategory(null);
         setFormDisplayed(true);
     }
 
