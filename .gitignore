@@ -24,4 +24,4 @@ dist-ssr
 *.sln
 *.sw?
 *.code-workspace
-.env
+server/.env
