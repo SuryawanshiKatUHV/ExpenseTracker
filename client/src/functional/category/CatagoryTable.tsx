@@ -7,7 +7,7 @@ interface Props {
     userId: number;
 }
 
-const CategoryTable = ( {userId} : Props) => {
+const CategoryTable = ({userId} : Props) => {
 
     const [formDisplayed, setFormDisplayed] = useState(false);
     const [categories, setCategories] = useState<any[]>([]);

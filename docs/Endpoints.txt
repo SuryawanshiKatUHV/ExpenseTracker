@@ -23,11 +23,11 @@ x post		/api/categories
 x put		/api/categories
 x delete	/api/categories/:id
  
-. get		/api/budgets
-. get		/api/budgets/:id
-. post		/api/budgets
-. put		/api/budgets
-. delete	/api/budgets/:id
+x get		/api/budgets
+x get		/api/budgets/:id
+x post		/api/budgets
+x put		/api/budgets
+x delete	/api/budgets/:id
 
 x get		/api/transactions
 . get		/api/transactions/:id

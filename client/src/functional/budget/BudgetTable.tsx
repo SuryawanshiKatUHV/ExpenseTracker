@@ -1,29 +1,72 @@
 import { useEffect, useState } from "react";
+import BudgetForm from "./BudgetForm";
 import { END_POINTS, get, del } from "../../common/Utilities";
 import { PencilSquare, TrashFill } from 'react-bootstrap-icons';
-import BudgetForm from "./BudgetForm";
 
 interface Props {
     userId: number;
 }
 
 const BudgetTable = ({userId}:Props) => {
-
     const [formDisplayed, setFormDisplayed] = useState(false);
+    const [budgets, setBudgets] = useState<any[]>([]);
+    const [editingBudget, setEditingBudget] = useState<any>([]);
     const [error, setError] = useState('');
+    
+    async function loadBudgets() {
+        const budgets = await get(`${END_POINTS.Users}/${userId}/budgets`);
+        setBudgets(budgets);
+    }
+
+    useEffect(() =>{ 
+        async function fetchData() {
+            await loadBudgets();
+        }
+        fetchData();
+    }, []);
 
     const AddNewClicked = () => {
+        setEditingBudget(null);
         setFormDisplayed(true);
     }
 
+    const SaveClicked = async () => {
+        try {
+            await loadBudgets(); // Refresh the table
+            setFormDisplayed(false);
+        } 
+        catch (error : any) {
+            setError(error.message);
+        }
+    }
+
+    const EditClicked = (budgets: any) => {
+        setEditingBudget(budgets);
+        setFormDisplayed(true);
+    }
+    
+    const DeleteClicked = async (budgetId: number) => {
+        // Simple confirmation dialog
+        const isConfirmed = window.confirm("Are you sure you want to delete?");
+        if (isConfirmed) {
+            try {
+                await del(`${END_POINTS.Budgets}/${budgetId}`);
+                console.log("Budget deleted");
+                await loadBudgets(); // Refresh the list after deleting
+                setError("");
+            } catch (error) {
+                console.error("Failed to delete the item:", error);
+                setError('Failed to delete budget'); 
+            }
+        } else {
+            console.log("Delete operation cancelled");
+        }
+    };
+
     const CancelClicked = () => {
         setFormDisplayed(false);
+        setEditingBudget(null);
     }
-
-    const SaveClicked = () => {
-        setFormDisplayed(false);
-    }
-
 
     return (
         <div className="form-floating mb-3">
@@ -31,7 +74,7 @@ const BudgetTable = ({userId}:Props) => {
             {!formDisplayed && <button className="btn btn-success" onClick={AddNewClicked}>Add New</button>}
 
             {/* Show the add new form*/}
-            {formDisplayed && <BudgetForm userId={userId} saveHandler={SaveClicked} cancelHandler={CancelClicked} />}
+            {formDisplayed && <BudgetForm userId={userId} saveHandler={SaveClicked} cancelHandler={CancelClicked} editingBudget={editingBudget}/>}
 
             {error && <p style={{color:'red'}}>{error}</p>}
 
@@ -44,49 +87,19 @@ const BudgetTable = ({userId}:Props) => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Grocery</td>
-                        <td>500</td>
-                        <td>4/17/2024</td>
-                        <td>
-                            <PencilSquare  style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
-                            <TrashFill  style={{cursor: 'pointer'}}/> 
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Food</td>
-                        <td>200</td>
-                        <td>4/15/2024</td>
-                        <td>
-                            <PencilSquare  style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
-                            <TrashFill  style={{cursor: 'pointer'}}/> 
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Shopping</td>
-                        <td>100</td>
-                        <td>4/12/2024</td>
-                        <td>
-                            <PencilSquare  style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
-                            <TrashFill  style={{cursor: 'pointer'}}/> 
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Subscriptions</td>
-                        <td>150</td>
-                        <td>4/11/2024</td>
-                        <td>
-                            <PencilSquare  style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
-                            <TrashFill  style={{cursor: 'pointer'}}/> 
-                        </td>
-                    </tr>
-                    
+                    {budgets.map((item) => (
+                        <tr>
+                            <td>{item.CATEGORY_TITLE}</td>
+                            <td>{item.BUDGET_AMOUNT}</td>
+                            <td>{item.BUDGET_DATE}</td>
+                            <td>
+                                <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
+                                <TrashFill onClick={() => DeleteClicked(item.BUDGET_ID)} style={{cursor: 'pointer'}}/> Delete icon
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
-
         </div>
     );
 }

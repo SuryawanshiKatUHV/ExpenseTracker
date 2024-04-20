@@ -47,7 +47,7 @@ class Category {
     console.log("Category update is invoked");
 
     try {
-      const{id} = req.params;
+      const{ id } = req.params;
       console.log("id=", id);
 
       const { CATEGORY_TITLE, CATEGORY_DESCRIPTION } = req.body;

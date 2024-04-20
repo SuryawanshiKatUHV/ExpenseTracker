@@ -165,6 +165,22 @@ class User {
     }
   }
 
+  async getBudgets(userId) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(
+        `SELECT CATEGORY.CATEGORY_ID, CATEGORY.CATEGORY_TITLE, BUDGET.BUDGET_ID, BUDGET.BUDGET_AMOUNT, DATE_FORMAT(BUDGET.BUDGET_DATE, '%m/%d/%Y') AS BUDGET_DATE
+        FROM USER
+        JOIN CATEGORY ON USER.USER_ID = CATEGORY.OWNER_ID
+        JOIN BUDGET ON CATEGORY.CATEGORY_ID = BUDGET.CATEGORY_ID
+        WHERE USER.USER_ID = ?;`, [userId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
   async getTransactions(userId) {
     const connection = await getConnection();
     try {

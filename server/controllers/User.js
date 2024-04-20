@@ -155,6 +155,20 @@ class User {
     }
   }
   
+  async getBudgets(req, res) {
+    console.log("User getBudgets is invoked...");
+    try {
+      const { id } = req.params;
+      console.log("id=", id);
+      const data = await repository.getBudgets(parseInt(id));
+
+      res.status(200).json(data); // Send the users as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async getTransactions(req, res) {
     console.log("User getTransactions is invoked...");
     try {

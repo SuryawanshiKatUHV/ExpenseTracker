@@ -23,6 +23,8 @@ router.delete("/:id", authenticator, controller.delete);
  */
 router.get("/:id/categories", authenticator, controller.getCategories);
 
+router.get("/:id/budgets", authenticator, controller.getBudgets);
+
 router.get("/:id/transactions", authenticator, controller.getTransactions);
 
 router.get("/:id/groups", authenticator, controller.getGroups);
