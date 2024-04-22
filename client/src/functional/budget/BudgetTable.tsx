@@ -7,7 +7,7 @@ interface Props {
     userId: number;
 }
 
-const BudgetTable = ({userId}:Props) => {
+const BudgetTable = ({userId} : Props) => {
     const [formDisplayed, setFormDisplayed] = useState(false);
     const [budgets, setBudgets] = useState<any[]>([]);
     const [editingBudget, setEditingBudget] = useState<any>([]);

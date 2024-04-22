@@ -45,7 +45,6 @@ class Category {
 
   async update(req, res) {
     console.log("Category update is invoked");
-
     try {
       const{ id } = req.params;
       console.log("id=", id);

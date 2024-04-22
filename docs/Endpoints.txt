@@ -30,9 +30,9 @@ x put		/api/budgets
 x delete	/api/budgets/:id
 
 x get		/api/transactions
-. get		/api/transactions/:id
+x get		/api/transactions/:id
 . get		/api/transactions/:id/groupTransactions
-. post		/api/transactions
+x post		/api/transactions
 . put		/api/transactions
 . delete	/api/transactions/:id
  

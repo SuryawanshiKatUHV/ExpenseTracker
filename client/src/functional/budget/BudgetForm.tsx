@@ -8,7 +8,7 @@ interface Props {
     editingBudget?: { BUDGET_ID: number; CATEGORY_ID: number; BUDGET_DATE: Date; BUDGET_AMOUNT: number;}; 
 }
 
-const BudgetForm = (props :Props) => {
+const BudgetForm = (props : Props) => {
 
     const [categories, setCategories] = useState<any[]>([]);
     const [categoryId, setCategoryId] = useState(props.editingBudget?.CATEGORY_ID);
@@ -17,7 +17,7 @@ const BudgetForm = (props :Props) => {
     const [validationErrors, setValidationErrors] = useState({categoryId: '', budgetDate: '', budgetAmount: ''});
     const [error, setError] = useState('');
     
-     // Validate category input
+     // Validate budget input
      const validateInput = () => {
         let isValid = true;
         let validationErrors = {categoryId: '', budgetDate: '', budgetAmount: ''};

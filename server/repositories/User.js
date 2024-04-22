@@ -185,12 +185,11 @@ class User {
     const connection = await getConnection();
     try {
       const [rows, fields] = await connection.execute(
-        `SELECT T.*, C.CATEGORY_TITLE, C.CATEGORY_DESCRIPTION
-          FROM TRANSACTION T
-          JOIN CATEGORY C ON T.CATEGORY_ID = C.CATEGORY_ID
-          WHERE C.OWNER_ID=?
-          ORDER BY T.TRANSACTION_DATE DESC`, 
-          [userId]);
+        `SELECT T.TRANSACTION_TYPE, T.TRANSACTION_AMOUNT, T.TRANSACTION_NOTES, DATE_FORMAT(T.TRANSACTION_DATE, '%m/%d/%Y') AS TRANSACTION_DATE, C.CATEGORY_TITLE
+        FROM TRANSACTION T
+        JOIN CATEGORY C ON T.CATEGORY_ID = C.CATEGORY_ID
+        WHERE C.OWNER_ID=?
+        ORDER BY T.TRANSACTION_DATE DESC;`, [userId]);
       return rows;
     }
     finally {
