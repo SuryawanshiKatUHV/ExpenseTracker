@@ -66,12 +66,10 @@ const BudgetForm = (props : Props) => {
                 
                 if (props.editingBudget?.BUDGET_ID) {
                     // Update the existing budget
-                    console.log("editing ", budgetData.BUDGET_DATE);
                     await put(`${END_POINTS.Budgets}/${props.editingBudget.BUDGET_ID}`, budgetData);
                     console.log(`Budget updated with id ${props.editingBudget.BUDGET_ID}`);
                 } else {
                     // Create a new budget
-                    console.log("creating ", budgetData.BUDGET_DATE);
                     const result = await post(END_POINTS.Budgets, budgetData);
                     console.log(`Budget created with id ${result.BUDGET_ID}`);
                 }

@@ -14,14 +14,13 @@ const TransactionForm  = (props : Props) => {
     const [transactionDate, setTransactionDate] = useState(props.editingTransaction?.TRANSACTION_DATE ? new Date(props.editingTransaction.TRANSACTION_DATE) : new Date());
     const [transactionAmount, setTransactionAmount] = useState(props.editingTransaction?.TRANSACTION_AMOUNT);
     const [transactionNotes, setTransactionNotes] = useState(props.editingTransaction?.TRANSACTION_NOTES);
-    // without transaction notes atm
-    const [validationErrors, setValidationErrors] = useState({categoryId: '', transactionType: '', transactionDate: '', transactionAmount: ''});
+    const [validationErrors, setValidationErrors] = useState({categoryId: '', transactionType: '', transactionDate: '', transactionAmount: '', transactionNotes: ''});
     const [error, setError] = useState('');
     
-         // Validate category input
+    // Validate transaction input
     const validateInput = () => {
         let isValid = true;
-        let validationErrors = {categoryId: '', transactionType: '', transactionDate: '', transactionAmount: ''};
+        let validationErrors = {categoryId: '', transactionType: '', transactionDate: '', transactionAmount: '',  transactionNotes: ''};
 
         if (!categoryId) {
             validationErrors.categoryId = 'A category is required.';
@@ -37,6 +36,10 @@ const TransactionForm  = (props : Props) => {
         }
         if (!transactionAmount) {
             validationErrors.transactionAmount = 'Transaction Amount is required.';
+            isValid = false;
+        }
+        if (!transactionNotes) {
+            validationErrors.transactionNotes = 'Transaction Notes are required.';
             isValid = false;
         }
 
@@ -73,12 +76,10 @@ const TransactionForm  = (props : Props) => {
                 
                 if (props.editingTransaction?.TRANSACTION_ID) {
                     // Update the existing transaction
-                    console.log("editing ", transactionData.TRANSACTION_DATE);
                     await put(`${END_POINTS.Transactions}/${props.editingTransaction.TRANSACTION_ID}`, transactionData);
                     console.log(`Transaction updated with id ${props.editingTransaction.TRANSACTION_ID}`);
                 } else {
                     // Create a new transaction
-                    console.log("creating ", transactionData.TRANSACTION_DATE);
                     const result = await post(END_POINTS.Transactions, transactionData);
                     console.log(`Transaction created with id ${result.TRANSACTION_ID}`);
                 }
@@ -114,12 +115,12 @@ const TransactionForm  = (props : Props) => {
             <div style={{ display: 'flex', alignItems: 'center', paddingBottom: '20px' }}>
             <label htmlFor="transactionType" style={{ marginRight: '20px' }}>Transaction Type:</label>
                 <div className="radio-option" style={{ marginRight: '20px' }}>
-                <input type="radio" id="income" name="transactionType" value="Income" checked={transactionType === "Income"} onChange={(e) => setTransactionType(e.target.value)} />
+                <input type="radio" id="income" name="transactionType" value="Income" checked={transactionType === "Income"} onChange={(e) => setTransactionType(e.target.value)} disabled={props.editingTransaction ? true : false}/>
                 <label htmlFor="income" style={{ marginLeft: '5px' }}>Income</label>
                 </div>
 
                 <div className="radio-option">
-                <input type="radio" id="expense" name="transactionType" value="Expense" checked={transactionType === "Expense"} onChange={(e) => setTransactionType(e.target.value)} />
+                <input type="radio" id="expense" name="transactionType" value="Expense" checked={transactionType === "Expense"} onChange={(e) => setTransactionType(e.target.value)} disabled={props.editingTransaction ? true : false}/>
                 <label htmlFor="expense" style={{ marginLeft: '5px' }}>Expense</label>
                 </div>
             </div>
@@ -144,8 +145,8 @@ const TransactionForm  = (props : Props) => {
                     
             <div className="form-floating mb-3">
               <input type="string" className="form-control" id="transactionNotes" value={transactionNotes} onChange={(e) => setTransactionNotes(e.target.value)}/>
-              <label htmlFor="transactionNotes">Transaction Description</label>
-              {/* {validationErrors.transactionNotes && <p style={{color:'red'}}>{validationErrors.transactionNotes}</p>} */}
+              <label htmlFor="transactionNotes">Transaction Notes</label>
+              {validationErrors.transactionNotes && <p style={{color:'red'}}>{validationErrors.transactionNotes}</p>}
             </div>
                     
             <div className="form-floating mb-3">
