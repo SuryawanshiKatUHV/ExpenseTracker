@@ -40,8 +40,13 @@ const BudgetForm = (props : Props) => {
     };
 
     async function loadCategories() {
-        const categories = await get(`${END_POINTS.Users}/${props.userId}/categories`);
-        setCategories(categories);
+        try {
+            const response = await get(`${END_POINTS.Users}/${props.userId}/categories`);
+            setCategories(response);
+        } catch (error:any) {
+            console.error("Failed to load categories:", error);
+            setError(error.message);
+        }
     }
 
     useEffect(() =>{ 

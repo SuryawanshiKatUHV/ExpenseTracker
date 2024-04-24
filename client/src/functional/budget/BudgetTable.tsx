@@ -14,8 +14,13 @@ const BudgetTable = ({userId} : Props) => {
     const [error, setError] = useState('');
     
     async function loadBudgets() {
-        const budgets = await get(`${END_POINTS.Users}/${userId}/budgets`);
-        setBudgets(budgets);
+        try {
+            const response = await get(`${END_POINTS.Users}/${userId}/budgets`);
+            setBudgets(response);
+        } catch (error) {
+            console.error("Failed to load budgets:", error);
+            setError('Failed to load budgets');
+        }
     }
 
     useEffect(() =>{ 
@@ -34,11 +39,12 @@ const BudgetTable = ({userId} : Props) => {
         try {
             await loadBudgets(); // Refresh the table
             setFormDisplayed(false);
-        } 
-        catch (error : any) {
+            setError('');
+        } catch (error:any) {
+            console.error("Failed to save:", error);
             setError(error.message);
         }
-    }
+    };
 
     const EditClicked = (budgets: any) => {
         setEditingBudget(budgets);
