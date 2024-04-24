@@ -102,8 +102,16 @@ const GroupTransactionForm = (props : Props) => {
         setValidationErrors(validationErrors);
         return !(validationErrors.txDate || validationErrors.txAmount || validationErrors.txMembers || validationErrors.txNotes);
 
-        // TODO Check if the above return statement be written as below
+        // I did check if the above return statement be written as below
         // return Object.keys(validationErrors).length === 0;
+        //
+        // - No I cannot do that as, the Object.keys would return 4 even if none of the keys have values assigned
+        // let validationErrors = {txDate:'', txAmount:'', txMembers:'', txNotes:''};
+        // undefined
+        // validationErrors
+        // {txDate: '', txAmount: '', txMembers: '', txNotes: ''}
+        // Object.keys(validationErrors).length
+        // 4
     }
 
     /**
