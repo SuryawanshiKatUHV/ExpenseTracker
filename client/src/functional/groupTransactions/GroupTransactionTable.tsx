@@ -99,7 +99,7 @@ const GroupTransactionTable = (props : Props) => {
     return (<>
         <div className="form-floating mb-3">
             <select className="form-select" id="selectedGroupId" onChange={(e) => setSelectedGroupId(parseInt(e.target.value))} value={selectedGroupId}>
-                <option key="0" value="0">Select group</option>
+                <option key="0" value="0"></option>
                 {groups.map(group => (
                     <option key={group.USER_GROUP_ID} value={group.USER_GROUP_ID}>{group.USER_GROUP_DATE} {group.USER_GROUP_TITLE} ({group.USER_GROUP_DESCRIPTION})</option>
                 ))}
