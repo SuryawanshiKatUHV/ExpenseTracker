@@ -100,7 +100,7 @@ const BudgetTable = ({userId} : Props) => {
                             <td>{item.BUDGET_DATE}</td>
                             <td>
                                 <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
-                                <TrashFill onClick={() => DeleteClicked(item.BUDGET_ID)} style={{cursor: 'pointer'}}/> Delete icon
+                                <TrashFill onClick={() => DeleteClicked(item.BUDGET_ID)} style={{cursor: 'pointer'}}/>
                             </td>
                         </tr>
                     ))}
