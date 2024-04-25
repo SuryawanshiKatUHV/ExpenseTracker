@@ -68,14 +68,14 @@ class Transaction {
    * Update a transaction.
    *
    * @param {number} id - The transaction ID.
-   * @param {{TRANSACTION_TYPE: string, TRANSACTION_DATE: Date, TRANSACTION_AMOUNT: Number, TRANSACTION_NOTES: string}} updates - The transaction updates.
+   * @param {{TRANSACTION_TYPE: string, CATEGORY_ID:number, TRANSACTION_DATE: Date, TRANSACTION_AMOUNT: Number, TRANSACTION_NOTES: string}} updates - The transaction updates.
    * @returns {Promise<Object>} The result of the update operation.
    * @throws {Error} If the transaction is not found.
    */
-  async update(id, { TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES }) {
+  async update(id, { TRANSACTION_TYPE, CATEGORY_ID, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES }) {
     const connection = await getConnection();
     try {
-      const result = await connection.execute("UPDATE TRANSACTION SET TRANSACTION_TYPE=?, TRANSACTION_DATE=?, TRANSACTION_AMOUNT=?, TRANSACTION_NOTES=? WHERE TRANSACTION_ID=?", [TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES, id]);
+      const result = await connection.execute("UPDATE TRANSACTION SET TRANSACTION_TYPE=?, CATEGORY_ID=?, TRANSACTION_DATE=?, TRANSACTION_AMOUNT=?, TRANSACTION_NOTES=? WHERE TRANSACTION_ID=?", [TRANSACTION_TYPE, CATEGORY_ID, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES, id]);
   
       if (result.affectedRows === 0) {
         throw new Error(`No transaction found for id ${id}`);
