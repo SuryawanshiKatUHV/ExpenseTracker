@@ -34,6 +34,18 @@ const TransactionForm  = (props : Props) => {
             validationErrors.transactionDate = 'A valid date is required.';
             isValid = false;
         }
+        else {
+            transactionDate.setHours(0, 0, 0, 0);
+            
+            const currentDate = new Date();
+            currentDate.setHours(0, 0, 0, 0);
+
+            if (transactionDate > currentDate) {
+                validationErrors.transactionDate = "Date must not be in future.";
+                isValid = false;
+            }
+        }
+
         if (!transactionAmount) {
             validationErrors.transactionAmount = 'Transaction Amount is required.';
             isValid = false;
@@ -97,7 +109,7 @@ const TransactionForm  = (props : Props) => {
         props.cancelHandler();
     }
 
-    // Formats date into to yyyy/mm/dd 
+    // Formats date into to yyyy-mm-dd 
     const formatDate = (date: Date) => {
         let year = date.getUTCFullYear();
         // Pad month and day with leading zeros if necessary
@@ -105,7 +117,18 @@ const TransactionForm  = (props : Props) => {
         let day = date.getUTCDate().toString().padStart(2, '0');
         
         return `${year}-${month}-${day}`;
-    };
+    }
+
+    /**
+     * Converts date string to date object
+     * @param dateString Date in format "yyyy-mm-dd"
+     * @returns Date object
+     */
+    const stringToDate = (dateString: string) => {
+        const dateTokens : string[] = dateString.split("-");
+        const dateWithoutTime = new Date(Number(dateTokens[0]), Number(dateTokens[1]) - 1, Number(dateTokens[2]));
+        return dateWithoutTime;
+    }
 
     return (
 
@@ -148,7 +171,7 @@ const TransactionForm  = (props : Props) => {
             </div>
                     
             <div className="form-floating mb-3">
-              <input type="date" className="form-control" id="transactionDate" value={formatDate(transactionDate)} onChange={(e) => setTransactionDate(new Date(e.target.value))}/>
+              <input type="date" className="form-control" id="transactionDate" value={formatDate(transactionDate)} onChange={(e) => {setTransactionDate(stringToDate(e.target.value))}}/>
               <label htmlFor="transactionDate">Date</label>
               {validationErrors.transactionDate && <p style={{color:'red'}}>{validationErrors.transactionDate}</p>}
             </div>
