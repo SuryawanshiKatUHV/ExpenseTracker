@@ -62,27 +62,30 @@ const GroupTransactionForm = (props : Props) => {
             validationErrors["txDate"] = "Date is required.";
         }
         else {
+            console.log(`txDate=${txDate}`);
             // Future date is not allowed check
             const selectedDate = new Date(`${txDate}T00:00:00`);
             const currentDate = new Date();
 
             // Remove timezone information from the dates
-            const selectedDateWithoutTimezone = new Date(
-                selectedDate.getFullYear(),
-                selectedDate.getMonth(),
-                selectedDate.getDate()
-            );
-            const currentDateWithoutTimezone = new Date(
-                currentDate.getFullYear(),
-                currentDate.getMonth(),
-                currentDate.getDate()
-            );
+            // const selectedDateWithoutTimezone = new Date(
+            //     selectedDate.getFullYear(),
+            //     selectedDate.getMonth(),
+            //     selectedDate.getDate()
+            // );
+            // const currentDateWithoutTimezone = new Date(
+            //     currentDate.getFullYear(),
+            //     currentDate.getMonth(),
+            //     currentDate.getDate()
+            // );
 
-            //TODO Can the above code be written as below?
-            // selectedDate.setHours(0, 0, 0, 0);
-            // currentDate.setHours(0, 0, 0, 0);
+            selectedDate.setHours(0, 0, 0, 0);
+            currentDate.setHours(0, 0, 0, 0);
 
-            if (selectedDateWithoutTimezone > currentDateWithoutTimezone) {
+            // if (selectedDateWithoutTimezone > currentDateWithoutTimezone) {
+            //     validationErrors["txDate"] = "Date must not be in future.";
+            // }
+            if (selectedDate > currentDate) {
                 validationErrors["txDate"] = "Date must not be in future.";
             }
         }
