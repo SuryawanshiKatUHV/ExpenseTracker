@@ -6,8 +6,8 @@ interface Props {
 }
 
 function LoginForm({loginHandler, showRegistrationHandler}:Props) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('suryawanshik@uhv.edu');
+  const [password, setPassword] = useState('kapil123');
   const [errors, setErrors] = useState({email:'', password:''});
 
   /**

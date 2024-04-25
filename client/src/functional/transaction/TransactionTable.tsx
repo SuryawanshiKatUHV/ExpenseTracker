@@ -104,6 +104,8 @@ const TransactionTable = ({userId} : Props) => {
                     ))}
                 </tbody>
             </table>
+
+            {transactions.length == 0 && <p>No records found.</p>}
         </div>
     );
 }
