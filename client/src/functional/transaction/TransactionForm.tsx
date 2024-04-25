@@ -112,30 +112,27 @@ const TransactionForm  = (props : Props) => {
         <div  style={{border:1}}>
             <h5 className="m-5">Add Transaction</h5>
 
-            <div style={{ display: 'flex', alignItems: 'center', paddingBottom: '20px' }}>
-            <label htmlFor="transactionType" style={{ marginRight: '20px' }}>Transaction Type:</label>
-                <div className="radio-option" style={{ marginRight: '20px' }}>
-                <input type="radio" id="income" name="transactionType" value="Income" checked={transactionType === "Income"} onChange={(e) => setTransactionType(e.target.value)} disabled={props.editingTransaction ? true : false}/>
-                <label htmlFor="income" style={{ marginLeft: '5px' }}>Income</label>
-                </div>
-
-                <div className="radio-option">
-                <input type="radio" id="expense" name="transactionType" value="Expense" checked={transactionType === "Expense"} onChange={(e) => setTransactionType(e.target.value)} disabled={props.editingTransaction ? true : false}/>
-                <label htmlFor="expense" style={{ marginLeft: '5px' }}>Expense</label>
-                </div>
+            <div className="form-floating mb-3">
+                <select className="form-select" id="txTransactionType" style={{ marginBottom: '18px' }} value={transactionType} onChange={(e) => setTransactionType(e.target.value)}>
+                    <option key="Expense" value="Expense">Expense</option>
+                    <option key="Income" value="Income">Income</option>
+                </select>
+                <label htmlFor="txTransactionType">Type</label>
+                {validationErrors.transactionType && <p style={{ color: 'red' }}>{validationErrors.transactionType}</p>}
             </div>
-            {validationErrors.transactionType && <p style={{ color: 'red' }}>{validationErrors.transactionType}</p>}
 
-            <select className="form-select" aria-label="Default select example" style={{ marginBottom: '18px' }} value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))} disabled={props.editingTransaction ? true : false}>
-                <option value="">Select Category</option>
-                {categories.map((item, index) => (
-                    <option key={index} value={item.CATEGORY_ID}>
-                        {item.CATEGORY_TITLE}
-                    </option>
-                ))}
-            </select>
-            {validationErrors.categoryId && <p style={{color:'red'}}>{validationErrors.categoryId}</p>}
-
+            <div className="form-floating mb-3">
+                <select className="form-select" id="txCategoryId" style={{ marginBottom: '18px' }} value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))}>
+                    <option value=""></option>
+                    {categories.map((item, index) => (
+                        <option key={index} value={item.CATEGORY_ID}>
+                            {item.CATEGORY_TITLE}
+                        </option>
+                    ))}
+                </select>
+                <label htmlFor="txCategoryId">Category</label>
+                {validationErrors.categoryId && <p style={{color:'red'}}>{validationErrors.categoryId}</p>}
+            </div>
 
             <div className="form-floating mb-3">
               <input type="number" className="form-control" id="transactionAmount" value={transactionAmount} onChange={(e) => setTransactionAmount(Number(e.target.value))}/>
