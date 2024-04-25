@@ -114,6 +114,7 @@ const TransactionForm  = (props : Props) => {
 
             <div className="form-floating mb-3">
                 <select className="form-select" id="txTransactionType" style={{ marginBottom: '18px' }} value={transactionType} onChange={(e) => setTransactionType(e.target.value)}>
+                    <option key="blank" value=""></option>
                     <option key="Expense" value="Expense">Expense</option>
                     <option key="Income" value="Income">Income</option>
                 </select>
