@@ -107,14 +107,17 @@ const BudgetForm = (props : Props) => {
         <div  style={{border:1}}>
             <h5 className="m-5">Add Budget</h5>
 
-            <select className="form-select" aria-label="Default select example" style={{ marginBottom: '18px' }} value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))} disabled={props.editingBudget ? true : false}>
-                <option value="">Select Category</option>
-                {categories.map((item, index) => (
-                    <option key={index} value={item.CATEGORY_ID}>
-                        {item.CATEGORY_TITLE}
-                    </option>
-                ))}
-            </select>
+            <div className="form-floating mb-3">
+                <select className="form-select" id="txCategoryId" style={{ marginBottom: '18px' }} value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))} disabled={props.editingBudget ? true : false}>
+                    <option value=""></option>
+                    {categories.map((item, index) => (
+                        <option key={index} value={item.CATEGORY_ID}>
+                            {item.CATEGORY_TITLE}
+                        </option>
+                    ))}
+                </select>
+                <label htmlFor="txCategoryId">Category</label>
+            </div>
             {validationErrors.categoryId && <p style={{color:'red'}}>{validationErrors.categoryId}</p>}
 
             <div className="form-floating mb-3">
