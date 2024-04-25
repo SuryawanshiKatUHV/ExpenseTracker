@@ -31,10 +31,10 @@ class Budget {
   async create(req, res) {
     console.log("Budget create is invoked...");
     try {
-      const BudgetData = req.body;
-      console.log(`BudgetData=${JSON.stringify(BudgetData)}`);
+      const budgetData = req.body;
+      console.log(`budgetData=${JSON.stringify(budgetData)}`);
 
-      const data = await repository.create(BudgetData);
+      const data = await repository.create(budgetData);
 
       res.status(201).json(data); // Send the saved object as a JSON response
       console.log(`Budget is created ${JSON.stringify(data)}`);
