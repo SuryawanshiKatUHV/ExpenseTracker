@@ -175,18 +175,29 @@ const GroupTransactionForm = (props : Props) => {
           {validationErrors.txNotes && <p style={{color:'red'}}>{validationErrors.txNotes}</p>}
         </div>
 
-        <div>Paid for members</div>
-        {availableGroupMembers.map((availableGroupMember) => (
-            <div className="form-check form-check-inline">
-                <input className="form-check-input" 
-                    type="checkbox" 
-                    id={"paidForMember" + availableGroupMember.MEMBER_ID}
-                    value={availableGroupMember.MEMBER_ID}
-                    checked={txMembers.includes(availableGroupMember.MEMBER_ID)}
-                    onChange={() => handleMemberSelect(availableGroupMember.MEMBER_ID)}/>
-                <label className="form-check-label" htmlFor={"paidForMember" + availableGroupMember.MEMBER_ID}>{availableGroupMember.USER_FULLNAME}</label>
-            </div>    
-        ))}
+        <div className="form-floating mb-3">
+            <ul className="list-group">
+                <label htmlFor="UserId" style={{textAlign: "left", paddingLeft: "1em"}}>Paid for members</label>
+                {availableGroupMembers.map((availableGroupMember) => (
+                    <li key={availableGroupMember.MEMBER_ID} className="list-group-item" style={{ textAlign: "left", height: "3em" }}>
+                        <input
+                            type="checkbox"
+                            className="form-check-input me-1"
+                            id={"paidForMember" + availableGroupMember.MEMBER_ID}
+                            name={availableGroupMember.MEMBER_ID}
+                            value={availableGroupMember.MEMBER_ID}
+                            checked={txMembers.includes(availableGroupMember.MEMBER_ID)}
+                            onChange={() => handleMemberSelect(availableGroupMember.MEMBER_ID)}
+                            style={{ height: "1em" }}
+                        />
+                        <label className="form-check-label" htmlFor={"paidForMember" + availableGroupMember.MEMBER_ID}>
+                            {availableGroupMember.USER_FULLNAME}
+                        </label>
+                    </li>
+                ))}
+            </ul>
+        </div>
+
         {validationErrors.txMembers && <p style={{color:'red'}}>{validationErrors.txMembers}</p>}
 
         <div>
