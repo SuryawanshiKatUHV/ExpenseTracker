@@ -163,7 +163,6 @@ const GroupForm = (props:Props) => {
         </div>
 
         <div className="form-floating mb-3">
-
             <ul className="list-group">
                 <label htmlFor="UserId" style={{textAlign: "left", paddingLeft: "1em"}}>Members</label>
                 {users.map((user, index) => (
@@ -184,9 +183,9 @@ const GroupForm = (props:Props) => {
                     </li>
                 ))}
             </ul>
-                
         </div>
-            {/* {validationErrors.categoryId && <p style={{color:'red'}}>{validationErrors.categoryId}</p>} */}
+
+        {/* {validationErrors.categoryId && <p style={{color:'red'}}>{validationErrors.categoryId}</p>} */}
 
         <div>
             <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
