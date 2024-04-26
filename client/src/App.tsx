@@ -85,7 +85,7 @@ function App() {
 
   return (
     <>
-      <div style={{ backgroundColor: '#f0f0f0', padding: '20px', textAlign: 'center' }}>
+      <div style={{ padding: '20px', textAlign: 'center' }}>
         <h1>Expense Tracker</h1>
       </div>
       {error && (<Alert subject="Error" message={error} closeHandler={ErrorClosed}/>)}

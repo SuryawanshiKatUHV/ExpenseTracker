@@ -1,4 +1,5 @@
 import { useState } from "react";
+import './login.css';
 
 interface Props {
     loginHandler: (email : string, password: string) => void;
@@ -40,8 +41,8 @@ function LoginForm({loginHandler, showRegistrationHandler}:Props) {
   }
 
   return (
-    <div>
-        <h2 className="m-5">Login to your account</h2>
+    <div className="card">
+        <h2 className="m-5">Login</h2>
         
         <div className="form-floating mb-3">
           <input type="email" className="form-control" id="inputEmail" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)}/>
@@ -55,9 +56,9 @@ function LoginForm({loginHandler, showRegistrationHandler}:Props) {
           {errors.password && <p style={{color:'red'}}>{errors.password}</p>}
         </div>
 
-        <button className="btn btn-primary" onClick={LoginClicked}>Login</button>
+        <button className="loginBtn" onClick={LoginClicked}>Login</button>
         <br/>
-        <button className="btn btn-link" onClick={showRegistrationHandler}>Register new account</button>
+        <button className="registerBtn" onClick={showRegistrationHandler}>Register new account</button>
     </div>
   );
 }

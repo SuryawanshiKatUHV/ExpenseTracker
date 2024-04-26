@@ -12,9 +12,9 @@ router.get("/:id", authenticator, controller.getById);
 
 router.post("/", authenticator, controller.create);
 
-router.put("/:id", authenticator, controller.update);
+router.put("/:userGroupId", authenticator, controller.update);
 
-router.delete("/:id", authenticator, controller.delete);
+router.delete("/:userGroupId", authenticator, controller.delete);
 
 /**
  * Extended services

@@ -95,11 +95,13 @@ const TransactionTable = ({userId} : Props) => {
                             <td>{item.CATEGORY_TITLE}</td>
                             <td>{item.TRANSACTION_AMOUNT}</td>
                             <td>{item.TRANSACTION_DATE}</td>
-                            <td>{item.TRANSACTION_NOTES}</td>
-                            <td>
-                                <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
-                                <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/> Delete icon
+                            <td className="descriptionCat">{item.TRANSACTION_NOTES}
+                                <div>
+                                    <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
+                                    <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/> {/*Delete icon*/}
+                                </div>
                             </td>
+                            
                         </tr>
                     ))}
                 </tbody>

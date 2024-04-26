@@ -43,11 +43,39 @@ class Group {
   }
 
   async update(req, res) {
-    throw new Error(`To be implemented`);
+    console.log("Group update is invoked");
+
+    try {
+      const{userGroupId} = req.params;
+      console.log("id=", userGroupId);
+
+      const { USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION, USER_GROUP_MEMBERS} = req.body;
+      console.log(`USER_GROUP_DATE=${USER_GROUP_DATE} USER_GROUP_TITLE=${USER_GROUP_TITLE} USER_GROUP_DESCRIPTION=${USER_GROUP_DESCRIPTION}`);
+
+      const data = await repository.update(parseInt(userGroupId), {USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION, USER_GROUP_MEMBERS});
+
+      res.status(201).json(data);
+    }catch (error) {
+      console.error(error.message);
+      res.status(500).json({message: error.message});
+    }
   }
 
   async delete(req, res) {
-    throw new Error(`To be implemented`);
+    console.log("Group delete is invoked...");
+    try {
+      const { userGroupId } = req.params;
+      console.log("id=", userGroupId);
+      console.log("params=", req.params);
+      console.log("Requested URL:", req.originalUrl);
+
+      const data = await repository.delete(parseInt(userGroupId));
+
+      res.status(201).json(data); // Send the saved object as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
   }
   
   async getMembers(req, res) {
