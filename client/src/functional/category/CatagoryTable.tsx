@@ -61,9 +61,9 @@ const CategoryTable = ({userId} : Props) => {
                 console.log("Item deleted");
                 await loadCategories(); // Refresh the list after deleting
                 setError("");
-            } catch (error) {
+            } catch (error: any) {
                 console.error("Failed to delete the item:", error);
-                setError('Failed to delete category'); 
+                setError(error.message); 
             }
         } else {
             console.log("Delete operation cancelled");
@@ -84,8 +84,8 @@ const CategoryTable = ({userId} : Props) => {
             <table className="table table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">Category Title</th>
-                        <th scope="col">Category Description</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -102,6 +102,8 @@ const CategoryTable = ({userId} : Props) => {
                     ))}
                 </tbody>
             </table>
+
+            {categories.length == 0 && <p>No records found.</p>}
         </div>
     );
 };

@@ -186,11 +186,16 @@ class User {
     const connection = await getConnection();
     try {
       const [rows, fields] = await connection.execute(
-        `SELECT C.CATEGORY_ID, C.CATEGORY_TITLE, T.TRANSACTION_ID, T.TRANSACTION_TYPE, T.TRANSACTION_AMOUNT, T.TRANSACTION_NOTES, DATE_FORMAT(T.TRANSACTION_DATE, '%m/%d/%Y') AS TRANSACTION_DATE
+        `SELECT C.CATEGORY_ID, C.CATEGORY_TITLE, T.TRANSACTION_ID, T.TRANSACTION_TYPE, T.TRANSACTION_AMOUNT, T.TRANSACTION_NOTES, DATE_FORMAT(T.TRANSACTION_DATE, '%m/%d/%Y') AS TRANSACTION_DATE, COALESCE(UGT.num_user_group_transactions, 0) AS TOTAL_USER_GROUP_TRANSACTIONS
         FROM TRANSACTION T
         JOIN CATEGORY C ON T.CATEGORY_ID = C.CATEGORY_ID
-        WHERE C.OWNER_ID=?
-        ORDER BY T.TRANSACTION_DATE DESC;`, [userId]);
+        LEFT JOIN (
+          SELECT TRANSACTION_ID, COUNT(*) AS num_user_group_transactions
+          FROM USER_GROUP_TRANSACTION
+          GROUP BY TRANSACTION_ID
+        ) UGT ON T.TRANSACTION_ID = UGT.TRANSACTION_ID
+      WHERE C.OWNER_ID=?
+      ORDER BY T.TRANSACTION_DATE DESC;`, [userId]);
       return rows;
     }
     finally {
@@ -287,6 +292,69 @@ class User {
         GROUP BY UGT.PAID_BY_USER_FULLNAME, UGT.PAID_TO_USER_FULLNAME`, 
           [userId]);
       return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
+  
+  /**
+   * Get year month range of the Transactions.
+   *
+   * @returns {Promise<Array>} An array of objects {year, month}.
+   */
+  async getTransactionsYearMonthRange(userId) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(
+        `SELECT DISTINCT YEAR(t.TRANSACTION_DATE) AS Year, MONTH(t.TRANSACTION_DATE) AS Month
+        FROM TRANSACTION t
+        JOIN CATEGORY c ON t.CATEGORY_ID = c.CATEGORY_ID
+        WHERE t.TRANSACTION_DATE IS NOT NULL AND c.OWNER_ID = ?
+        ORDER BY Year DESC, Month DESC`, 
+        [userId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
+  /**
+   * Gets the transaction summary for the user in specific month
+   * 
+   * @param {number} userId 
+   * @param {string} type e.g. Expense, Income
+   * @param {number} year 
+   * @param {number} month 
+   * @returns 
+   */
+  async getTransactionsSummary(userId, type, year, month) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(
+        `SELECT C.CATEGORY_TITLE AS Category, B.BUDGET_AMOUNT AS Budget, SUM(T.TRANSACTION_AMOUNT) AS Total
+        FROM TRANSACTION T
+          JOIN CATEGORY C
+          ON C.CATEGORY_ID = T.CATEGORY_ID
+        JOIN BUDGET B
+          ON C.CATEGORY_ID = B.CATEGORY_ID AND YEAR(B.BUDGET_DATE) = YEAR(T.TRANSACTION_DATE) AND MONTH(B.BUDGET_DATE) = MONTH(T.TRANSACTION_DATE)
+        WHERE
+          YEAR(T.TRANSACTION_DATE) = ? AND MONTH(T.TRANSACTION_DATE) = ? AND T.TRANSACTION_TYPE = ?  AND C.OWNER_ID = ?
+        GROUP BY
+          T.TRANSACTION_TYPE, YEAR(T.TRANSACTION_DATE), MONTH(T.TRANSACTION_DATE), C.CATEGORY_TITLE, B.BUDGET_AMOUNT;`, 
+        [year, month, type, userId]);
+
+        const trsactionSummary = rows.map((item) => {
+          return {
+              name:     item.Category, 
+              Category: item.Category,
+              Budget:   parseFloat(item.Budget), 
+              Total:    parseFloat(item.Total)
+          };
+      });
+      return trsactionSummary;
     }
     finally {
       connection.release();

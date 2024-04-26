@@ -27,6 +27,10 @@ router.get("/:id/budgets", authenticator, controller.getBudgets);
 
 router.get("/:id/transactions", authenticator, controller.getTransactions);
 
+router.get("/:id/transactions/yearMonthRange", authenticator, controller.getTransactionsYearMonthRange);
+
+router.get("/:id/transactions/:type/:year/:month/summary", authenticator, controller.getTransactionsSummary);
+
 router.get("/:id/groups", authenticator, controller.getGroups);
 
 router.get("/:userId/groups/:groupId/paidTransactions", authenticator, controller.getGroupTransactionsPaid);

@@ -54,9 +54,9 @@ const TransactionTable = ({userId} : Props) => {
                 console.log("Transaction deleted");
                 await loadTransactions(); // Refresh the list after deleting
                 setError("");
-            } catch (error) {
+            } catch (error:any) {
                 console.error("Failed to delete the item:", error);
-                setError('Failed to delete transaction'); 
+                setError(error.message); 
             }
         } else {
             console.log("Delete operation cancelled");
@@ -85,6 +85,7 @@ const TransactionTable = ({userId} : Props) => {
                         <th scope="col">Category</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Date</th>
+                        <th scope="col">GroupTx</th>
                         <th scope="col">Notes</th>
                     </tr>
                 </thead>
@@ -95,17 +96,27 @@ const TransactionTable = ({userId} : Props) => {
                             <td>{item.CATEGORY_TITLE}</td>
                             <td>{item.TRANSACTION_AMOUNT}</td>
                             <td>{item.TRANSACTION_DATE}</td>
+<<<<<<< HEAD
                             <td className="descriptionCat">{item.TRANSACTION_NOTES}
                                 <div>
                                     <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
                                     <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/> {/*Delete icon*/}
                                 </div>
+=======
+                            <td>{item.TOTAL_USER_GROUP_TRANSACTIONS>0?item.TOTAL_USER_GROUP_TRANSACTIONS:''}</td>
+                            <td>{item.TRANSACTION_NOTES}</td>
+                            <td>
+                                <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
+                                <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/> Delete icon
+>>>>>>> 896f800560a77675f9f595cef1ea2320832dfd00
                             </td>
                             
                         </tr>
                     ))}
                 </tbody>
             </table>
+
+            {transactions.length == 0 && <p>No records found.</p>}
         </div>
     );
 }

@@ -9,10 +9,14 @@ interface Props {
 }
 
 const BudgetForm = (props : Props) => {
+    // Find the first date of the current month
+    const currentMonthStart = new Date();
+    currentMonthStart.setHours(0, 0, 0, 0);
+    currentMonthStart.setDate(1);
 
     const [categories, setCategories] = useState<any[]>([]);
     const [categoryId, setCategoryId] = useState(props.editingBudget?.CATEGORY_ID);
-    const [budgetDate, setBudgetDate] = useState(props.editingBudget?.BUDGET_DATE ? new Date(props.editingBudget.BUDGET_DATE) : new Date());
+    const [budgetDate, setBudgetDate] = useState(props.editingBudget?.BUDGET_DATE ? new Date(props.editingBudget.BUDGET_DATE) : currentMonthStart);
     const [budgetAmount, setBudgetAmount] = useState(props.editingBudget?.BUDGET_AMOUNT);
     const [validationErrors, setValidationErrors] = useState({categoryId: '', budgetDate: '', budgetAmount: ''});
     const [error, setError] = useState('');
@@ -101,6 +105,17 @@ const BudgetForm = (props : Props) => {
         
         return `${year}-${month}-${day}`;
     };
+
+    /**
+     * Converts date string to date object
+     * @param dateString Date in format "yyyy-mm-dd"
+     * @returns Date object
+     */
+    const stringToDate = (dateString: string) => {
+        const dateTokens : string[] = dateString.split("-");
+        const dateWithoutTime = new Date(Number(dateTokens[0]), Number(dateTokens[1]) - 1, 1);
+        return dateWithoutTime;
+    }
     
     return (
 
@@ -127,8 +142,9 @@ const BudgetForm = (props : Props) => {
             </div>
     
             <div className="form-floating mb-3">
-              <input type="date" className="form-control" id="budgetDate" value={formatDate(budgetDate)} onChange={(e) => setBudgetDate(new Date(e.target.value))}/>
+              <input type="date" className="form-control" id="budgetDate" value={formatDate(budgetDate)} onChange={(e) => setBudgetDate(stringToDate(e.target.value))}/>
               <label htmlFor="budgetDate">Date</label>
+              <small><i>* Selecting a date in a month will reset to the first day in a month.</i></small>
               {validationErrors.budgetDate && <p style={{color:'red'}}>{validationErrors.budgetDate}</p>}
             </div>
 

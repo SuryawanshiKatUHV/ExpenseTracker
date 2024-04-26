@@ -1,58 +1,95 @@
+import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList} from 'recharts';
-import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie} from 'recharts';
+import { END_POINTS, get } from '../../common/Utilities';
 
 
 interface Props {
     userId: number;
 }
 
-const DashboardForTransactions = ({userId} : Props) => {
-     /**
-     * Dummy data
-     */
-     const expenseData = [
-        {
-            Category: 'Utilities',
-            Budget: 700,
-            Expense: 100,
-        },
-        {
-            Category: 'Travel',
-            Budget: 300,
-            Expense: 400,
-        },
-        {
-            Category: 'Education',
-            Budget: 1500,
-            Expense: 1100,
-        },
-        {
-            Category: 'Food',
-            Budget: 500,
-            Expense: 450,
-        }
-      ];
+interface YearMonthRange {
+    Year:number;
+    Month:number;
+}
 
-      const incomeData = [
-        {
-            Category: 'Salary',
-            Budget: 2500,
-            Income: 2500,
-        },
-        {
-            Category: 'Business',
-            Budget: 3000,
-            Income: 2500,
-        },
-        {
-            Category: 'Real Estate',
-            Budget: 15000,
-            Income: 11000,
+interface TransactionSummary {
+    name:string;
+    Category: string
+    Budget:number;
+    Total:number;
+}
+
+const DashboardForTransactions = ({userId} : Props) => {
+    const [yearMonthRange, setYearMonthRange] = useState<YearMonthRange[]>([]);
+    const [selectedYearMonth, setSelectedYearMonth] = useState<YearMonthRange>();
+    const [incomeSummary, setIncomeSummary] = useState<TransactionSummary[]>([]);
+    const [expenseSummary, setExpenseSummary] = useState<TransactionSummary[]>([]);
+   
+    useEffect(() =>{ 
+        get(`${END_POINTS.Users}/${userId}/transactions/yearMonthRange`)
+        .then((data) => {
+            setYearMonthRange(data);
+            return data;
+        })
+        .then((data) => {
+            if (data && data.length > 0) {
+                setSelectedYearMonth(data[0]);
+                console.log(`Selected year and month: ${JSON.stringify(selectedYearMonth)}`);
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        fetchData();    
+    }, [selectedYearMonth]);
+
+    function fetchData() {
+        get(`${END_POINTS.Users}/${userId}/transactions/Expense/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}/summary`)
+        .then(data => {
+            setExpenseSummary(data);
+        });
+
+        get(`${END_POINTS.Users}/${userId}/transactions/Income/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}/summary`)
+        .then(data => {
+            setIncomeSummary(data);
+        });
+    }
+
+    /**
+     * Parses a string to YearMonthRange object
+     * 
+     * @param stringYearMonth A string in the format 'yyyy-mm'
+     * @returns YearMonthRange object
+     */
+    function stringToYearMonth(stringYearMonth : string) : YearMonthRange {
+        if (!stringToYearMonth) {
+            throw new Error(`stringToYearMonth is required.`);
         }
-      ];
+        const tokens = stringYearMonth?stringYearMonth.split("-"):[];
+        if (tokens.length != 2) {
+            throw new Error(`stringToYearMonth '${stringToYearMonth}' is not in required format of 'yyyy-mm'`)
+        }
+
+        return {Year:Number(tokens[0]), Month:Number(tokens[1])};
+    }
 
     return (
         <>
+            <div className="form-floating mb-3">
+                <select 
+                    className="form-select" 
+                    id="selectedYearMonth" 
+                    style={{ marginBottom: '18px' }} 
+                    value={`${selectedYearMonth?.Year}-${selectedYearMonth?.Month}`}
+                    onChange={(e) => setSelectedYearMonth(stringToYearMonth(e.target.value))}>
+                    {yearMonthRange.map((yearMonth, index) => <option key={index} value={`${yearMonth.Year}-${yearMonth.Month}`}>{`${yearMonth.Year}-${yearMonth.Month}`}</option>)}
+                </select>
+                <label htmlFor="selectedYearMonth">Year-Month</label>
+            </div>
+
+            {yearMonthRange.length == 0 && <p>There are no transactions to show the charts.</p>}
+
             <table width="100%">
                 <thead>
                     <tr>
@@ -63,15 +100,35 @@ const DashboardForTransactions = ({userId} : Props) => {
                 <tbody>
                     <tr>
                         <td>
-                            <PieChart width={500} height={300}>
+                            <PieChart width={400} height={400}>
+                                <Pie
+                                    dataKey="Total"
+                                    isAnimationActive={false}
+                                    data={incomeSummary}
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius={80}
+                                    fill="green"
+                                    label
+                                />
+                                <Pie dataKey="Total" data={expenseSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
                                 <Tooltip />
-                                <Pie data={incomeData} dataKey="Income" cx="50%" cy="50%" outerRadius={80} fill="green" label/>
                             </PieChart>
                         </td>
                         <td>
-                            <PieChart width={500} height={300}>
+                            <PieChart width={400} height={400}>
+                                <Pie
+                                    dataKey="Total"
+                                    isAnimationActive={false}
+                                    data={expenseSummary}
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius={80}
+                                    fill="red"
+                                    label
+                                />
+                                <Pie dataKey="Total" data={expenseSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
                                 <Tooltip />
-                                <Pie data={expenseData} dataKey="Expense" cx="50%" cy="50%" outerRadius={80} fill="red" label/>
                             </PieChart>
                         </td>
                     </tr>
@@ -80,7 +137,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                             <BarChart
                                 width={500}
                                 height={300}
-                                data={incomeData}
+                                data={incomeSummary}
                                 margin={{
                                     top: 20,
                                     right: 20,
@@ -96,17 +153,17 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 <Bar dataKey="Budget" fill="orange">
                                     <LabelList dataKey="Budget" position="top" />
                                 </Bar>
-                                <Bar dataKey="Income" fill="green">
-                                    <LabelList dataKey="Income" position="top" />
+                                <Bar dataKey="Total" fill="green">
+                                    <LabelList dataKey="Total" position="top" />
                                 </Bar>
                                 <Legend/>
                             </BarChart>
                         </td>
                         <td>
-                        <BarChart
+                            <BarChart
                                 width={500}
                                 height={300}
-                                data={expenseData}
+                                data={expenseSummary}
                                 margin={{
                                     top: 20,
                                     right: 20,
@@ -122,8 +179,8 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 <Bar dataKey="Budget" fill="orange">
                                     <LabelList dataKey="Budget" position="top" />
                                 </Bar>
-                                <Bar dataKey="Expense" fill="red">
-                                    <LabelList dataKey="Expense" position="top" />
+                                <Bar dataKey="Total" fill="red">
+                                    <LabelList dataKey="Total" position="top" />
                                 </Bar>
                                 <Legend/>
                             </BarChart>

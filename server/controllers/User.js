@@ -252,6 +252,38 @@ class User {
       res.status(500).json({ message: error.message });
     }
   }
+
+  async getTransactionsYearMonthRange(req, res) {
+    console.log("getTransactionsYearMonthRange is invoked...");
+    try {
+      const { id } = req.params;
+      console.log("id=", id);
+      const data = await repository.getTransactionsYearMonthRange(parseInt(id));
+
+      res.status(200).json(data); // Send the saved object as a JSON response
+      console.log(`Transactions year month range found ${JSON.stringify(data)}`);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async getTransactionsSummary(req, res) {
+    console.log("getTransactionsSummary is invoked...");
+    try {
+      const { id, type, year, month } = req.params;
+      console.log(`id=${id} type=${type} year=${year} month=${month}`);
+
+      const data = await repository.getTransactionsSummary(parseInt(id), type, parseInt(year), parseInt(month));
+
+      res.status(200).json(data); // Send the saved object as a JSON response
+      console.log(`getTransactionsSummary found ${JSON.stringify(data)}`);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
 }
 
 module.exports = new User();

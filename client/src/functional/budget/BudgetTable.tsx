@@ -108,6 +108,7 @@ const BudgetTable = ({userId} : Props) => {
                     ))}
                 </tbody>
             </table>
+            {budgets.length == 0 && <p>No records found.</p>}
         </div>
     );
 }

@@ -107,8 +107,10 @@ const GroupTransactionTable = (props : Props) => {
           <label htmlFor="selectedGroupId">Group</label>
         </div>
 
+        {groups.length == 0 && <p style={{color:'red'}}>No groups found.</p>}
+
         {/* Show add new button when the form is not shown*/}
-        {!formDisplayed && <button className="btn btn-success" onClick={AddNewClicked}>Add New</button>}
+        {!formDisplayed && groups.length > 0 && <button className="btn btn-success" onClick={AddNewClicked}>Add New</button>}
 
         {/* Show the add new form*/}
         {formDisplayed && <GroupTransactionForm userId={props.userId} groupId={selectedGroupId} saveHandler={SaveClicked} cancelHandler={CancelClicked}/>}
