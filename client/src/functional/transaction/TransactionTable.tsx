@@ -87,6 +87,7 @@ const TransactionTable = ({userId} : Props) => {
                         <th scope="col">Date</th>
                         <th scope="col">GroupTx</th>
                         <th scope="col">Notes</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -99,8 +100,8 @@ const TransactionTable = ({userId} : Props) => {
                             <td>{item.TOTAL_USER_GROUP_TRANSACTIONS>0?item.TOTAL_USER_GROUP_TRANSACTIONS:''}</td>
                             <td>{item.TRANSACTION_NOTES}</td>
                             <td>
-                                <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
-                                <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/> Delete icon
+                                {item.TOTAL_USER_GROUP_TRANSACTIONS===0 && <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} />} {/* Edit icon */}
+                                <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/>
                             </td>
                         </tr>
                     ))}
