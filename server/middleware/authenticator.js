@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 // Middleware to authenticate the token
 const authenticator = (req, res, next) => {
-  console.log(`Invoked authenticateToken...`);
+  console.log(`Invoked authenticator...`);
   // Retrieve the token from the Authorization header
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN_VALUE
@@ -20,7 +20,7 @@ const authenticator = (req, res, next) => {
     }
 
     req.user = user; // Set the user in the request object
-    console.log(`req.user=${JSON.stringify(req.user)}`);
+    console.log(`authenticator : req.user=${JSON.stringify(req.user)}`);
     next(); // Proceed to the next middleware or request handler
   });
 };
