@@ -85,20 +85,42 @@ class Group {
    * @returns {Promise<void>}
    * @throws {Error} To be implemented.
    */
-  async update(userId, userGroupId, userGroupData) {
-    throw new Error(`To be implemented`);
+  async update(userGroupId, {USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION, USER_GROUP_MEMBERS}) {
+    const connection = await getConnection();
+    try {
+      const result = await connection.execute("UPDATE USER_GROUP SET USER_GROUP_DATE=?, USER_GROUP_TITLE=?, USER_GROUP_DESCRIPTION=? WHERE USER_GROUP_ID=?", [USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION, userGroupId]);
+  
+      if (result.affectedRows === 0) {
+        throw new Error(`No group found for id ${userGroupId}`);
+      }
+  
+      return result;
+    } finally {
+      connection.release();
+    }
   }
 
   /**
    * Delete a group.
    *
-   * @param {number} userId - The user ID.
+   * 
    * @param {number} userGroupId - The group ID.
    * @returns {Promise<void>}
    * @throws {Error} To be implemented.
    */
-  async delete(userId, userGroupId) {
-    throw new Error(`To be implemented`);
+  async delete(userGroupId) {
+    const connection = await getConnection();
+    try {
+      const result = await connection.execute("DELETE FROM USER_GROUP WHERE USER_GROUP_ID=? ", [userGroupId]);
+  
+      if (result.affectedRows === 0) {
+        throw new Error(`No group found with USER_GROUP_ID=${userGroupId}`);
+      }
+  
+      return result;
+    } finally {
+      connection.release();
+    }
   }
 
   async getMembers(groupId) {

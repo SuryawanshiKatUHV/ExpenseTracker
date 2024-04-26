@@ -1,4 +1,5 @@
 import { useState } from "react";
+import './login.css';
 
 interface Props {
     registerHandler: (email:string, firstName: string, lastName: string, password: string) => void;
@@ -69,7 +70,7 @@ function RegistrationForm({registerHandler, showLoginHandler}:Props) {
     }
 
   return (
-    <div>
+    <div className="card">
         <h2 className="m-5">Register a new account</h2>
         
         <div className="form-floating mb-3">

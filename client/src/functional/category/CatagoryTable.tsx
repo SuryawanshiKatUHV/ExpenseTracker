@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CategoryForm from "./CategoryForm";
 import { END_POINTS, get, del } from "../../common/Utilities";
 import { PencilSquare, TrashFill } from 'react-bootstrap-icons';
+// import './category.css';
 
 interface Props {
     userId: number;
@@ -92,10 +93,11 @@ const CategoryTable = ({userId} : Props) => {
                     {categories.map((item) => (
                         <tr>
                             <td>{item.CATEGORY_TITLE}</td>
-                            <td>{item.CATEGORY_DESCRIPTION}</td>
-                            <td>
-                                <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
-                                <TrashFill onClick={() => DeleteClicked(item.CATEGORY_ID)} style={{cursor: 'pointer'}}/> {/* Delete icon */}
+                            <td className="descriptionCat">{item.CATEGORY_DESCRIPTION}
+                                <div>
+                                    <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
+                                    <TrashFill onClick={() => DeleteClicked(item.CATEGORY_ID)} style={{cursor: 'pointer'}}/> {/* Delete icon */}
+                                </div>        
                             </td>
                         </tr>
                     ))}

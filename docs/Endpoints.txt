@@ -42,8 +42,8 @@ x get		/api/groups/:id/members
 x get		/api/groups/:id/transactions
 x get		/api/groups/:id/settlementSummary
 x post		/api/groups
-. put		/api/groups
-. delete	/api/groups/:id
+. put		/api/groups/:userGroupId
+. delete	/api/groups/:userGroupId
 
 x get		/api/groupTransactions
 x get		/api/groupTransactions/:id
