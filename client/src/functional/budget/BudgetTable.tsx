@@ -60,9 +60,9 @@ const BudgetTable = ({userId} : Props) => {
                 console.log("Budget deleted");
                 await loadBudgets(); // Refresh the list after deleting
                 setError("");
-            } catch (error) {
+            } catch (error:any) {
                 console.error("Failed to delete the item:", error);
-                setError('Failed to delete budget'); 
+                setError(error.message); 
             }
         } else {
             console.log("Delete operation cancelled");
@@ -90,6 +90,7 @@ const BudgetTable = ({userId} : Props) => {
                         <th scope="col">Category</th>
                         <th scope="col">Budget</th>
                         <th scope="col">Date</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
