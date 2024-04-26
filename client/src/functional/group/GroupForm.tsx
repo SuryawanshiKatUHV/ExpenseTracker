@@ -140,8 +140,9 @@ const GroupForm = (props:Props) => {
 
 
     return (
-        <div  style={{border:1}}>
+        <>
         <h5 className="m-5">Add new group</h5>
+        <div className="card" style={{border:1}}>
 
         <div className="form-floating mb-3">
           <input type="date" className="form-control" id="groupDate" value={formatDate(groupDate)} onChange={(e) => setGroupDate(new Date(e.target.value))}/>
@@ -194,6 +195,7 @@ const GroupForm = (props:Props) => {
 
         {error && <p style={{color:'red'}}>{error}</p>}
     </div>
+    </>
     );
 }
 

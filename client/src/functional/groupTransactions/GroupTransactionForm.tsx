@@ -67,24 +67,9 @@ const GroupTransactionForm = (props : Props) => {
             const selectedDate = new Date(`${txDate}T00:00:00`);
             const currentDate = new Date();
 
-            // Remove timezone information from the dates
-            // const selectedDateWithoutTimezone = new Date(
-            //     selectedDate.getFullYear(),
-            //     selectedDate.getMonth(),
-            //     selectedDate.getDate()
-            // );
-            // const currentDateWithoutTimezone = new Date(
-            //     currentDate.getFullYear(),
-            //     currentDate.getMonth(),
-            //     currentDate.getDate()
-            // );
-
             selectedDate.setHours(0, 0, 0, 0);
             currentDate.setHours(0, 0, 0, 0);
 
-            // if (selectedDateWithoutTimezone > currentDateWithoutTimezone) {
-            //     validationErrors["txDate"] = "Date must not be in future.";
-            // }
             if (selectedDate > currentDate) {
                 validationErrors["txDate"] = "Date must not be in future.";
             }
@@ -156,10 +141,11 @@ const GroupTransactionForm = (props : Props) => {
     }
 
     return (
-        
-    <div style={{border:1}}>
-        <h5 className="m-5">Add new group transaction</h5>
-        
+        <>
+    <h5 className="m-5">Add new group transaction</h5>
+
+    <div className="card" style={{border:1}}>
+       
         {error && <p style={{color:'red'}}>{error}</p>}
 
         <div className="form-floating mb-3">
@@ -208,6 +194,7 @@ const GroupTransactionForm = (props : Props) => {
             <button className="btn btn-danger" onClick={CancelClicked}>Cancel</button>
         </div>
     </div>
+    </>
     );
 }
 
