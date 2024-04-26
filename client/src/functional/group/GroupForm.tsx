@@ -141,7 +141,7 @@ const GroupForm = (props:Props) => {
 
     return (
         <>
-        <h5 className="m-5">Add new group</h5>
+        <h5 className="m-5">{props.editingGroup?"Edit group":"Add group"}</h5>
         <div className="card" style={{border:1}}>
 
         <div className="form-floating mb-3">

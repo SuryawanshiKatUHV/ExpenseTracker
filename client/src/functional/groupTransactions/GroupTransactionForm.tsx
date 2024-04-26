@@ -142,7 +142,7 @@ const GroupTransactionForm = (props : Props) => {
 
     return (
         <>
-    <h5 className="m-5">Add new group transaction</h5>
+    <h5 className="m-5">Add group transaction</h5>
 
     <div className="card" style={{border:1}}>
        
