@@ -85,6 +85,7 @@ const CategoryTable = ({userId} : Props) => {
                     <tr>
                         <th scope="col">Title</th>
                         <th scope="col">Description</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
