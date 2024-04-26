@@ -93,11 +93,12 @@ const CategoryTable = ({userId} : Props) => {
                     {categories.map((item) => (
                         <tr>
                             <td>{item.CATEGORY_TITLE}</td>
-                            <td className="descriptionCat">{item.CATEGORY_DESCRIPTION}
+                            <td className="descriptionCat">{item.CATEGORY_DESCRIPTION}</td>
+                            <td>
                                 <div>
                                     <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
                                     <TrashFill onClick={() => DeleteClicked(item.CATEGORY_ID)} style={{cursor: 'pointer'}}/> {/* Delete icon */}
-                                </div>        
+                                </div> 
                             </td>
                         </tr>
                     ))}
