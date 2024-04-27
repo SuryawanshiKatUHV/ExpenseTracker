@@ -174,11 +174,11 @@ class Group {
   async getSettlementSummary(groupId) {
     const SQL =
     `SELECT
-        u.USER_ID,
-        CONCAT(u.USER_LNAME, ", ", u.USER_FNAME) AS USER_FULLNAME,
-        COALESCE(SUM(p.amount_paid), 0) AS TOTAL_AMOUNT_PAID,
-        COALESCE(SUM(r.amount_received), 0) AS TOTAL_AMOUNT_RECEIVED,
-        (COALESCE(SUM(p.amount_paid), 0) - COALESCE(SUM(r.amount_received), 0)) AS UNSETTLED_DUE
+      u.USER_ID,
+      CONCAT(u.USER_LNAME, ", ", u.USER_FNAME) AS USER_FULLNAME,
+      COALESCE(SUM(p.amount_paid), 0) AS TOTAL_AMOUNT_PAID,
+      COALESCE(SUM(r.amount_received), 0) AS TOTAL_AMOUNT_RECEIVED,
+      (COALESCE(SUM(p.amount_paid), 0) - COALESCE(SUM(r.amount_received), 0)) AS UNSETTLED_DUE
     FROM
         USER u
     LEFT JOIN
@@ -203,12 +203,18 @@ class Group {
         USER_GROUP_ID, PAID_TO_USER_ID) r
     ON
         u.USER_ID = r.USER_ID AND r.USER_GROUP_ID = ?
+    WHERE
+    u.USER_ID IN (
+      SELECT MEMBER_ID AS USER_ID
+            FROM USER_GROUP_MEMBERSHIP
+            WHERE USER_GROUP_ID = ?
+        )
     GROUP BY
         u.USER_ID`;
-  
+      
     const connection = await getConnection();
     try {
-      const [rows, fields] = await connection.execute(SQL, [groupId, groupId]);
+      const [rows, fields] = await connection.execute(SQL, [groupId, groupId, groupId]);
       return rows;
     }
     finally {
