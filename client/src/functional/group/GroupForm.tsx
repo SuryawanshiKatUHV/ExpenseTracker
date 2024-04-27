@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { END_POINTS, get, post, put } from "../../common/Utilities";
+import { END_POINTS, get, post, put, formatDate } from "../../common/Utilities";
 import { Display } from "react-bootstrap-icons";
 
 interface Props {
@@ -122,22 +122,9 @@ const GroupForm = (props:Props) => {
         }
     };
     
-
     const CancelClicked = () => {
         props.cancelHandler();
     }
-
-
-    // Formats date into to yyyy/mm/dd 
-    const formatDate = (date: Date) => {
-        let year = date.getUTCFullYear();
-        // Pad month and day with leading zeros if necessary
-        let month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-        let day = date.getUTCDate().toString().padStart(2, '0');
-        
-        return `${year}-${month}-${day}`;
-    };
-
 
     return (
         <>
