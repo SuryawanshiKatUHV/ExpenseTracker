@@ -14,7 +14,19 @@ class Category {
   async getAll() {
     const connection = await getConnection();
     try {
-      const [rows, fields] = await connection.execute("SELECT * FROM CATEGORY ORDER BY CATEGORY_TITLE ASC", []);
+      const [rows, fields] = await connection.execute(`SELECT C.*, COALESCE(T.TOTAL_TRANSACTIONS, 0) AS TOTAL_TRANSACTIONS, COALESCE(B.TOTAL_BUDGETS, 0) AS TOTAL_BUDGETS
+      FROM CATEGORY C
+        LEFT JOIN (
+        SELECT CATEGORY_ID, COUNT(*) AS TOTAL_TRANSACTIONS
+            FROM TRANSACTION
+            GROUP BY CATEGORY_ID
+        ) T ON T.CATEGORY_ID = C.CATEGORY_ID
+        LEFT JOIN (
+        SELECT CATEGORY_ID, COUNT(*) AS TOTAL_BUDGETS
+            FROM BUDGET
+            GROUP BY CATEGORY_ID
+        ) B ON B.CATEGORY_ID = C.CATEGORY_ID
+        ORDER BY C.CATEGORY_TITLE ASC;`, []);
       return rows;
     }
     finally {
@@ -32,7 +44,20 @@ class Category {
   async getById(id) {
     const connection = await getConnection();
     try {
-      const [rows, fields] = await connection.execute("SELECT * FROM CATEGORY WHERE CATEGORY_ID=?", [id]);
+      const [rows, fields] = await connection.execute(`SELECT C.*, COALESCE(T.TOTAL_TRANSACTIONS, 0) AS TOTAL_TRANSACTIONS, COALESCE(B.TOTAL_BUDGETS, 0) AS TOTAL_BUDGETS
+      FROM CATEGORY C
+        LEFT JOIN (
+        SELECT CATEGORY_ID, COUNT(*) AS TOTAL_TRANSACTIONS
+            FROM TRANSACTION
+            GROUP BY CATEGORY_ID
+        ) T ON T.CATEGORY_ID = C.CATEGORY_ID
+        LEFT JOIN (
+        SELECT CATEGORY_ID, COUNT(*) AS TOTAL_BUDGETS
+            FROM BUDGET
+            GROUP BY CATEGORY_ID
+        ) B ON B.CATEGORY_ID = C.CATEGORY_ID
+        WHERE C.CATEGORY_ID=?
+        ORDER BY C.CATEGORY_TITLE ASC;`, [id]);
       if (!rows || rows.length == 0) {
         throw new Error(`No category found for id ${id}`);
       }
@@ -99,6 +124,18 @@ class Category {
   async delete(id) {
     const connection = await getConnection();
     try {
+      // Ensure if this item can be deleted
+      const categoryData = await this.getById(id);
+      const totalTransactions = parseInt(categoryData.TOTAL_TRANSACTIONS);
+      const totalBudgets = parseInt(categoryData.TOTAL_BUDGETS);
+      if (totalTransactions > 0 ) {
+        throw new Error(`Cannot delete '${categoryData.CATEGORY_TITLE}' category as it has ${totalTransactions} transaction(s).`);
+      }
+      if (totalBudgets > 0 ) {
+        throw new Error(`Cannot delete '${categoryData.CATEGORY_TITLE}' category as it has ${totalBudgets} budget(s).`);
+      }
+
+      // Delete this item
       const result = await connection.execute("DELETE FROM CATEGORY WHERE CATEGORY_ID=?", [id]);
   
       if (result.affectedRows === 0) {
