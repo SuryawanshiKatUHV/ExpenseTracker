@@ -183,6 +183,21 @@ class User {
     }
   }
 
+  async getTransactionsByMonth(req, res) {
+    console.log("User getTransactionsByMonth is invoked...");
+    try {
+      const { id, year, month } = req.params;
+      console.log(`id=${id} year=${year} month=${month}`);
+
+      const data = await repository.getTransactionsByMonth(parseInt(id), parseInt(year), parseInt(month));
+
+      res.status(200).json(data); // Send the users as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async getGroups(req, res) {
     console.log("User getGroups is invoked...");
     try {

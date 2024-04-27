@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import TransactionForm from "./TransactionForm";
-import { END_POINTS, get, del } from "../../common/Utilities";
+import { END_POINTS, get, del, stringToYearMonth, YearMonthRange } from "../../common/Utilities";
 import { PencilSquare, TrashFill } from 'react-bootstrap-icons';
 
 interface Props {
@@ -8,22 +8,53 @@ interface Props {
 }
 
 const TransactionTable = ({userId} : Props) => {
+    const [yearMonthRange, setYearMonthRange] = useState<YearMonthRange[]>([]);
+    const [selectedYearMonth, setSelectedYearMonth] = useState<YearMonthRange>(defaultYearMonth());
+
     const [formDisplayed, setFormDisplayed] = useState(false);
     const [transactions, setTransactions] = useState<any[]>([]);
     const [editingTransaction, setEditingTransaction] = useState<any>([]);
     const [error, setError] = useState('');
 
+    function defaultYearMonth() : YearMonthRange {
+        let currentDate = new Date();
+        let yearMonth:YearMonthRange = {Year:currentDate.getFullYear(), Month:currentDate.getMonth()+1};
+        return yearMonth;
+    }
+
     async function loadTransactions() {
-        const transactions = await get(`${END_POINTS.Users}/${userId}/transactions`);
+        const transactions = await get(`${END_POINTS.Users}/${userId}/transactions/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}`);
         setTransactions(transactions);
     }
+    
+    useEffect(() =>{ 
+        get(`${END_POINTS.Users}/${userId}/transactions/yearMonthRange`)
+        .then((data) => {
+            setYearMonthRange(data);
+            return data;
+        })
+        .then((data) => {
+            if (data && data.length > 0) {
+                setSelectedYearMonth(data[0]);
+            }
+        })
+        .then(() => {
+            async function fetchData() {
+                await loadTransactions();
+            }
+            fetchData();
+        })
+        .catch((error) => {
+            setError(error.message?error.message:error)
+        });;
+    }, []);
 
     useEffect(() =>{ 
         async function fetchData() {
             await loadTransactions();
         }
         fetchData();
-    }, []);
+    }, [selectedYearMonth]);
 
     const AddNewClicked = () => {
         setEditingTransaction(null);
@@ -69,6 +100,19 @@ const TransactionTable = ({userId} : Props) => {
     }
 
     return (
+        <>
+        <div className="form-floating mb-3">
+            <select 
+                className="form-select" 
+                id="selectedYearMonth" 
+                style={{ marginBottom: '18px' }} 
+                value={`${selectedYearMonth?.Year}-${selectedYearMonth?.Month}`}
+                onChange={(e) => setSelectedYearMonth(stringToYearMonth(e.target.value))}>
+                {yearMonthRange.map((yearMonth, index) => <option key={index} value={`${yearMonth.Year}-${yearMonth.Month}`}>{`${yearMonth.Year}-${yearMonth.Month}`}</option>)}
+            </select>
+            <label htmlFor="selectedYearMonth">Year-Month</label>
+        </div>
+
         <div className="form-floating mb-3">
             {/* Show add new button when the form is not shown*/}
             {!formDisplayed && <button className="btn btn-success" onClick={AddNewClicked}>Add New</button>}
@@ -112,6 +156,7 @@ const TransactionTable = ({userId} : Props) => {
 
             {transactions.length == 0 && <p>No records found.</p>}
         </div>
+        </>
     );
 }
 

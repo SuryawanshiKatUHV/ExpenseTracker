@@ -213,6 +213,28 @@ class User {
     }
   }
 
+  async getTransactionsByMonth(userId, year, month) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(
+        `SELECT C.CATEGORY_ID, C.CATEGORY_TITLE, T.TRANSACTION_ID, T.TRANSACTION_TYPE, T.TRANSACTION_AMOUNT, T.TRANSACTION_NOTES, DATE_FORMAT(T.TRANSACTION_DATE, '%m/%d/%Y') AS TRANSACTION_DATE, COALESCE(UGT.num_user_group_transactions, 0) AS TOTAL_USER_GROUP_TRANSACTIONS
+        FROM TRANSACTION T
+        JOIN CATEGORY C ON T.CATEGORY_ID = C.CATEGORY_ID
+        LEFT JOIN (
+          SELECT TRANSACTION_ID, COUNT(*) AS num_user_group_transactions
+          FROM USER_GROUP_TRANSACTION
+          GROUP BY TRANSACTION_ID
+        ) UGT ON T.TRANSACTION_ID = UGT.TRANSACTION_ID
+      WHERE C.OWNER_ID=? AND YEAR(T.TRANSACTION_DATE) = ? AND MONTH(T.TRANSACTION_DATE) = ?
+      ORDER BY T.TRANSACTION_DATE DESC;`, [userId, year, month]);
+      
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
   async getGroups(userId) {
     const connection = await getConnection();
     try {
