@@ -99,8 +99,10 @@ const TransactionTable = ({userId} : Props) => {
                             <td>{item.TOTAL_USER_GROUP_TRANSACTIONS>0?item.TOTAL_USER_GROUP_TRANSACTIONS:''}</td>
                             <td>{item.TRANSACTION_NOTES}</td>
                             <td>
-                                <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
-                                <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/> Delete icon
+                                {/* If there are group transactions associated with this transaction then do not allow to edit this transaction, because then we need
+                                additional processing to distribute the amount among the group transactions. */}
+                                {item.TOTAL_USER_GROUP_TRANSACTIONS===0 && <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} />} {/* Edit icon */}
+                                <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/>
                             </td>
                             
                         </tr>
