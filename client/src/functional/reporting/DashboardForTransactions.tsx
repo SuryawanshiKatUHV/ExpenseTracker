@@ -13,7 +13,7 @@ interface YearMonthRange {
 }
 
 interface TransactionSummary {
-    name: string;
+    Name: string;
     Category: string;
     Budget: number;
     Total: number;
@@ -53,20 +53,21 @@ const DashboardForTransactions = ({userId} : Props) => {
             // Wait for both requests to finish and continue to then
             Promise.all([incomeRequest, expenseRequest])
             .then(([incomeData, expenseData]) => {
-                // Calculate total income and total expense
-                const totalIncome = incomeData.reduce((acc: number, item: TransactionSummary) => acc + item.Total, 0);
-                const totalExpense = expenseData.reduce((acc: number, item: TransactionSummary) => acc + item.Total, 0);
+                // Iterate though list of incomes/expenses, and calculate the categories total amount with the reduce function
+                const totalIncome = incomeData.reduce((sum: number, item: TransactionSummary) => sum + item.Total, 0);
+                const totalExpense = expenseData.reduce((sum: number, item: TransactionSummary) => sum + item.Total, 0);
 
                 // Set income summary with percentages
                 setIncomeSummary(incomeData.map((item: TransactionSummary) => ({
+                    // spread operator 
                     ...item,
-                    Percentage: parseFloat((item.Total / totalIncome * 100).toFixed(2))
+                    Percentage: item.Total / totalIncome * 100
                 })));
 
                 // Set expense summary with percentages
                 setExpenseSummary(expenseData.map((item: TransactionSummary) => ({
                     ...item,
-                    Percentage: parseFloat((item.Total / totalExpense * 100).toFixed(2))
+                    Percentage: item.Total / totalExpense * 100
                 })));
             })
             .catch(error => {
@@ -128,10 +129,10 @@ const DashboardForTransactions = ({userId} : Props) => {
                                     cy="50%"
                                     outerRadius={80}
                                     fill="green"
-                                    label
+                                    label={({ Percentage }) => `${Percentage.toFixed(2)}%`}
                                 />
                                 <Pie dataKey="Percentage" data={incomeSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
-                                <Tooltip />
+                                <Tooltip formatter={(value, name, props) => [`${props.payload.Category}: ${props.payload.Percentage.toFixed(2)}%`]}/>
                             </PieChart>
                         </td>
                         <td>
@@ -144,10 +145,10 @@ const DashboardForTransactions = ({userId} : Props) => {
                                     cy="50%"
                                     outerRadius={80}
                                     fill="red"
-                                    label
+                                    label={({ Percentage }) => `${Percentage.toFixed(2)}%`}
                                 />
                                 <Pie dataKey="Percentage" data={expenseSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
-                                <Tooltip />
+                                <Tooltip formatter={(value, name, props) => [`${props.payload.Category}: ${props.payload.Percentage.toFixed(2)}%`]}/>
                             </PieChart>
                         </td>
                     </tr>
@@ -167,7 +168,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 >
                                 <XAxis dataKey="Category" scale="point" padding={{ left: 50, right: 50}} angle={30}/>
                                 <YAxis />
-                                <Tooltip />
+                                <Tooltip/>
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <Bar dataKey="Budget" fill="orange">
                                     <LabelList dataKey="Budget" position="top" />
