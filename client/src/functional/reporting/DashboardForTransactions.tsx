@@ -3,21 +3,21 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList}
 import { PieChart, Pie} from 'recharts';
 import { END_POINTS, get } from '../../common/Utilities';
 
-
 interface Props {
     userId: number;
 }
 
 interface YearMonthRange {
-    Year:number;
-    Month:number;
+    Year: number;
+    Month: number;
 }
 
 interface TransactionSummary {
-    name:string;
-    Category: string
-    Budget:number;
-    Total:number;
+    name: string;
+    Category: string;
+    Budget: number;
+    Total: number;
+    Percentage: number;
 }
 
 const DashboardForTransactions = ({userId} : Props) => {
@@ -45,15 +45,34 @@ const DashboardForTransactions = ({userId} : Props) => {
     }, [selectedYearMonth]);
 
     function fetchData() {
-        get(`${END_POINTS.Users}/${userId}/transactions/Expense/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}/summary`)
-        .then(data => {
-            setExpenseSummary(data);
-        });
+        if (selectedYearMonth) {
+            // Fetch both income and expense summaries
+            const incomeRequest = get(`${END_POINTS.Users}/${userId}/transactions/Income/${selectedYearMonth.Year}/${selectedYearMonth.Month}/summary`);
+            const expenseRequest = get(`${END_POINTS.Users}/${userId}/transactions/Expense/${selectedYearMonth.Year}/${selectedYearMonth.Month}/summary`);
+            
+            // Wait for both requests to finish and continue to then
+            Promise.all([incomeRequest, expenseRequest])
+            .then(([incomeData, expenseData]) => {
+                // Calculate total income and total expense
+                const totalIncome = incomeData.reduce((acc: number, item: TransactionSummary) => acc + item.Total, 0);
+                const totalExpense = expenseData.reduce((acc: number, item: TransactionSummary) => acc + item.Total, 0);
 
-        get(`${END_POINTS.Users}/${userId}/transactions/Income/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}/summary`)
-        .then(data => {
-            setIncomeSummary(data);
-        });
+                // Set income summary with percentages
+                setIncomeSummary(incomeData.map((item: TransactionSummary) => ({
+                    ...item,
+                    Percentage: parseFloat((item.Total / totalIncome * 100).toFixed(2))
+                })));
+
+                // Set expense summary with percentages
+                setExpenseSummary(expenseData.map((item: TransactionSummary) => ({
+                    ...item,
+                    Percentage: parseFloat((item.Total / totalExpense * 100).toFixed(2))
+                })));
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        }
     }
 
     /**
@@ -102,7 +121,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                         <td>
                             <PieChart width={400} height={400}>
                                 <Pie
-                                    dataKey="Total"
+                                    dataKey="Percentage"
                                     isAnimationActive={false}
                                     data={incomeSummary}
                                     cx="50%"
@@ -111,14 +130,14 @@ const DashboardForTransactions = ({userId} : Props) => {
                                     fill="green"
                                     label
                                 />
-                                <Pie dataKey="Total" data={expenseSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
+                                <Pie dataKey="Percentage" data={incomeSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
                                 <Tooltip />
                             </PieChart>
                         </td>
                         <td>
                             <PieChart width={400} height={400}>
                                 <Pie
-                                    dataKey="Total"
+                                    dataKey="Percentage"
                                     isAnimationActive={false}
                                     data={expenseSummary}
                                     cx="50%"
@@ -127,7 +146,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                                     fill="red"
                                     label
                                 />
-                                <Pie dataKey="Total" data={expenseSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
+                                <Pie dataKey="Percentage" data={expenseSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
                                 <Tooltip />
                             </PieChart>
                         </td>
