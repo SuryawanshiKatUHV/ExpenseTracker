@@ -153,7 +153,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 <Bar dataKey="Budget" fill="orange">
                                     <LabelList dataKey="Budget" position="top" />
                                 </Bar>
-                                <Bar dataKey="Total" fill="green">
+                                <Bar dataKey="Total" fill="green" name="Income">
                                     <LabelList dataKey="Total" position="top" />
                                 </Bar>
                                 <Legend/>
@@ -179,7 +179,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 <Bar dataKey="Budget" fill="orange">
                                     <LabelList dataKey="Budget" position="top" />
                                 </Bar>
-                                <Bar dataKey="Total" fill="red">
+                                <Bar dataKey="Total" fill="red" name="Expense">
                                     <LabelList dataKey="Total" position="top" />
                                 </Bar>
                                 <Legend/>
