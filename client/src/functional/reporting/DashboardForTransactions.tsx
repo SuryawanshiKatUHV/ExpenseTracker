@@ -25,6 +25,7 @@ const DashboardForTransactions = ({userId} : Props) => {
     const [selectedYearMonth, setSelectedYearMonth] = useState<YearMonthRange>();
     const [incomeSummary, setIncomeSummary] = useState<TransactionSummary[]>([]);
     const [expenseSummary, setExpenseSummary] = useState<TransactionSummary[]>([]);
+    const [error, setError] = useState('');
    
     useEffect(() =>{ 
         get(`${END_POINTS.Users}/${userId}/transactions/yearMonthRange`)
@@ -37,7 +38,10 @@ const DashboardForTransactions = ({userId} : Props) => {
                 setSelectedYearMonth(data[0]);
                 console.log(`Selected year and month: ${JSON.stringify(selectedYearMonth)}`);
             }
-        });
+        })
+        .catch((error) => {
+            setError(error.message?error.message:error)
+        });;
     }, []);
 
     useEffect(() => {
@@ -72,6 +76,7 @@ const DashboardForTransactions = ({userId} : Props) => {
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
+                setError(error.message? error.message: error);
             });
         }
     }
@@ -96,6 +101,8 @@ const DashboardForTransactions = ({userId} : Props) => {
 
     return (
         <>
+            {error && <p style={{color:'red'}}>{error}</p>}
+            
             <div className="form-floating mb-3">
                 <select 
                     className="form-select" 
@@ -129,7 +136,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                                     cy="50%"
                                     outerRadius={80}
                                     fill="green"
-                                    label={({ Percentage }) => `${Percentage.toFixed(2)}%`}
+                                    label={({ Percentage, Category}) => `${Category} ${Percentage.toFixed(2)}%`}
                                 />
                                 <Pie dataKey="Percentage" data={incomeSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
                                 <Tooltip formatter={(value, name, props) => [`${props.payload.Category}: ${props.payload.Percentage.toFixed(2)}%`]}/>
@@ -145,7 +152,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                                     cy="50%"
                                     outerRadius={80}
                                     fill="red"
-                                    label={({ Percentage }) => `${Percentage.toFixed(2)}%`}
+                                    label={({ Percentage, Category }) => `${Category} ${Percentage.toFixed(2)}%`}
                                 />
                                 <Pie dataKey="Percentage" data={expenseSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
                                 <Tooltip formatter={(value, name, props) => [`${props.payload.Category}: ${props.payload.Percentage.toFixed(2)}%`]}/>
