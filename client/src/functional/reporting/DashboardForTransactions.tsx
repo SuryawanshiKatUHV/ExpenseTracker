@@ -1,15 +1,10 @@
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList} from 'recharts';
 import { PieChart, Pie} from 'recharts';
-import { END_POINTS, get } from '../../common/Utilities';
+import { END_POINTS, get, stringToYearMonth, YearMonthRange } from '../../common/Utilities';
 
 interface Props {
     userId: number;
-}
-
-interface YearMonthRange {
-    Year: number;
-    Month: number;
 }
 
 interface TransactionSummary {
@@ -79,24 +74,6 @@ const DashboardForTransactions = ({userId} : Props) => {
                 setError(error.message? error.message: error);
             });
         }
-    }
-
-    /**
-     * Parses a string to YearMonthRange object
-     * 
-     * @param stringYearMonth A string in the format 'yyyy-mm'
-     * @returns YearMonthRange object
-     */
-    function stringToYearMonth(stringYearMonth : string) : YearMonthRange {
-        if (!stringToYearMonth) {
-            throw new Error(`stringToYearMonth is required.`);
-        }
-        const tokens = stringYearMonth?stringYearMonth.split("-"):[];
-        if (tokens.length != 2) {
-            throw new Error(`stringToYearMonth '${stringToYearMonth}' is not in required format of 'yyyy-mm'`)
-        }
-
-        return {Year:Number(tokens[0]), Month:Number(tokens[1])};
     }
 
     return (
