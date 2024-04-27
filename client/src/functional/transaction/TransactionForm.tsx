@@ -131,10 +131,9 @@ const TransactionForm  = (props : Props) => {
     }
 
     return (
-
-        <div  style={{border:1}}>
-            <h5 className="m-5">Add Transaction</h5>
-
+        <>
+        <h5 className="m-5">{props.editingTransaction?"Edit transaction":"Add transaction"}</h5>
+        <div className="card" style={{border:1}}>
             <div className="form-floating mb-3">
                 <select className="form-select" id="txTransactionType" style={{ marginBottom: '18px' }} value={transactionType} onChange={(e) => setTransactionType(e.target.value)}>
                     <option key="blank" value=""></option>
@@ -182,6 +181,7 @@ const TransactionForm  = (props : Props) => {
             </div>
             {error && <p style={{color:'red'}}>{error}</p>}
         </div>
+        </>
     );
 
 }

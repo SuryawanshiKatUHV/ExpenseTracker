@@ -101,7 +101,7 @@ function RegistrationForm({registerHandler, showLoginHandler}:Props) {
           {errors.confirmedPassword && <p style={{color:'red'}}>{errors.confirmedPassword}</p>}
         </div>
 
-        <button className="btn btn-primary" onClick={RegisterClicked}>Register</button>
+        <button className="registerBtn" onClick={RegisterClicked}>Register</button>
         <br/>
         <button className="btn btn-link" onClick={showLoginHandler}>Back to Login</button>
     </div>

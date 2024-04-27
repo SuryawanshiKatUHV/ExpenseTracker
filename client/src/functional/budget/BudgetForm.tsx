@@ -118,9 +118,9 @@ const BudgetForm = (props : Props) => {
     }
     
     return (
-
-        <div  style={{border:1}}>
-            <h5 className="m-5">Add Budget</h5>
+        <>
+        <h5 className="m-5">{props.editingBudget?"Edit budget":"Add budget"}</h5>
+        <div className="card" style={{border:1}}>
 
             <div className="form-floating mb-3">
                 <select className="form-select" id="txCategoryId" style={{ marginBottom: '18px' }} value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))} disabled={props.editingBudget ? true : false}>
@@ -154,6 +154,7 @@ const BudgetForm = (props : Props) => {
             </div>
             {error && <p style={{color:'red'}}>{error}</p>}
         </div>
+        </>
     );
 }
 
