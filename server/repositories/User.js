@@ -154,10 +154,20 @@ class User {
     const connection = await getConnection();
     try {
       const [rows, fields] = await connection.execute(
-        `SELECT * 
-        FROM CATEGORY 
-        WHERE OWNER_ID=?
-        ORDER BY CATEGORY_TITLE ASC`, [userId]);
+        `SELECT C.*, COALESCE(T.TOTAL_TRANSACTIONS, 0) AS TOTAL_TRANSACTIONS, COALESCE(B.TOTAL_BUDGETS, 0) AS TOTAL_BUDGETS
+        FROM CATEGORY C
+          LEFT JOIN (
+          SELECT CATEGORY_ID, COUNT(*) AS TOTAL_TRANSACTIONS
+              FROM TRANSACTION
+              GROUP BY CATEGORY_ID
+          ) T ON T.CATEGORY_ID = C.CATEGORY_ID
+          LEFT JOIN (
+          SELECT CATEGORY_ID, COUNT(*) AS TOTAL_BUDGETS
+              FROM BUDGET
+              GROUP BY CATEGORY_ID
+          ) B ON B.CATEGORY_ID = C.CATEGORY_ID
+          WHERE C.OWNER_ID = ?
+          ORDER BY C.CATEGORY_TITLE ASC;`, [userId]);
       return rows;
     }
     finally {
