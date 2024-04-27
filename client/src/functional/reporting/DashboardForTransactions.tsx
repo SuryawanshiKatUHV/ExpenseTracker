@@ -104,7 +104,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                 <tbody>
                     <tr>
                         <td>
-                            <PieChart width={400} height={400}>
+                            <PieChart width={500} height={400}>
                                 <Pie
                                     dataKey="Percentage"
                                     isAnimationActive={false}
@@ -115,12 +115,12 @@ const DashboardForTransactions = ({userId} : Props) => {
                                     fill="green"
                                     label={({ Percentage, Category}) => `${Category} ${Percentage.toFixed(2)}%`}
                                 />
-                                <Pie dataKey="Percentage" data={incomeSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
+                                <Pie dataKey="Percentage" data={incomeSummary} cx="50%" cy="50%" innerRadius={50} outerRadius={80} fill="#82CA9D" />
                                 <Tooltip formatter={(value, name, props) => [`${props.payload.Category}: ${props.payload.Percentage.toFixed(2)}%`]}/>
                             </PieChart>
                         </td>
                         <td>
-                            <PieChart width={400} height={400}>
+                            <PieChart width={500} height={400}>
                                 <Pie
                                     dataKey="Percentage"
                                     isAnimationActive={false}
@@ -131,7 +131,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                                     fill="red"
                                     label={({ Percentage, Category }) => `${Category} ${Percentage.toFixed(2)}%`}
                                 />
-                                <Pie dataKey="Percentage" data={expenseSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
+                                <Pie dataKey="Percentage" data={expenseSummary} cx="50%" cy="50%" innerRadius={50} outerRadius={80} fill="#FF9999" />
                                 <Tooltip formatter={(value, name, props) => [`${props.payload.Category}: ${props.payload.Percentage.toFixed(2)}%`]}/>
                             </PieChart>
                         </td>
