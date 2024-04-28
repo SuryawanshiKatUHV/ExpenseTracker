@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { END_POINTS, get, post, put, formatDate } from "../../common/Utilities";
 import { Display } from "react-bootstrap-icons";
+import { toast } from 'react-toastify';
 
 interface Props {
     userId: number;
@@ -17,7 +18,7 @@ const GroupForm = (props:Props) => {
     const [groupDescription, setGroupDescription] = useState(props.editingGroup?.USER_GROUP_DESCRIPTION);
     const [groupMembers, setGroupMembers] = useState(props.editingGroup?.USER_GROUP_MEMBERS);
     const [groupOwnerId, setGroupOwnerId] = useState(props.editingGroup?.OWNER_ID);
-    const [validationErrors, setValidationErrors] = useState({groupDate: '', groupTitle: '', groupDescription: ''});
+    const [validationErrors, setValidationErrors] = useState({groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''});
     const [users, setUsers] = useState<any[]>([]);
     const [checkedState, setCheckedState] = useState(new Array(users.length).fill(false));
     const [error, setError] = useState('');
@@ -25,23 +26,27 @@ const GroupForm = (props:Props) => {
     // Validate category input
     const validateInput = () => {
       let isValid = true;
-      let validationErrors = {groupDate: '', groupTitle: '', groupDescription: '', groupMembers: []};
+      let validationErrors = {groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''};
 
       if (!groupDate) {
-          validationErrors.groupDate = 'Group Date is required.';
+        //   validationErrors.groupDate = 'Group Date is required.';
+          toast.error('Group Date is required');
           isValid = false;
       }
       if (!groupTitle) {
-          validationErrors.groupTitle = 'Group Title is required.';
+        //   validationErrors.groupTitle = 'Group Title is required.';
+          toast.error('Group Title is required.');
           isValid = false;
       }
       if (!groupDescription) {
-        validationErrors.groupDescription = 'Group Description is required.';
+        // validationErrors.groupDescription = 'Group Description is required.';
+        toast.error('Group Description is required.');
         isValid = false;
-
-    //   if (!groupMembers) {
-    //     validationErrors.groupMembers = 'Group member is required.';
-    //     isValid = false;
+      }
+      if (groupMembers?.length === 0) {  
+        // validationErrors.groupMembers = 'Please select at least one member.';
+        toast.error('Please select at least one member.');
+        isValid = false;
     }
 
     setValidationErrors(validationErrors);
@@ -115,9 +120,11 @@ const GroupForm = (props:Props) => {
                 if (props.editingGroup?.USER_GROUP_ID) {
                     await put(`${END_POINTS.Groups}/${props.editingGroup.USER_GROUP_ID}`, groupData);
                     console.log(`Budget updated with id ${props.editingGroup.USER_GROUP_ID}`);
+                    toast.info(`Group updated with id ${props.editingGroup.USER_GROUP_ID}`);
                 } else {
                     const result = await post(END_POINTS.Groups, groupData);
                     console.log(`Group created with id ${result.USER_GROUP_ID}`);
+                    toast.info(`Group created with id ${result.USER_GROUP_ID}`);
                 }
     
                 props.saveHandler();
@@ -176,9 +183,8 @@ const GroupForm = (props:Props) => {
                     </li>
                 ))}
             </ul>
+            {validationErrors.groupMembers && <p style={{color:'red'}}>{validationErrors.groupMembers}</p>}
         </div>
-
-        {/* {validationErrors.categoryId && <p style={{color:'red'}}>{validationErrors.categoryId}</p>} */}
 
         <div>
             <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 

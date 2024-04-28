@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import CategoryForm from "./CategoryForm";
 import { END_POINTS, get, del } from "../../common/Utilities";
 import { PencilSquare, TrashFill } from 'react-bootstrap-icons';
-// import './category.css';
+import { toast } from 'react-toastify';
 
 interface Props {
     userId: number;
@@ -63,7 +63,8 @@ const CategoryTable = ({userId} : Props) => {
                 setError("");
             } catch (error: any) {
                 console.error("Failed to delete the item:", error);
-                setError(error.message); 
+                // setError(error.message); 
+                toast.error(error.message);
             }
         } else {
             console.log("Delete operation cancelled");

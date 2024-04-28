@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import BudgetForm from "./BudgetForm";
 import { END_POINTS, get, del } from "../../common/Utilities";
 import { PencilSquare, TrashFill } from 'react-bootstrap-icons';
+import { toast } from 'react-toastify';
 
 interface Props {
     userId: number;
@@ -20,6 +21,7 @@ const BudgetTable = ({userId} : Props) => {
         } catch (error) {
             console.error("Failed to load budgets:", error);
             setError('Failed to load budgets');
+            toast.error('Failed to load budget')
         }
     }
 
@@ -43,6 +45,7 @@ const BudgetTable = ({userId} : Props) => {
         } catch (error:any) {
             console.error("Failed to save:", error);
             setError(error.message);
+            toast.error(error.message);
         }
     };
 
@@ -62,7 +65,9 @@ const BudgetTable = ({userId} : Props) => {
                 setError("");
             } catch (error:any) {
                 console.error("Failed to delete the item:", error);
-                setError(error.message); 
+                setError(error.message);
+                toast.error(error.message);
+                 
             }
         } else {
             console.log("Delete operation cancelled");

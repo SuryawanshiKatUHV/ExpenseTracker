@@ -1,5 +1,6 @@
 import { useState } from "react";
 import './login.css';
+import { toast } from 'react-toastify';
 
 interface Props {
     registerHandler: (email:string, firstName: string, lastName: string, password: string) => void;
@@ -23,36 +24,46 @@ function RegistrationForm({registerHandler, showLoginHandler}:Props) {
 
       if (email == "") {
         errors["email"] = "Email is required.";
+        toast.error('Email is required');
       }
       else if (email.indexOf('@') == -1 || email.indexOf('.') == -1) {
         errors["email"] = "Email should be in format name@domain.com.";
+        toast.error('Email should be in format name@domain.com.');
       }
       
       if (firstName == '') {
         errors["firstName"] = "First Name is required.";
+        toast.error('First Name is required.');
       }
       else if (firstName.length < 3 || firstName.length > 50) {
         errors["firstName"] = "First Name should be between 3 to 50 characters.";
+        toast.error('First Name should be between 3 to 50 characters.');
       }
       
       if (lastName == '') {
         errors["lastName"] = "Last Name is required.";
+        toast.error('Last Name is required.');
       }
       else if (lastName.length < 3 || lastName.length > 50) {
         errors["lastName"] = "Last Name should be between 3 to 50 characters.";
+        toast.error('Last Name should be between 3 to 50 characters.');
       }
 
       if (password == '') {
         errors["password"] = "Password is required.";
+        toast.error('Password is required.');
       }
 
       if (confirmedPassword == '') {
         errors["confirmedPassword"] = "Confirmed Password is required.";
+        toast.error('Confirmed Password is required.');
       }
 
       if (password && confirmedPassword && password != confirmedPassword) {
         errors["password"] = "Password does not match with confirm password.";
         errors["confirmedPassword"] = "Confirmed Password does not match with password.";
+        toast.error('Password does not match with confirm password.');
+        toast.error('Confirmed Password does not match with password.');
       }
 
       setErrors(errors);
@@ -67,6 +78,8 @@ function RegistrationForm({registerHandler, showLoginHandler}:Props) {
       
       if (validateInput())
         registerHandler(email, firstName, lastName, password);
+
+        toast.success('Registration Successfull')
     }
 
   return (

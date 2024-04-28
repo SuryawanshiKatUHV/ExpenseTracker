@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { END_POINTS, post, put } from "../../common/Utilities";
+import { toast } from 'react-toastify';
 
 interface Props {
     userId: number;
@@ -23,10 +24,12 @@ const CategoryForm = (props : Props) => {
 
         if (!categoryTitle) {
             validationErrors.categoryTitle = 'Category title is required.';
+            toast.error('Category title is required')
             isValid = false;
         }
         if (!categoryDescription) {
             validationErrors.categoryDescription = 'Category description is required.';
+            toast.error('Category description is required')
             isValid = false;
         }
 
@@ -50,10 +53,12 @@ const CategoryForm = (props : Props) => {
                     // Update the existing category
                     await put(`${END_POINTS.Categories}/${props.editingCategory.CATEGORY_ID}`, categoryData);
                     console.log(`Category updated with id ${props.editingCategory.CATEGORY_ID}`);
+                    toast.info(`Category updated with id ${props.editingCategory.CATEGORY_ID}`);
                 } else {
                     // Create a new category
                     const result = await post(END_POINTS.Categories, categoryData);
                     console.log(`Category created with id ${result.CATEGORY_ID}`);
+                    toast.info(`Category created with id ${result.CATEGORY_ID}`);
                 }
 
                 props.saveHandler();
