@@ -65,6 +65,10 @@ const GroupForm = (props:Props) => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        setCheckedState(new Array(users.length).fill(false));
+    }, [users]);
+
     const handleOnChange = (position: number) => {
         const updatedCheckedState = checkedState.map((item, index) =>
             index === position ? !item : item
@@ -92,9 +96,11 @@ const GroupForm = (props:Props) => {
     
     
     const SaveClicked = async () => {
-        
-        const selectedUserIds = users.filter((item, index) => checkedState[index]).map(user => user.USER_ID);
-        
+        console.log("members ", checkedState);
+        // const selectedUserIds = users.filter((_, index) => checkedState[index]).map(user => user.USER_ID);
+        const selectedUserIds = users.filter((_, index) => checkedState[index]).map(user => user.USER_ID);
+        console.log("ids ", selectedUserIds);
+        // so member ids are user ids
     
         if (validateInput()) {
             const groupData = {
