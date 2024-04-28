@@ -184,7 +184,7 @@ class User {
         JOIN CATEGORY C ON U.USER_ID = C.OWNER_ID
         JOIN BUDGET B ON C.CATEGORY_ID = B.CATEGORY_ID
         WHERE U.USER_ID = ?
-        ORDER BY B.BUDGET_DATE DESC;`, [userId]);
+        ORDER BY C.CATEGORY_TITLE ASC, B.BUDGET_DATE DESC;`, [userId]);
       return rows;
     }
     finally {
