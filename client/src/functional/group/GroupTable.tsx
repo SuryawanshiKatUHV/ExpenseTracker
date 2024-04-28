@@ -85,8 +85,11 @@ const GroupTable = ({userId} : Props) => {
             <table className="table table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">Date</th>
                         <th scope="col">Title</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Owner</th>
+                        {/* <th scope="col">Settled</th> */}
+                        {/* <th scope="col">Member list in a popup</th> */}
                         <th scope="col">Description</th>
                         <th scope="col"></th>
                     </tr>
@@ -94,8 +97,9 @@ const GroupTable = ({userId} : Props) => {
                 <tbody>
                     {group.map((item) => (
                         <tr>
-                            <td>{item.USER_GROUP_DATE}</td>
                             <td>{item.USER_GROUP_TITLE}</td>
+                            <td>{item.USER_GROUP_DATE}</td>
+                            <td>{item.OWNER_ID}</td>
                             <td className="descriptionCat">{item.USER_GROUP_DESCRIPTION}</td>
                             <td>
                                 <div>
