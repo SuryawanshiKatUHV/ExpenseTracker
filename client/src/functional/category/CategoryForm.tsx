@@ -77,13 +77,13 @@ const CategoryForm = (props : Props) => {
 
             <div className="form-floating mb-3">
               <input type="string" className="form-control" id="categoryTitle" value={categoryTitle} onChange={(e) => setCategoryTitle(e.target.value)}/>
-              <label htmlFor="categoryTitle">Category Title</label>
+              <label htmlFor="categoryTitle">Title</label>
               {validationErrors.categoryTitle && <p style={{color:'red'}}>{validationErrors.categoryTitle}</p>}
             </div>
     
             <div className="form-floating mb-3">
               <input type="string" className="form-control" id="categoryDescription" value={categoryDescription} onChange={(e) => setCategoryDescription(e.target.value)}/>
-              <label htmlFor="categoryDescription">Category Description</label>
+              <label htmlFor="categoryDescription">Description</label>
               {validationErrors.categoryDescription && <p style={{color:'red'}}>{validationErrors.categoryDescription}</p>}
             </div>
     
