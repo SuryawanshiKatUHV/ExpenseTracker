@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { END_POINTS, get, post, put } from "../../common/Utilities";
+import { END_POINTS, get, post, put, formatDate } from "../../common/Utilities";
 
 interface Props {
     userId: number;
@@ -96,16 +96,6 @@ const BudgetForm = (props : Props) => {
         props.cancelHandler();
     }
 
-    // Formats date into to yyyy/mm/dd 
-    const formatDate = (date: Date) => {
-        let year = date.getUTCFullYear();
-        // Pad month and day with leading zeros if necessary
-        let month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-        let day = date.getUTCDate().toString().padStart(2, '0');
-        
-        return `${year}-${month}-${day}`;
-    };
-
     /**
      * Converts date string to date object
      * @param dateString Date in format "yyyy-mm-dd"
@@ -118,9 +108,9 @@ const BudgetForm = (props : Props) => {
     }
     
     return (
-
-        <div  style={{border:1}}>
-            <h5 className="m-5">Add Budget</h5>
+        <>
+        <h5 className="m-5">{props.editingBudget?"Edit budget":"Add budget"}</h5>
+        <div className="card" style={{border:1}}>
 
             <div className="form-floating mb-3">
                 <select className="form-select" id="txCategoryId" style={{ marginBottom: '18px' }} value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))} disabled={props.editingBudget ? true : false}>
@@ -154,6 +144,7 @@ const BudgetForm = (props : Props) => {
             </div>
             {error && <p style={{color:'red'}}>{error}</p>}
         </div>
+        </>
     );
 }
 

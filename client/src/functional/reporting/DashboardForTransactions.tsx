@@ -1,23 +1,18 @@
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList} from 'recharts';
 import { PieChart, Pie} from 'recharts';
-import { END_POINTS, get } from '../../common/Utilities';
-
+import { END_POINTS, get, stringToYearMonth, YearMonthRange } from '../../common/Utilities';
 
 interface Props {
     userId: number;
 }
 
-interface YearMonthRange {
-    Year:number;
-    Month:number;
-}
-
 interface TransactionSummary {
-    name:string;
-    Category: string
-    Budget:number;
-    Total:number;
+    Name: string;
+    Category: string;
+    Budget: number;
+    Total: number;
+    Percentage: number;
 }
 
 const DashboardForTransactions = ({userId} : Props) => {
@@ -25,6 +20,7 @@ const DashboardForTransactions = ({userId} : Props) => {
     const [selectedYearMonth, setSelectedYearMonth] = useState<YearMonthRange>();
     const [incomeSummary, setIncomeSummary] = useState<TransactionSummary[]>([]);
     const [expenseSummary, setExpenseSummary] = useState<TransactionSummary[]>([]);
+    const [error, setError] = useState('');
    
     useEffect(() =>{ 
         get(`${END_POINTS.Users}/${userId}/transactions/yearMonthRange`)
@@ -37,7 +33,10 @@ const DashboardForTransactions = ({userId} : Props) => {
                 setSelectedYearMonth(data[0]);
                 console.log(`Selected year and month: ${JSON.stringify(selectedYearMonth)}`);
             }
-        });
+        })
+        .catch((error) => {
+            setError(error.message?error.message:error)
+        });;
     }, []);
 
     useEffect(() => {
@@ -45,37 +44,42 @@ const DashboardForTransactions = ({userId} : Props) => {
     }, [selectedYearMonth]);
 
     function fetchData() {
-        get(`${END_POINTS.Users}/${userId}/transactions/Expense/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}/summary`)
-        .then(data => {
-            setExpenseSummary(data);
-        });
+        if (selectedYearMonth) {
+            // Fetch both income and expense summaries
+            const incomeRequest = get(`${END_POINTS.Users}/${userId}/transactions/Income/${selectedYearMonth.Year}/${selectedYearMonth.Month}/summary`);
+            const expenseRequest = get(`${END_POINTS.Users}/${userId}/transactions/Expense/${selectedYearMonth.Year}/${selectedYearMonth.Month}/summary`);
+            
+            // Wait for both requests to finish and continue to then
+            Promise.all([incomeRequest, expenseRequest])
+            .then(([incomeData, expenseData]) => {
+                // Iterate though list of incomes/expenses, and calculate the categories total amount with the reduce function
+                const totalIncome = incomeData.reduce((sum: number, item: TransactionSummary) => sum + item.Total, 0);
+                const totalExpense = expenseData.reduce((sum: number, item: TransactionSummary) => sum + item.Total, 0);
 
-        get(`${END_POINTS.Users}/${userId}/transactions/Income/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}/summary`)
-        .then(data => {
-            setIncomeSummary(data);
-        });
-    }
+                // Set income summary with percentages
+                setIncomeSummary(incomeData.map((item: TransactionSummary) => ({
+                    // spread operator 
+                    ...item,
+                    Percentage: item.Total / totalIncome * 100
+                })));
 
-    /**
-     * Parses a string to YearMonthRange object
-     * 
-     * @param stringYearMonth A string in the format 'yyyy-mm'
-     * @returns YearMonthRange object
-     */
-    function stringToYearMonth(stringYearMonth : string) : YearMonthRange {
-        if (!stringToYearMonth) {
-            throw new Error(`stringToYearMonth is required.`);
+                // Set expense summary with percentages
+                setExpenseSummary(expenseData.map((item: TransactionSummary) => ({
+                    ...item,
+                    Percentage: item.Total / totalExpense * 100
+                })));
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                setError(error.message? error.message: error);
+            });
         }
-        const tokens = stringYearMonth?stringYearMonth.split("-"):[];
-        if (tokens.length != 2) {
-            throw new Error(`stringToYearMonth '${stringToYearMonth}' is not in required format of 'yyyy-mm'`)
-        }
-
-        return {Year:Number(tokens[0]), Month:Number(tokens[1])};
     }
 
     return (
         <>
+            {error && <p style={{color:'red'}}>{error}</p>}
+            
             <div className="form-floating mb-3">
                 <select 
                     className="form-select" 
@@ -100,35 +104,35 @@ const DashboardForTransactions = ({userId} : Props) => {
                 <tbody>
                     <tr>
                         <td>
-                            <PieChart width={400} height={400}>
+                            <PieChart width={500} height={400}>
                                 <Pie
-                                    dataKey="Total"
+                                    dataKey="Percentage"
                                     isAnimationActive={false}
                                     data={incomeSummary}
                                     cx="50%"
                                     cy="50%"
                                     outerRadius={80}
                                     fill="green"
-                                    label
+                                    label={({ Percentage, Category}) => `${Category} ${Percentage.toFixed(2)}%`}
                                 />
-                                <Pie dataKey="Total" data={expenseSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
-                                <Tooltip />
+                                <Pie dataKey="Percentage" data={incomeSummary} cx="50%" cy="50%" innerRadius={50} outerRadius={80} fill="#82CA9D" />
+                                <Tooltip formatter={(value, name, props) => [`${props.payload.Category}: ${props.payload.Percentage.toFixed(2)}%`]}/>
                             </PieChart>
                         </td>
                         <td>
-                            <PieChart width={400} height={400}>
+                            <PieChart width={500} height={400}>
                                 <Pie
-                                    dataKey="Total"
+                                    dataKey="Percentage"
                                     isAnimationActive={false}
                                     data={expenseSummary}
                                     cx="50%"
                                     cy="50%"
                                     outerRadius={80}
                                     fill="red"
-                                    label
+                                    label={({ Percentage, Category }) => `${Category} ${Percentage.toFixed(2)}%`}
                                 />
-                                <Pie dataKey="Total" data={expenseSummary} cx={500} cy={200} innerRadius={40} outerRadius={80} fill="#82ca9d" />
-                                <Tooltip />
+                                <Pie dataKey="Percentage" data={expenseSummary} cx="50%" cy="50%" innerRadius={50} outerRadius={80} fill="#FF9999" />
+                                <Tooltip formatter={(value, name, props) => [`${props.payload.Category}: ${props.payload.Percentage.toFixed(2)}%`]}/>
                             </PieChart>
                         </td>
                     </tr>
@@ -148,12 +152,12 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 >
                                 <XAxis dataKey="Category" scale="point" padding={{ left: 50, right: 50}} angle={30}/>
                                 <YAxis />
-                                <Tooltip />
+                                <Tooltip/>
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <Bar dataKey="Budget" fill="orange">
                                     <LabelList dataKey="Budget" position="top" />
                                 </Bar>
-                                <Bar dataKey="Total" fill="green">
+                                <Bar dataKey="Total" fill="green" name="Income">
                                     <LabelList dataKey="Total" position="top" />
                                 </Bar>
                                 <Legend/>
@@ -179,7 +183,7 @@ const DashboardForTransactions = ({userId} : Props) => {
                                 <Bar dataKey="Budget" fill="orange">
                                     <LabelList dataKey="Budget" position="top" />
                                 </Bar>
-                                <Bar dataKey="Total" fill="red">
+                                <Bar dataKey="Total" fill="red" name="Expense">
                                     <LabelList dataKey="Total" position="top" />
                                 </Bar>
                                 <Legend/>

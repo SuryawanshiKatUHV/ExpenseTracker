@@ -86,8 +86,9 @@ const GroupTable = ({userId} : Props) => {
                 <thead>
                     <tr>
                         <th scope="col">Date</th>
-                        <th scope="col">Group Title</th>
-                        <th scope="col">Group Description</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Description</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,7 +96,8 @@ const GroupTable = ({userId} : Props) => {
                         <tr>
                             <td>{item.USER_GROUP_DATE}</td>
                             <td>{item.USER_GROUP_TITLE}</td>
-                            <td className="descriptionCat">{item.USER_GROUP_DESCRIPTION}
+                            <td className="descriptionCat">{item.USER_GROUP_DESCRIPTION}</td>
+                            <td>
                                 <div>
                                     <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
                                     <TrashFill onClick={() => DeleteClicked(item.USER_GROUP_ID)} style={{cursor: 'pointer'}}/> {/* Delete icon */}

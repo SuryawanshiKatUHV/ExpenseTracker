@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { END_POINTS, get, post, put } from "../../common/Utilities";
+import { END_POINTS, get, post, put, formatDate } from "../../common/Utilities";
 
 interface Props {
     userId: number;
@@ -109,16 +109,6 @@ const TransactionForm  = (props : Props) => {
         props.cancelHandler();
     }
 
-    // Formats date into to yyyy-mm-dd 
-    const formatDate = (date: Date) => {
-        let year = date.getUTCFullYear();
-        // Pad month and day with leading zeros if necessary
-        let month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-        let day = date.getUTCDate().toString().padStart(2, '0');
-        
-        return `${year}-${month}-${day}`;
-    }
-
     /**
      * Converts date string to date object
      * @param dateString Date in format "yyyy-mm-dd"
@@ -131,10 +121,9 @@ const TransactionForm  = (props : Props) => {
     }
 
     return (
-
-        <div  style={{border:1}}>
-            <h5 className="m-5">Add Transaction</h5>
-
+        <>
+        <h5 className="m-5">{props.editingTransaction?"Edit transaction":"Add transaction"}</h5>
+        <div className="card" style={{border:1}}>
             <div className="form-floating mb-3">
                 <select className="form-select" id="txTransactionType" style={{ marginBottom: '18px' }} value={transactionType} onChange={(e) => setTransactionType(e.target.value)}>
                     <option key="blank" value=""></option>
@@ -182,6 +171,7 @@ const TransactionForm  = (props : Props) => {
             </div>
             {error && <p style={{color:'red'}}>{error}</p>}
         </div>
+        </>
     );
 
 }

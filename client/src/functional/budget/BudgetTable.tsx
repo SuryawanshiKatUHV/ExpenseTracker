@@ -60,9 +60,9 @@ const BudgetTable = ({userId} : Props) => {
                 console.log("Budget deleted");
                 await loadBudgets(); // Refresh the list after deleting
                 setError("");
-            } catch (error) {
+            } catch (error:any) {
                 console.error("Failed to delete the item:", error);
-                setError('Failed to delete budget'); 
+                setError(error.message); 
             }
         } else {
             console.log("Delete operation cancelled");
@@ -90,6 +90,7 @@ const BudgetTable = ({userId} : Props) => {
                         <th scope="col">Category</th>
                         <th scope="col">Budget</th>
                         <th scope="col">Date</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -97,13 +98,13 @@ const BudgetTable = ({userId} : Props) => {
                         <tr>
                             <td>{item.CATEGORY_TITLE}</td>
                             <td>{item.BUDGET_AMOUNT}</td>
-                            <td className="descriptionCat">{item.BUDGET_DATE}
+                            <td className="descriptionCat">{item.BUDGET_DATE}</td>
+                            <td>
                                 <div>
                                     <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
                                     <TrashFill onClick={() => DeleteClicked(item.BUDGET_ID)} style={{cursor: 'pointer'}}/>
                                 </div>
                             </td>
-                            
                         </tr>
                     ))}
                 </tbody>

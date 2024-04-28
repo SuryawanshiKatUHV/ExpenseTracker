@@ -9,59 +9,11 @@ interface Props {
 const DashboardForGroupTransactions = ({userId} : Props) => {
     const [moneyOwedToMe, setMoneyOwedToMe] = useState<any[]>([]);
     const [moneyINeedToPay, setMoneyINeedToPay] = useState<any[]>([]);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         loadData();
     }, []);
-
-    // function adjustAmounts() {
-    //     const newMoneyOwedToMe = [];
-    //     for(let recordMoneyOwedToMe of moneyOwedToMe) {
-    //         // {
-    //         //     "PAID_BY_USER_FULLNAME": "Suryawanshi, Kapil Satish",
-    //         //     "PAID_TO_USER_FULLNAME": "Odera, Suraj",
-    //         //     "MONEY_OWED_TO_ME": "435.00"
-    //         // }
-    //         for (let recordMoneyINeedToPay of moneyINeedToPay) {
-    //             // {
-    //             //     "PAID_BY_USER_FULLNAME": "Odera, Suraj",
-    //             //     "PAID_TO_USER_FULLNAME": "Suryawanshi, Kapil Satish",
-    //             //     "MONEY_I_NEED_TO_PAY": "35.00"
-    //             // }
-    //             if (recordMoneyOwedToMe["PAID_TO_USER_FULLNAME"] === recordMoneyINeedToPay["PAID_BY_USER_FULLNAME"]) {
-    //                 recordMoneyOwedToMe["MONEY_OWED_TO_ME"] -= recordMoneyINeedToPay["MONEY_I_NEED_TO_PAY"];
-    //                 break;
-    //             }
-    //         }
-    //         newMoneyOwedToMe.push(recordMoneyOwedToMe);
-    //     }
-    //     console.log(`newMoneyOwedToMe=${newMoneyOwedToMe}`);
-    //     setMoneyOwedToMe(newMoneyOwedToMe.filter(r => r["MONEY_OWED_TO_ME"] > 0));
-
-
-    //     const newMoneyINeedToPay = [];
-    //     for (let recordMoneyINeedToPay of moneyINeedToPay) {
-    //         // {
-    //         //     "PAID_BY_USER_FULLNAME": "Odera, Suraj",
-    //         //     "PAID_TO_USER_FULLNAME": "Suryawanshi, Kapil Satish",
-    //         //     "MONEY_I_NEED_TO_PAY": "35.00"
-    //         // }
-    //         for(let recordMoneyOwedToMe of moneyOwedToMe) {
-    //         // {
-    //         //     "PAID_BY_USER_FULLNAME": "Suryawanshi, Kapil Satish",
-    //         //     "PAID_TO_USER_FULLNAME": "Odera, Suraj",
-    //         //     "MONEY_OWED_TO_ME": "435.00"
-    //         // }
-    //             if (recordMoneyINeedToPay["PAID_BY_USER_FULLNAME"] === recordMoneyOwedToMe["PAID_TO_USER_FULLNAME"]) {
-    //                 recordMoneyINeedToPay["MONEY_I_NEED_TO_PAY"] -= recordMoneyOwedToMe["MONEY_OWED_TO_ME"];
-    //                 break;
-    //             }
-    //         }
-    //         newMoneyINeedToPay.push(recordMoneyINeedToPay);
-    //     }
-    //     console.log(`newMoneyINeedToPay=${newMoneyINeedToPay}`);
-    //     setMoneyINeedToPay(newMoneyINeedToPay.filter(r => r["MONEY_I_NEED_TO_PAY"] > 0));
-    // }
 
     async function loadData() {
         get(`${END_POINTS.Users}/${userId}/groupTransactions/moneyOwedToMe`)
@@ -74,13 +26,15 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
         .then((data) => {
             setMoneyINeedToPay(data);
         })
-        .then(() => {
-            //adjustAmounts();
+        .catch((error) => {
+            setError(error.message?error.message:error)
         });
     }
 
     return (
         <>
+            {error && <p style={{color:'red'}}>{error}</p>}
+            
             <table width="100%">
                 <thead>
                     <tr>

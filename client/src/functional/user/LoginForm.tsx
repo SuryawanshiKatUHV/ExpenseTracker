@@ -58,7 +58,7 @@ function LoginForm({loginHandler, showRegistrationHandler}:Props) {
 
         <button className="loginBtn" onClick={LoginClicked}>Login</button>
         <br/>
-        <button className="registerBtn" onClick={showRegistrationHandler}>Register new account</button>
+        <button className="btn btn-link" onClick={showRegistrationHandler}>Register new account</button>
     </div>
   );
 }

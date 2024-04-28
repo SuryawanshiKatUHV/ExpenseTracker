@@ -34,6 +34,11 @@ interface RequestParams {
     body?: string; // Optional body property
   }
 
+export interface YearMonthRange {
+    Year: number;
+    Month: number;
+}
+
 /**
  * Invokes a web service with the specified HTTP method, URL, and payload.
  *
@@ -128,4 +133,33 @@ export async function get(url:string) {
  */
 export async function del(url:string) {
     return await invokeWS("DELETE", url);
+}
+
+/**
+ * Parses a string to YearMonthRange object
+ * 
+ * @param stringYearMonth A string in the format 'yyyy-mm'
+ * @returns YearMonthRange object
+ */
+export function stringToYearMonth(stringYearMonth : string) : YearMonthRange {
+    if (!stringToYearMonth) {
+        throw new Error(`stringToYearMonth is required.`);
+    }
+    const tokens = stringYearMonth?stringYearMonth.split("-"):[];
+    if (tokens.length != 2) {
+        throw new Error(`stringToYearMonth '${stringToYearMonth}' is not in required format of 'yyyy-mm'`)
+    }
+
+    return {Year:Number(tokens[0]), Month:Number(tokens[1])};
+}
+
+
+// Formats date into to yyyy-mm-dd 
+export function formatDate (date: Date) {
+    let year = date.getUTCFullYear();
+    // Pad month and day with leading zeros if necessary
+    let month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    let day = date.getUTCDate().toString().padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
 }

@@ -70,9 +70,10 @@ const CategoryForm = (props : Props) => {
 
 
     return (
-        
-        <div  style={{border:1}}>
-            <h5 className="m-5">Add new category</h5>
+        <>
+        <h5 className="m-5">{props.editingCategory?"Edit category":"Add new category"}</h5>
+
+        <div className="card" style={{border:1}}>
 
             <div className="form-floating mb-3">
               <input type="string" className="form-control" id="categoryTitle" value={categoryTitle} onChange={(e) => setCategoryTitle(e.target.value)}/>
@@ -93,6 +94,7 @@ const CategoryForm = (props : Props) => {
 
             {error && <p style={{color:'red'}}>{error}</p>}
         </div>
+        </>
     );
 };
 

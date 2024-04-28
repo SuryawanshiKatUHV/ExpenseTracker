@@ -154,10 +154,20 @@ class User {
     const connection = await getConnection();
     try {
       const [rows, fields] = await connection.execute(
-        `SELECT * 
-        FROM CATEGORY 
-        WHERE OWNER_ID=?
-        ORDER BY CATEGORY_TITLE ASC`, [userId]);
+        `SELECT C.*, COALESCE(T.TOTAL_TRANSACTIONS, 0) AS TOTAL_TRANSACTIONS, COALESCE(B.TOTAL_BUDGETS, 0) AS TOTAL_BUDGETS
+        FROM CATEGORY C
+          LEFT JOIN (
+          SELECT CATEGORY_ID, COUNT(*) AS TOTAL_TRANSACTIONS
+              FROM TRANSACTION
+              GROUP BY CATEGORY_ID
+          ) T ON T.CATEGORY_ID = C.CATEGORY_ID
+          LEFT JOIN (
+          SELECT CATEGORY_ID, COUNT(*) AS TOTAL_BUDGETS
+              FROM BUDGET
+              GROUP BY CATEGORY_ID
+          ) B ON B.CATEGORY_ID = C.CATEGORY_ID
+          WHERE C.OWNER_ID = ?
+          ORDER BY C.CATEGORY_TITLE ASC;`, [userId]);
       return rows;
     }
     finally {
@@ -196,6 +206,28 @@ class User {
         ) UGT ON T.TRANSACTION_ID = UGT.TRANSACTION_ID
       WHERE C.OWNER_ID=?
       ORDER BY T.TRANSACTION_DATE DESC;`, [userId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
+  async getTransactionsByMonth(userId, year, month) {
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(
+        `SELECT C.CATEGORY_ID, C.CATEGORY_TITLE, T.TRANSACTION_ID, T.TRANSACTION_TYPE, T.TRANSACTION_AMOUNT, T.TRANSACTION_NOTES, DATE_FORMAT(T.TRANSACTION_DATE, '%m/%d/%Y') AS TRANSACTION_DATE, COALESCE(UGT.num_user_group_transactions, 0) AS TOTAL_USER_GROUP_TRANSACTIONS
+        FROM TRANSACTION T
+        JOIN CATEGORY C ON T.CATEGORY_ID = C.CATEGORY_ID
+        LEFT JOIN (
+          SELECT TRANSACTION_ID, COUNT(*) AS num_user_group_transactions
+          FROM USER_GROUP_TRANSACTION
+          GROUP BY TRANSACTION_ID
+        ) UGT ON T.TRANSACTION_ID = UGT.TRANSACTION_ID
+      WHERE C.OWNER_ID=? AND YEAR(T.TRANSACTION_DATE) = ? AND MONTH(T.TRANSACTION_DATE) = ?
+      ORDER BY T.TRANSACTION_DATE DESC;`, [userId, year, month]);
+      
       return rows;
     }
     finally {
