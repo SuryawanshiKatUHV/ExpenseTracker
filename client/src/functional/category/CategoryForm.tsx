@@ -71,7 +71,7 @@ const CategoryForm = (props : Props) => {
 
     return (
         <>
-        <h5 className="m-5">{props.editingCategory?"Edit category":"Add new category"}</h5>
+        <h5 className="m-5">{props.editingCategory?"Edit category":"Add category"}</h5>
 
         <div className="card" style={{border:1}}>
 
