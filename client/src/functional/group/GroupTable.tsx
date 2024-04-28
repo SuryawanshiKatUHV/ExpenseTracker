@@ -99,7 +99,7 @@ const GroupTable = ({userId} : Props) => {
                         <tr>
                             <td>{item.USER_GROUP_TITLE}</td>
                             <td>{item.USER_GROUP_DATE}</td>
-                            <td>{item.OWNER_ID}</td>
+                            <td>{item.OWNER_NAME}</td>
                             <td className="descriptionCat">{item.USER_GROUP_DESCRIPTION}</td>
                             <td>
                                 <div>
