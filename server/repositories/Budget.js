@@ -1,75 +1,40 @@
 const Joi = require("joi");
-const getConnection = require('../common/database');
+const {execute} = require('../common/database');
 
 //interacts with db
 class Budget {
   async getAll() {
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute("SELECT * FROM BUDGET", []);
-      return rows;
-    }
-    finally {
-      connection.release();
-    }
+    return await execute("SELECT * FROM BUDGET", []);
   }
 
   async getById(id) {
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute("SELECT * FROM BUDGET WHERE BUDGET_ID=?", [id]);
-      if (!rows || rows.length == 0) {
-        throw new Error(`No budget found for id ${id}`);
-      }
-
-      return rows[0];
-    } finally {
-      connection.release();
+    const [rows] = await execute("SELECT * FROM BUDGET WHERE BUDGET_ID=?", [id]);
+    if (!rows || rows.length == 0) {
+      throw new Error(`No budget found for id ${id}`);
     }
+    return rows[0];
   }
 
   async create({CATEGORY_ID, BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES}) {
-    const connection = await getConnection();
-    try {
-      this._validate({CATEGORY_ID, BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES});
-      console.log(`Budget id inside repo ${CATEGORY_ID}`);
-      const result = await connection.execute("INSERT INTO BUDGET (CATEGORY_ID, BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES) VALUES (?, ?, ?, ?)", [CATEGORY_ID, BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES]);
-      console.log(`Budget inserted with id ${result[0].insertId}`);
-
-      return { BUDGET_ID: result[0].insertId };
-    } finally {
-      connection.release();
-    }
+    this._validate({CATEGORY_ID, BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES});
+    const result = await execute("INSERT INTO BUDGET (CATEGORY_ID, BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES) VALUES (?, ?, ?, ?)", [CATEGORY_ID, BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES]);
+    return { BUDGET_ID: result.insertId };
   }
 
   async update(id, {BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES}) {
-    const connection = await getConnection();
-    try {
-      const result = await connection.execute("UPDATE BUDGET SET BUDGET_DATE=?, BUDGET_AMOUNT=?, BUDGET_NOTES=? WHERE BUDGET_ID=?", [BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES, id]);
-
-      if (result.affectedRows === 0) {
-        throw new Error(`No budget found for id ${id}`);
-      }
-
-      return result;
-    } finally {
-      connection.release();
+    const result = await execute("UPDATE BUDGET SET BUDGET_DATE=?, BUDGET_AMOUNT=?, BUDGET_NOTES=? WHERE BUDGET_ID=?", [BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES, id]);
+    if (result.affectedRows === 0) {
+      throw new Error(`No budget found for id ${id}`);
     }
+    return result;
   }
 
   async delete(id) {
-    const connection = await getConnection();
-    try {
-      const result = await connection.execute("DELETE FROM BUDGET WHERE BUDGET_ID=?", [id]);
-
-      if (result.affectedRows === 0) {
-        throw new Error(`No budget found for id ${id}`);
-      }
-
-      return result;
-    } finally {
-      connection.release();
+    const result = await execute("DELETE FROM BUDGET WHERE BUDGET_ID=?", [id]);
+    if (result.affectedRows === 0) {
+      throw new Error(`No budget found for id ${id}`);
     }
+    return result;
   }
 
   _validate(budgetData) {

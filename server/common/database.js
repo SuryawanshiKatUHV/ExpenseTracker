@@ -9,8 +9,22 @@ const connectionPool = mysql.createPool({
   database: process.env.DB_NAME || 'expense_tracker',
 });
 
-// Export a function that returns a Promise that resolves to a connection from the pool
-module.exports = async function() {
+async function execute(sql, params) {
+  const connection = await connectionPool.getConnection();
+  try {
+    return await connection.execute(sql, params);
+  } catch (error) {
+    console.error(`Database error: ${error.message}`);
+    throw error;
+  } finally {
+    connection.release();
+  }
+}
+
+async function getConnection() {
   const connection = await connectionPool.getConnection();
   return connection;
-};
+}
+
+// Export a function that returns a Promise that resolves to a connection from the pool
+module.exports = {execute, getConnection};
