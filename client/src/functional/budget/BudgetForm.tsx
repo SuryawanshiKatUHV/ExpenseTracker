@@ -142,7 +142,7 @@ const BudgetForm = (props : Props) => {
             <div className="form-floating mb-3">
               <input type="date" className="form-control" id="budgetDate" value={formatDate(budgetDate)} onChange={(e) => setBudgetDate(stringToDate(e.target.value))}/>
               <label htmlFor="budgetDate">Date</label>
-              <small><i>* Selecting a date in a month will reset to the first day in a month.</i></small>
+              <small><i>* Selecting a date in a month will reset to the first day in a month. You can create only one budget per category per month.</i></small>
               {validationErrors.budgetDate && <p style={{color:'red'}}>{validationErrors.budgetDate}</p>}
             </div>
 

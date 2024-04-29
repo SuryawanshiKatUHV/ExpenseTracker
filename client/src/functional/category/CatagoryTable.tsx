@@ -93,12 +93,12 @@ const CategoryTable = ({userId} : Props) => {
                 <tbody>
                     {categories.map((item) => (
                         <tr>
-                            <td>{item.CATEGORY_TITLE}</td>
+                            <td>{item.CATEGORY_TITLE} {(item.TOTAL_TRANSACTIONS > 0 || item.TOTAL_BUDGETS > 0) && <small>*</small>}</td>
                             <td className="descriptionCat">{item.CATEGORY_DESCRIPTION}</td>
                             <td>
                                 <div>
                                     <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
-                                    <TrashFill onClick={() => DeleteClicked(item.CATEGORY_ID)} style={{cursor: 'pointer'}}/> {/* Delete icon */}
+                                    {(item.TOTAL_TRANSACTIONS === 0 && item.TOTAL_BUDGETS === 0) && <TrashFill onClick={() => DeleteClicked(item.CATEGORY_ID)} style={{cursor: 'pointer'}}/>} {/* Delete icon */}
                                 </div> 
                             </td>
                         </tr>
@@ -106,7 +106,9 @@ const CategoryTable = ({userId} : Props) => {
                 </tbody>
             </table>
 
-            {categories.length == 0 && <p>No records found.</p>}
+            {categories.length === 0 && <p>No records found.</p>}
+
+            {categories.length > 0 && <small><i>* A category having transactions and/or budgets define against it, cannot be deleted.</i></small>}
         </div>
     );
 };

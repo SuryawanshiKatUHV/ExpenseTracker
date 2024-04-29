@@ -76,19 +76,19 @@ const CategoryForm = (props : Props) => {
 
     return (
         <>
-        <h5 className="m-5">{props.editingCategory?"Edit category":"Add new category"}</h5>
+        <h5 className="m-5">{props.editingCategory?"Edit category":"Add category"}</h5>
 
         <div className="card" style={{border:1}}>
 
             <div className="form-floating mb-3">
               <input type="string" className="form-control" id="categoryTitle" value={categoryTitle} onChange={(e) => setCategoryTitle(e.target.value)}/>
-              <label htmlFor="categoryTitle">Category Title</label>
+              <label htmlFor="categoryTitle">Title</label>
               {validationErrors.categoryTitle && <p style={{color:'red'}}>{validationErrors.categoryTitle}</p>}
             </div>
     
             <div className="form-floating mb-3">
               <input type="string" className="form-control" id="categoryDescription" value={categoryDescription} onChange={(e) => setCategoryDescription(e.target.value)}/>
-              <label htmlFor="categoryDescription">Category Description</label>
+              <label htmlFor="categoryDescription">Description</label>
               {validationErrors.categoryDescription && <p style={{color:'red'}}>{validationErrors.categoryDescription}</p>}
             </div>
     

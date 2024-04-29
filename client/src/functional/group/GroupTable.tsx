@@ -12,7 +12,7 @@ const GroupTable = ({userId} : Props) => {
 
     const [formDisplayed, setFormDisplayed] = useState(false);
     const [editingGroup, setEditingGroup] = useState<any>([]);
-    const [group, setGroup] = useState<any[]>([]);
+    const [groups, setGroups] = useState<any[]>([]);
     const [error, setError] = useState('');
 
     async function loadGroups() {
@@ -22,7 +22,7 @@ const GroupTable = ({userId} : Props) => {
                 const members = await get(`${END_POINTS.Groups}/${group.USER_GROUP_ID}/members`);
                 return { ...group, members };
             }));
-            setGroup(groupsWithMembers);
+            setGroups(groupsWithMembers);
         } catch (error) {
             console.error("Failed to load groups:", error);
             setError("error");
@@ -59,6 +59,7 @@ const GroupTable = ({userId} : Props) => {
     }
 
     const EditClicked =  (group: any) => {
+        // console.log("Editing Group:", group); 
         setEditingGroup(group);
         setFormDisplayed(true);
     }
@@ -107,9 +108,9 @@ const GroupTable = ({userId} : Props) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {group.map((item) => (
+                    {groups.map((item) => (
                         <tr>
-                            <td>{item.USER_GROUP_TITLE}</td>
+                            <td>{item.USER_GROUP_TITLE} {(item.TOTAL_USER_GROUP_TRANSACTIONS > 0 || item.OWNER_ID !== userId) && <small>*</small>}</td>
                             <td>{item.USER_GROUP_DATE}</td>
                             <td>{item.OWNER_NAME}</td>
                             <td>{item.members.map((member: any) => (
@@ -118,8 +119,11 @@ const GroupTable = ({userId} : Props) => {
                             <td className="descriptionCat">{item.USER_GROUP_DESCRIPTION}</td>
                             <td>
                                 <div>
-                                    <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}
-                                    <TrashFill onClick={() => DeleteClicked(item.USER_GROUP_ID)} style={{cursor: 'pointer'}}/> {/* Delete icon */}
+                                    {/* Only owner of the group can edit the group */}
+                                    {item.OWNER_ID === userId && <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} />} {/* Edit icon */}
+                                    
+                                    {/* Only owner of the group can delete the group. The group which has group transactions cannot be deleted. */}
+                                    {(item.TOTAL_USER_GROUP_TRANSACTIONS === 0 && item.OWNER_ID === userId) && <TrashFill onClick={() => DeleteClicked(item.USER_GROUP_ID)} style={{cursor: 'pointer'}}/>} {/* Delete icon */}
                                 </div>        
                             </td>
                         </tr>
@@ -127,8 +131,9 @@ const GroupTable = ({userId} : Props) => {
                 </tbody>
             </table>
 
+            {groups.length === 0 && <p>No records found.</p>}
 
-
+            {groups.length > 0 && <small><i>You would see the groups you owned as well as the one you are member of. <br/>* A group having transactions against it OR you are not owner of, cannot be deleted. <br/> * You may only edit the groups which you own.</i></small>}
 
         </div>
 

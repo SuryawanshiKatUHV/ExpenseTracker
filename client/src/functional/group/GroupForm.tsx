@@ -3,26 +3,32 @@ import { END_POINTS, get, post, put, formatDate } from "../../common/Utilities";
 import { Display } from "react-bootstrap-icons";
 import { toast } from 'react-toastify';
 
+interface Member {
+    USER_GROUP_ID: number,
+    MEMBER_ID: number;
+    USER_FULLNAME: string;
+}
+
 interface Props {
     userId: number;
     saveHandler: () => void;
     cancelHandler: () => void;
-    editingGroup?: { USER_GROUP_ID: number; OWNER_ID: number; USER_GROUP_DATE: Date; USER_GROUP_TITLE: string; USER_GROUP_DESCRIPTION: string; USER_GROUP_MEMBERS: Array<String>;}; 
+    editingGroup?: { USER_GROUP_ID: number; OWNER_ID: number; USER_GROUP_DATE: Date; USER_GROUP_TITLE: string; USER_GROUP_DESCRIPTION: string; members: Member[];}; 
 }
 
 const GroupForm = (props:Props) => {
 
     // State for category input form
+    const [groupOwnerId, setGroupOwnerId] = useState(props.editingGroup?.OWNER_ID);
     const [groupDate, setGroupDate] = useState(props.editingGroup?.USER_GROUP_DATE ? new Date(props.editingGroup?.USER_GROUP_DATE) : new Date());
     const [groupTitle, setGroupTitle] = useState(props.editingGroup?.USER_GROUP_TITLE);
     const [groupDescription, setGroupDescription] = useState(props.editingGroup?.USER_GROUP_DESCRIPTION);
-    const [groupMembers, setGroupMembers] = useState(props.editingGroup?.USER_GROUP_MEMBERS);
-    const [groupOwnerId, setGroupOwnerId] = useState(props.editingGroup?.OWNER_ID);
-    const [validationErrors, setValidationErrors] = useState({groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''});
+    const [groupMembers, setGroupMembers] = useState(props.editingGroup?.members);
     const [users, setUsers] = useState<any[]>([]);
     const [checkedState, setCheckedState] = useState(new Array(users.length).fill(false));
+    const [validationErrors, setValidationErrors] = useState({groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''});
     const [error, setError] = useState('');
-
+    
     // Validate category input
     const validateInput = () => {
       let isValid = true;
@@ -82,30 +88,17 @@ const GroupForm = (props:Props) => {
         setCheckedState(updatedCheckedState); // Update state
     };
 
-    //code for getting previous checked state
-    // useEffect(() => {
-
-            
-    //         if (users.length > 0 && props.editingGroup) {
-    //             console.log('Editing Group:', props.editingGroup);
-    //         console.log('Users List:', users);
-    //             const memberIds = props.editingGroup.USER_GROUP_MEMBERS || []; 
-    //             const updatedCheckedState = users.map(user => memberIds.includes(user.USER_ID));
-    //             setCheckedState(updatedCheckedState);
-    //             console.log('Updated Checked State:', updatedCheckedState);
-    //         } else {
-    //             setCheckedState(new Array(users.length).fill(false));
-    //         }
-        
-    // }, [users, props.editingGroup]); // Depend on both users and editingGroup
-    
+    useEffect(() => {
+        if (groupMembers && users.length > 0) {
+            const initialCheckedState = users.map(user =>
+                groupMembers.some(member => member.MEMBER_ID === user.USER_ID)
+            );
+            setCheckedState(initialCheckedState);
+        }
+    }, [groupMembers, users]);
     
     const SaveClicked = async () => {
-        console.log("members ", checkedState);
-        // const selectedUserIds = users.filter((_, index) => checkedState[index]).map(user => user.USER_ID);
-        const selectedUserIds = users.filter((_, index) => checkedState[index]).map(user => user.USER_ID);
-        console.log("ids ", selectedUserIds);
-        // so member ids are user ids
+        const memberIdsList = users.filter((_, index) => checkedState[index]).map(user => user.USER_ID);
     
         if (validateInput()) {
             const groupData = {
@@ -113,7 +106,7 @@ const GroupForm = (props:Props) => {
                 OWNER_ID: props.userId,
                 USER_GROUP_TITLE: groupTitle, 
                 USER_GROUP_DESCRIPTION: groupDescription,
-                USER_GROUP_MEMBERS: selectedUserIds
+                USER_GROUP_MEMBERS: memberIdsList
             };
     
             try {

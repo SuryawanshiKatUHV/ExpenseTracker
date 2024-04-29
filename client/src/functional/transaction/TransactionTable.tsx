@@ -131,6 +131,7 @@ const TransactionTable = ({userId} : Props) => {
                         <th scope="col">Date</th>
                         <th scope="col">GroupTx</th>
                         <th scope="col">Notes</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -145,8 +146,9 @@ const TransactionTable = ({userId} : Props) => {
                             <td>
                                 {/* If there are group transactions associated with this transaction then do not allow to edit this transaction, because then we need
                                 additional processing to distribute the amount among the group transactions. */}
-                                {item.TOTAL_USER_GROUP_TRANSACTIONS===0 && <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} />} {/* Edit icon */}
-                                <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/>
+                                {item.TOTAL_USER_GROUP_TRANSACTIONS > 0 && <small>*</small>}
+                                {item.TOTAL_USER_GROUP_TRANSACTIONS === 0 && <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} />}
+                                {item.TOTAL_USER_GROUP_TRANSACTIONS === 0 && <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/>}
                             </td>
                             
                         </tr>
@@ -155,6 +157,8 @@ const TransactionTable = ({userId} : Props) => {
             </table>
 
             {transactions.length == 0 && <p>No records found.</p>}
+
+            {transactions.length > 0 && <small><i>* The consolidated transactions which are result of the group tranasactions cannot be edited or deleted.</i></small>}
         </div>
         </>
     );

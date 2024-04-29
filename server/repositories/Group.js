@@ -86,16 +86,47 @@ class Group {
    * @throws {Error} To be implemented.
    */
   async update(userGroupId, {USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION, USER_GROUP_MEMBERS}) {
+    // console.log("inside group repo");
+    // console.log(`USER_GROUP_DATE=${USER_GROUP_DATE} USER_GROUP_TITLE=${USER_GROUP_TITLE} USER_GROUP_DESCRIPTION=${USER_GROUP_DESCRIPTION}`);
+    // console.log(`USER_GROUP_MEMBERS=${USER_GROUP_MEMBERS}`); //ids 
+
     const connection = await getConnection();
     try {
-      const result = await connection.execute("UPDATE USER_GROUP SET USER_GROUP_DATE=?, USER_GROUP_TITLE=?, USER_GROUP_DESCRIPTION=? WHERE USER_GROUP_ID=?", [USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION, userGroupId]);
+
+      await connection.beginTransaction();
+      try {
+        const result = await connection.execute("UPDATE USER_GROUP SET USER_GROUP_DATE=?, USER_GROUP_TITLE=?, USER_GROUP_DESCRIPTION=? WHERE USER_GROUP_ID=?", [USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION, userGroupId]);
+        
+        if (result.affectedRows === 0) {
+          throw new Error(`No group found for id ${userGroupId}`);
+        }
+        console.log(`Group updated with id ${userGroupId}`);
   
-      if (result.affectedRows === 0) {
-        throw new Error(`No group found for id ${userGroupId}`);
+        const [existingMembers] = await connection.execute("SELECT MEMBER_ID FROM USER_GROUP_MEMBERSHIP WHERE USER_GROUP_ID=?", [userGroupId]);
+        // Store results of existing member ids into array
+        const existingMemberIds = existingMembers.map(member => member.MEMBER_ID);
+        const membersToRemove = existingMemberIds.filter(memberId => !USER_GROUP_MEMBERS.includes(memberId));
+        const membersToAdd = USER_GROUP_MEMBERS.filter(memberId => !existingMemberIds.includes(memberId));
+
+        // Remove members
+        for (const memberId of membersToRemove) {
+            await connection.execute("DELETE FROM USER_GROUP_MEMBERSHIP WHERE USER_GROUP_ID=? AND MEMBER_ID=?", [userGroupId, memberId]);
+        }
+
+        // Add new members
+        for (const memberId of membersToAdd) {
+            await connection.execute("INSERT INTO USER_GROUP_MEMBERSHIP (USER_GROUP_ID, MEMBER_ID) VALUES (?,?)", [userGroupId, memberId]);
+        }
+  
+        await connection.commit();
+        return {userGroupId};
       }
-  
-      return result;
-    } finally {
+      catch(error) {
+        await connection.rollback();
+        throw error;
+      }
+    }
+    finally {
       connection.release();
     }
   }
@@ -143,24 +174,40 @@ class Group {
   }
 
   async getTransactions(groupId) {
-    const SQL =
-    `SELECT 
-      USER_GROUP_TRANSACTION_ID, 
-      USER_GROUP_ID, 
-      TRANSACTION_ID,
-      PAID_BY_USER_ID, 
-      CONCAT(U1.USER_LNAME, ', ', U1.USER_FNAME) AS PAID_BY_USER_FULLNAME,
-      PAID_TO_USER_ID, 
-      CONCAT(U2.USER_LNAME, ', ', U2.USER_FNAME) AS PAID_TO_USER_FULLNAME,
-      DATE_FORMAT(USER_GROUP_TRANSACTION_DATE, '%Y-%m-%d') AS USER_GROUP_TRANSACTION_DATE, 
-      USER_GROUP_TRANSACTION_AMOUNT, 
-      USER_GROUP_TRANSACTION_NOTES
-      FROM USER_GROUP_TRANSACTION
-        JOIN USER u1 on USER_GROUP_TRANSACTION.PAID_BY_USER_ID = u1.USER_ID
-        JOIN USER u2 on USER_GROUP_TRANSACTION.PAID_TO_USER_ID = u2.USER_ID
-      WHERE USER_GROUP_ID=?
-      ORDER BY USER_GROUP_TRANSACTION_DATE DESC`;
+    // const SQL =
+    // `SELECT 
+    //   USER_GROUP_TRANSACTION_ID, 
+    //   USER_GROUP_ID, 
+    //   TRANSACTION_ID,
+    //   PAID_BY_USER_ID, 
+    //   CONCAT(U1.USER_LNAME, ', ', U1.USER_FNAME) AS PAID_BY_USER_FULLNAME,
+    //   PAID_TO_USER_ID, 
+    //   CONCAT(U2.USER_LNAME, ', ', U2.USER_FNAME) AS PAID_TO_USER_FULLNAME,
+    //   DATE_FORMAT(USER_GROUP_TRANSACTION_DATE, '%m/%d/%Y') AS USER_GROUP_TRANSACTION_DATE, 
+    //   USER_GROUP_TRANSACTION_AMOUNT, 
+    //   USER_GROUP_TRANSACTION_NOTES
+    //   FROM USER_GROUP_TRANSACTION
+    //     JOIN USER u1 on USER_GROUP_TRANSACTION.PAID_BY_USER_ID = u1.USER_ID
+    //     JOIN USER u2 on USER_GROUP_TRANSACTION.PAID_TO_USER_ID = u2.USER_ID
+    //   WHERE USER_GROUP_ID=?
+    //   ORDER BY USER_GROUP_TRANSACTION_DATE DESC`;
   
+    const SQL = `SELECT 
+    T.TRANSACTION_ID,
+      DATE_FORMAT(T.TRANSACTION_DATE, '%Y-%m-%d') AS TRANSACTION_DATE,
+      T.TRANSACTION_AMOUNT,
+      T.TRANSACTION_NOTES,
+      CONCAT(U1.USER_LNAME, ", ", U1.USER_FNAME) AS PAID_BY_USER_FULLNAME,
+      GROUP_CONCAT(DISTINCT CONCAT(U2.USER_LNAME, ", ", U2.USER_FNAME) SEPARATOR '; ') AS PAID_TO_USER_FULLNAME
+  FROM USER_GROUP_TRANSACTION UGT
+  JOIN USER U1 ON U1.USER_ID = UGT.PAID_BY_USER_ID
+  JOIN USER U2 ON U2.USER_ID = UGT.PAID_TO_USER_ID
+  JOIN TRANSACTION T ON T.TRANSACTION_ID = UGT.TRANSACTION_ID
+  WHERE UGT.USER_GROUP_ID=2
+  GROUP BY
+    T.TRANSACTION_ID, T.TRANSACTION_DATE, T.TRANSACTION_AMOUNT, T.TRANSACTION_NOTES, CONCAT(U1.USER_LNAME, ", ", U1.USER_FNAME)
+  ORDER BY T.TRANSACTION_DATE DESC`;
+
     const connection = await getConnection();
     try {
       const [rows, fields] = await connection.execute(SQL, [groupId]);
