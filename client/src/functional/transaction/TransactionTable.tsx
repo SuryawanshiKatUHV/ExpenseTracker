@@ -158,7 +158,7 @@ const TransactionTable = ({userId} : Props) => {
 
             {transactions.length == 0 && <p>No records found.</p>}
 
-            {transactions.length > 0 && <small>* The consolidated transactions which are result of the group tranasactions cannot be edited or deleted.</small>}
+            {transactions.length > 0 && <small><i>* The consolidated transactions which are result of the group tranasactions cannot be edited or deleted.</i></small>}
         </div>
         </>
     );

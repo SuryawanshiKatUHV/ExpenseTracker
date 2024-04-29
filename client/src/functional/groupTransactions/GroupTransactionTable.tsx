@@ -193,7 +193,7 @@ const GroupTransactionTable = (props : Props) => {
         
         {settlementSummary.length == 0 && <p>No records found.</p>}
 
-        <i>* Negative unsettled due indicates that the member needs to pay to other member.</i>
+        <small><i>* Negative unsettled due indicates that the member needs to pay to other member.</i></small>
     </>);
 }
 
