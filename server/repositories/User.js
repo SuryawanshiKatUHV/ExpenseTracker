@@ -184,7 +184,7 @@ class User {
         JOIN CATEGORY C ON U.USER_ID = C.OWNER_ID
         JOIN BUDGET B ON C.CATEGORY_ID = B.CATEGORY_ID
         WHERE U.USER_ID = ?
-        ORDER BY B.BUDGET_DATE DESC;`, [userId]);
+        ORDER BY C.CATEGORY_TITLE ASC, B.BUDGET_DATE DESC;`, [userId]);
       return rows;
     }
     finally {
@@ -196,7 +196,15 @@ class User {
     const connection = await getConnection();
     try {
       const [rows, fields] = await connection.execute(
-        `SELECT C.CATEGORY_ID, C.CATEGORY_TITLE, T.TRANSACTION_ID, T.TRANSACTION_TYPE, T.TRANSACTION_AMOUNT, T.TRANSACTION_NOTES, DATE_FORMAT(T.TRANSACTION_DATE, '%m/%d/%Y') AS TRANSACTION_DATE, COALESCE(UGT.num_user_group_transactions, 0) AS TOTAL_USER_GROUP_TRANSACTIONS
+        `SELECT 
+          C.CATEGORY_ID, 
+          C.CATEGORY_TITLE, 
+          T.TRANSACTION_ID, 
+          T.TRANSACTION_TYPE, 
+          T.TRANSACTION_AMOUNT, 
+          T.TRANSACTION_NOTES, 
+          DATE_FORMAT(T.TRANSACTION_DATE, '%m/%d/%Y') AS TRANSACTION_DATE, 
+          COALESCE(UGT.num_user_group_transactions, 0) AS TOTAL_USER_GROUP_TRANSACTIONS
         FROM TRANSACTION T
         JOIN CATEGORY C ON T.CATEGORY_ID = C.CATEGORY_ID
         LEFT JOIN (
@@ -239,13 +247,29 @@ class User {
     const connection = await getConnection();
     try {
       const [rows, fields] = await connection.execute(
-        `SELECT UG.*, DATE_FORMAT(UG.USER_GROUP_DATE, '%m/%d/%Y') AS USER_GROUP_DATE,
-        CONCAT(U.USER_FNAME, ' ', U.USER_LNAME) AS OWNER_NAME
-        FROM USER_GROUP UG
-        JOIN  USER U ON U.USER_ID = UG.OWNER_ID
-        JOIN  USER_GROUP_MEMBERSHIP UGM ON UG.USER_GROUP_ID = UGM.USER_GROUP_ID
-        WHERE UGM.MEMBER_ID = ?
-        ORDER BY UG.USER_GROUP_DATE DESC, UG.USER_GROUP_TITLE ASC`, [userId]);
+        `SELECT 
+            UG.USER_GROUP_ID, 
+            UG.OWNER_ID,
+            CONCAT(U.USER_LNAME, ', ', U.USER_FNAME) AS OWNER_NAME,
+            DATE_FORMAT(UG.USER_GROUP_DATE, '%Y-%m-%d') AS USER_GROUP_DATE,
+            UG.USER_GROUP_TITLE,
+            UG.USER_GROUP_DESCRIPTION,
+            COALESCE(UGT.TOTAL_USER_GROUP_TRANSACTIONS, 0) AS TOTAL_USER_GROUP_TRANSACTIONS
+          FROM USER_GROUP UG
+          JOIN USER U 
+            ON U.USER_ID = UG.OWNER_ID
+          JOIN USER_GROUP_MEMBERSHIP UGM 
+            ON UG.USER_GROUP_ID = UGM.USER_GROUP_ID
+          LEFT JOIN (
+              SELECT USER_GROUP_ID, COUNT(*) AS TOTAL_USER_GROUP_TRANSACTIONS
+              FROM USER_GROUP_TRANSACTION
+              GROUP BY USER_GROUP_ID
+            ) UGT 
+            ON UG.USER_GROUP_ID = UGT.USER_GROUP_ID
+          WHERE UGM.MEMBER_ID = ?
+          ORDER BY UG.USER_GROUP_DATE DESC, UG.USER_GROUP_TITLE ASC`, 
+      [userId]);
+
       return rows;
     }
     finally {
@@ -257,7 +281,12 @@ class User {
     const connection = await getConnection();
     try {
       const [rows, fields] = await connection.execute(
-        `SELECT UGT.*, CONCAT(U1.USER_LNAME, ", ", U1.USER_FNAME) AS PAID_BY_USER_FULLNAME, CONCAT(U2.USER_LNAME, ", ", U2.USER_FNAME) AS PAID_TO_USER_FULLNAME, UG.USER_GROUP_DATE, UG.USER_GROUP_TITLE
+        `SELECT 
+          UGT.*, 
+          CONCAT(U1.USER_LNAME, ", ", U1.USER_FNAME) AS PAID_BY_USER_FULLNAME, 
+          CONCAT(U2.USER_LNAME, ", ", U2.USER_FNAME) AS PAID_TO_USER_FULLNAME, 
+          UG.USER_GROUP_DATE, 
+          UG.USER_GROUP_TITLE
         FROM USER_GROUP_TRANSACTION UGT
         JOIN USER U1 ON UGT.PAID_BY_USER_ID=U1.USER_ID
         JOIN USER U2 ON UGT.PAID_TO_USER_ID=U2.USER_ID
