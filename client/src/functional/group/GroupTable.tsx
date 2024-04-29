@@ -57,6 +57,7 @@ const GroupTable = ({userId} : Props) => {
     }
 
     const EditClicked =  (group: any) => {
+        // console.log("Editing Group:", group); 
         setEditingGroup(group);
         setFormDisplayed(true);
     }

@@ -239,7 +239,7 @@ class User {
     const connection = await getConnection();
     try {
       const [rows, fields] = await connection.execute(
-        `SELECT UG.*, DATE_FORMAT(UG.USER_GROUP_DATE, '%Y-%m-%d') AS USER_GROUP_DATE,
+        `SELECT UG.*, DATE_FORMAT(UG.USER_GROUP_DATE, '%m/%d/%Y') AS USER_GROUP_DATE,
         CONCAT(U.USER_FNAME, ' ', U.USER_LNAME) AS OWNER_NAME
         FROM USER_GROUP UG
         JOIN  USER U ON U.USER_ID = UG.OWNER_ID
