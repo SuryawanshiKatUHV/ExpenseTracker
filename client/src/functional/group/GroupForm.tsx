@@ -25,34 +25,46 @@ const GroupForm = (props:Props) => {
     const [groupMembers, setGroupMembers] = useState(props.editingGroup?.members);
     const [users, setUsers] = useState<any[]>([]);
     const [checkedState, setCheckedState] = useState(new Array(users.length).fill(false));
-    const [validationErrors, setValidationErrors] = useState({groupDate: '', groupTitle: '', groupDescription: ''});
+    const [validationErrors, setValidationErrors] = useState({groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''});
     const [error, setError] = useState('');
     
     // Validate category input
     const validateInput = () => {
-      let isValid = true;
-      let validationErrors = {groupDate: '', groupTitle: '', groupDescription: '', groupMembers: []};
+        let isValid = true;
+        let validationErrors = {groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''};
 
-      if (!groupDate) {
-          validationErrors.groupDate = 'Group Date is required.';
-          isValid = false;
-      }
-      if (!groupTitle) {
-          validationErrors.groupTitle = 'Group Title is required.';
-          isValid = false;
-      }
-      if (!groupDescription) {
-        validationErrors.groupDescription = 'Group Description is required.';
-        isValid = false;
+        if (!groupDate || isNaN(groupDate.getDate())) {
+            validationErrors.groupDate = 'Group Date is required.';
+            isValid = false;
+        } 
+        else {
+            groupDate.setHours(0, 0, 0, 0);
+            
+            const currentDate = new Date();
+            currentDate.setHours(0, 0, 0, 0);
 
-    //   if (!groupMembers) {
-    //     validationErrors.groupMembers = 'Group member is required.';
-    //     isValid = false;
-    }
+            if (groupDate > currentDate) {
+                validationErrors.groupDate = "Date must not be in future.";
+                isValid = false;
+            }
+        }
+        
+        if (!groupTitle) {
+            validationErrors.groupTitle = 'Group Title is required.';
+            isValid = false;
+        }
+        if (!groupDescription) {
+            validationErrors.groupDescription = 'Group Description is required.';
+            isValid = false;
+        }
+        if (checkedState.every(state => !state)) {
+            validationErrors.groupMembers = 'Must select at least one member.';
+            isValid = false;
+        } 
 
-    setValidationErrors(validationErrors);
-      return isValid;
-  };
+        setValidationErrors(validationErrors);
+        return isValid;
+    };
 
     async function loadUsers() {
         try {
@@ -83,6 +95,7 @@ const GroupForm = (props:Props) => {
         setCheckedState(updatedCheckedState); // Update state
     };
 
+    // pre fill existing members for a group
     useEffect(() => {
         if (groupMembers && users.length > 0) {
             const initialCheckedState = users.map(user =>
@@ -170,8 +183,7 @@ const GroupForm = (props:Props) => {
                 ))}
             </ul>
         </div>
-
-        {/* {validationErrors.categoryId && <p style={{color:'red'}}>{validationErrors.categoryId}</p>} */}
+        {validationErrors.groupMembers && <p style={{color:'red'}}>{validationErrors.groupMembers}</p>}
 
         <div>
             <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
