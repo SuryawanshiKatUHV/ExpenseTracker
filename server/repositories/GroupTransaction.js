@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const getConnection = require('../common/database');
+const {getConnection} = require('../common/database');
 const transactionRepo = require("./Transaction");
 
 // SQL Queries
