@@ -187,10 +187,6 @@ const GroupForm = (props:Props) => {
             </ul>
             {validationErrors.groupMembers && <p style={{color:'red'}}>{validationErrors.groupMembers}</p>}
         </div>
-<<<<<<< HEAD
-        {validationErrors.groupMembers && <p style={{color:'red'}}>{validationErrors.groupMembers}</p>}
-=======
->>>>>>> origin/Development
 
         <div>
             <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
