@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import GroupForm from "./GroupForm";
 import { END_POINTS, get, del } from "../../common/Utilities";
 import { PencilSquare, TrashFill } from 'react-bootstrap-icons';
+import { toast } from 'react-toastify';
 
 interface Props {
     userId: number;
@@ -48,6 +49,7 @@ const GroupTable = ({userId} : Props) => {
         } catch (error:any) {
             console.error("Failed to save:", error);
             setError(error.message);
+            toast.error(error.message);
         }
     };
 
@@ -73,8 +75,9 @@ const GroupTable = ({userId} : Props) => {
                 await loadGroups(); // Refresh the list after deleting
                 setError("");
             } catch (error) {
-                console.error("Failed to delete the item:", error);
-                setError('Failed to delete group'); 
+                // console.error("Failed to delete the item:", error);
+                // setError('Failed to delete group'); 
+                toast.error('Failed to delete group');
             }
         } else {
             console.log("Delete operation cancelled");

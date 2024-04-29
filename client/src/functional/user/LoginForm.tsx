@@ -1,5 +1,6 @@
 import { useState } from "react";
 import './login.css';
+import { toast } from 'react-toastify';
 
 interface Props {
     loginHandler: (email : string, password: string) => void;
@@ -19,13 +20,16 @@ function LoginForm({loginHandler, showRegistrationHandler}:Props) {
 
     if (email == "") {
       errors["email"] = "Email is required.";
+      toast.error('Email is required');
     }
     else if (email.indexOf('@') == -1 || email.indexOf('.') == -1) {
       errors["email"] = "Email should be in format name@domain.com.";
+      toast.error('Email should be in format name@domain.com');
     }
 
     if (password == '') {
       errors["password"] = "Password is required.";
+      toast.error('Password is required');
     }
 
     setErrors(errors);
@@ -38,6 +42,8 @@ function LoginForm({loginHandler, showRegistrationHandler}:Props) {
   const LoginClicked = () => {
     if (validateInput())
       loginHandler(email, password);
+
+      toast.success('Login Success');
   }
 
   return (

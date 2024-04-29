@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import GroupTransactionForm from "./GroupTransactionForm";
-import { END_POINTS, get } from "../../common/Utilities";
+import { END_POINTS, del, get } from "../../common/Utilities";
+import { TrashFill } from "react-bootstrap-icons";
 
 interface Props {
     userId: number;
@@ -96,6 +97,25 @@ const GroupTransactionTable = (props : Props) => {
         await refresh();
     }
 
+    async function DeleteClicked(transactionId:number) {
+        console.log(`DeleteClicked with transaction id ${transactionId}`);
+        // Simple confirmation dialog
+        const isConfirmed = window.confirm("Are you sure you want to delete?");
+        if (isConfirmed) {
+            try {
+                await del(`${END_POINTS.Transactions}/${transactionId}`);
+                console.log("Transaction deleted");
+                await refresh();
+                setError("");
+            } catch (error:any) {
+                console.error("Failed to delete the item:", error);
+                setError(error.message); 
+            }
+        } else {
+            console.log("Delete operation cancelled");
+        }
+    }
+
     return (<>
         <div className="form-floating mb-3">
             <select className="form-select" id="selectedGroupId" onChange={(e) => setSelectedGroupId(parseInt(e.target.value))} value={selectedGroupId}>
@@ -121,20 +141,24 @@ const GroupTransactionTable = (props : Props) => {
             <thead>
                 <tr>
                     <th scope="col">Date</th>
-                    <th scope="col">Amount</th>
+                    <th scope="col">Total Amount</th>
+                    <th scope="col">Notes</th>
                     <th scope="col">Paid By</th>
                     <th scope="col">Paid To</th>
-                    <th scope="col">Notes</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
                 {groupTransactions.map((item)=> (
                     <tr>
-                        <td>{item.USER_GROUP_TRANSACTION_DATE}</td>
-                        <td>${item.USER_GROUP_TRANSACTION_AMOUNT}</td>
+                        <td>{item.TRANSACTION_DATE}</td>
+                        <td>${item.TRANSACTION_AMOUNT}</td>
+                        <td>{item.TRANSACTION_NOTES}</td>
                         <td>{item.PAID_BY_USER_FULLNAME}</td>
-                        <td>{item.PAID_TO_USER_FULLNAME}</td>
-                        <td>{item.USER_GROUP_TRANSACTION_NOTES}</td>
+                        <td>{item.PAID_TO_USER_FULLNAME.split(";").map((user:string) =>(<div key={user}>{user}</div>))}</td>
+                        <td>
+                            <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/>
+                        </td>
                     </tr>                
                 ))}
             </tbody>
@@ -169,7 +193,7 @@ const GroupTransactionTable = (props : Props) => {
         
         {settlementSummary.length == 0 && <p>No records found.</p>}
 
-        <i>* Negative unsettled due indicates that the member needs to pay to other member.</i>
+        <small><i>* Negative unsettled due indicates that the member needs to pay to other member.</i></small>
     </>);
 }
 
