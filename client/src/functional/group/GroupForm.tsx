@@ -18,14 +18,14 @@ interface Props {
 
 const GroupForm = (props:Props) => {
 
-    // State for category input form
-    const [groupOwnerId, setGroupOwnerId] = useState(props.editingGroup?.OWNER_ID);
+    // State for group input form
+    const [groupOwnerId, setGroupOwnerId] = useState(props.editingGroup ? props.editingGroup.OWNER_ID : props.userId);
     const [groupDate, setGroupDate] = useState(props.editingGroup?.USER_GROUP_DATE ? new Date(props.editingGroup?.USER_GROUP_DATE) : new Date());
     const [groupTitle, setGroupTitle] = useState(props.editingGroup?.USER_GROUP_TITLE);
     const [groupDescription, setGroupDescription] = useState(props.editingGroup?.USER_GROUP_DESCRIPTION);
     const [groupMembers, setGroupMembers] = useState(props.editingGroup?.members);
     const [users, setUsers] = useState<any[]>([]);
-    const [checkedState, setCheckedState] = useState(new Array(users.length).fill(false));
+    const [checkedBoxState, setCheckedBoxState] = useState(new Array(users.length).fill(false));
     const [validationErrors, setValidationErrors] = useState({groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''});
     const [error, setError] = useState('');
     
@@ -58,7 +58,7 @@ const GroupForm = (props:Props) => {
             validationErrors.groupDescription = 'Group Description is required.';
             isValid = false;
         }
-        if (checkedState.every(state => !state)) {
+        if (checkedBoxState.every(state => !state)) {
             validationErrors.groupMembers = 'Must select at least one member.';
             isValid = false;
         } 
@@ -85,34 +85,33 @@ const GroupForm = (props:Props) => {
     }, []);
 
     useEffect(() => {
-        setCheckedState(new Array(users.length).fill(false));
-    }, [users]);
-
-    const handleOnChange = (position: number) => {
-        const updatedCheckedState = checkedState.map((item, index) =>
-            index === position ? !item : item
-        );
-    
-        setCheckedState(updatedCheckedState); // Update state
-    };
-
-    // pre fill existing members for a group
-    useEffect(() => {
         if (groupMembers && users.length > 0) {
             const initialCheckedState = users.map(user =>
                 groupMembers.some(member => member.MEMBER_ID === user.USER_ID)
             );
-            setCheckedState(initialCheckedState);
+            setCheckedBoxState(initialCheckedState);
         }
+        else {
+            setCheckedBoxState(new Array(users.length).fill(false));
+        }
+
     }, [groupMembers, users]);
+
+    const handleCheckBoxValues = (position: number) => {
+        const updatedCheckedBoxState = checkedBoxState.map((item, index) =>
+            index === position ? !item : item
+        );
+    
+        setCheckedBoxState(updatedCheckedBoxState); // Update state
+    };
     
     const SaveClicked = async () => {
-        const memberIdsList = users.filter((_, index) => checkedState[index]).map(user => user.USER_ID);
+        const memberIdsList = users.filter((_, index) => checkedBoxState[index]).map(user => user.USER_ID);
     
         if (validateInput()) {
             const groupData = {
                 USER_GROUP_DATE: formatDate(groupDate),
-                OWNER_ID: props.userId,
+                OWNER_ID: groupOwnerId,
                 USER_GROUP_TITLE: groupTitle, 
                 USER_GROUP_DESCRIPTION: groupDescription,
                 USER_GROUP_MEMBERS: memberIdsList
@@ -166,26 +165,34 @@ const GroupForm = (props:Props) => {
 
         <div className="form-floating mb-3">
             <ul className="list-group">
-                <label htmlFor="UserId" style={{textAlign: "left", paddingLeft: "1em"}}>Members</label>
-                {users.map((user, index) => (
-                    <li key={user.USER_ID} className="list-group-item" style={{ textAlign: "left", height: "3em" }}>
-                        <input
-                            type="checkbox"
-                            className="form-check-input me-1"
-                            id={`custom-checkbox-${index}`}
-                            name={user.USER_ID}
-                            value={user.USER_ID}
-                            checked={checkedState[index]}
-                            onChange={() => handleOnChange(index)}
-                            style={{ height: "1em" }}
-                        />
-                        <label className="form-check-label" htmlFor={`custom-checkbox-${index}`}>
-                            {user.USER_LNAME} {user.USER_FNAME}
-                        </label>
-                    </li>
-                ))}
+                <label htmlFor="UserId" style={{ textAlign: "left", paddingLeft: "1em" }}>Members</label>
+                {users.map((user, index) => {
+                    // Check if the user is the owner
+                    const isOwner = user.USER_ID === groupOwnerId;
+
+                    // Render checkbox for members only
+                    if (!isOwner) {
+                        return (
+                            <li key={user.USER_ID} className="list-group-item" style={{ textAlign: "left", height: "3em" }}>
+                                <input
+                                    type="checkbox"
+                                    className="form-check-input me-1"
+                                    id={`custom-checkbox-${index}`}
+                                    name={user.USER_ID}
+                                    value={user.USER_ID}
+                                    checked={checkedBoxState[index]}
+                                    onChange={() => handleCheckBoxValues(index)}
+                                    style={{ height: "1em" }}
+                                />
+                                <label className="form-check-label" htmlFor={`custom-checkbox-${index}`}>
+                                    {user.USER_LNAME} {user.USER_FNAME}
+                                </label>
+                            </li>
+                        );
+                    }
+                })}
             </ul>
-            {validationErrors.groupMembers && <p style={{color:'red'}}>{validationErrors.groupMembers}</p>}
+            {validationErrors.groupMembers && <p style={{ color: 'red' }}>{validationErrors.groupMembers}</p>}
         </div>
 
         <div>
