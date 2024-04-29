@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { END_POINTS, get, post, put, formatDate } from "../../common/Utilities";
+import { toast } from 'react-toastify';
 
 interface Props {
     userId: number;
@@ -61,8 +62,14 @@ const TransactionForm  = (props : Props) => {
 
     
     async function loadCategories() {
-        const categories = await get(`${END_POINTS.Users}/${props.userId}/categories`);
-        setCategories(categories);
+        try {
+            const categories = await get(`${END_POINTS.Users}/${props.userId}/categories`);
+            setCategories(categories);
+        } catch (error:any) {
+            console.error("Failed to load categories:", error);
+            setError(error.message);
+            toast.error(error.message);
+        }
     }
 
     useEffect(() =>{ 

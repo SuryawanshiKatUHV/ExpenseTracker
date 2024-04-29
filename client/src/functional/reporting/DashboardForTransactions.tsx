@@ -40,14 +40,17 @@ const DashboardForTransactions = ({userId} : Props) => {
     }, []);
 
     useEffect(() => {
+        async function fetchData() {
+            await loadTransactions();
+        }
         fetchData();    
     }, [selectedYearMonth]);
 
-    function fetchData() {
+    async function loadTransactions() {
         if (selectedYearMonth) {
             // Fetch both income and expense summaries
-            const incomeRequest = get(`${END_POINTS.Users}/${userId}/transactions/Income/${selectedYearMonth.Year}/${selectedYearMonth.Month}/summary`);
-            const expenseRequest = get(`${END_POINTS.Users}/${userId}/transactions/Expense/${selectedYearMonth.Year}/${selectedYearMonth.Month}/summary`);
+            const incomeRequest = await get(`${END_POINTS.Users}/${userId}/transactions/Income/${selectedYearMonth.Year}/${selectedYearMonth.Month}/summary`);
+            const expenseRequest = await get(`${END_POINTS.Users}/${userId}/transactions/Expense/${selectedYearMonth.Year}/${selectedYearMonth.Month}/summary`);
             
             // Wait for both requests to finish and continue to then
             Promise.all([incomeRequest, expenseRequest])

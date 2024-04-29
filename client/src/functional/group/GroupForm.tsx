@@ -78,9 +78,9 @@ const GroupForm = (props:Props) => {
     }
 
     useEffect(() =>{ 
-    async function fetchData() {
-        await loadUsers();
-    }
+        async function fetchData() {
+            await loadUsers();
+        }
         fetchData();
     }, []);
 

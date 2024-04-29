@@ -16,8 +16,14 @@ const CategoryTable = ({userId} : Props) => {
     const [error, setError] = useState('');
 
     async function loadCategories() {
-        const categories = await get(`${END_POINTS.Users}/${userId}/categories`);
-        setCategories(categories);
+        try {
+            const categories = await get(`${END_POINTS.Users}/${userId}/categories`);
+            setCategories(categories);
+        } catch (error:any) {
+            console.error("Failed to load categories:", error);
+            setError(error.message);
+            toast.error(error.message);
+        }
     }
 
     useEffect(() =>{ 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import TransactionForm from "./TransactionForm";
 import { END_POINTS, get, del, stringToYearMonth, YearMonthRange } from "../../common/Utilities";
 import { PencilSquare, TrashFill } from 'react-bootstrap-icons';
+import { toast } from 'react-toastify';
 
 interface Props {
     userId: number;
@@ -10,7 +11,6 @@ interface Props {
 const TransactionTable = ({userId} : Props) => {
     const [yearMonthRange, setYearMonthRange] = useState<YearMonthRange[]>([]);
     const [selectedYearMonth, setSelectedYearMonth] = useState<YearMonthRange>(defaultYearMonth());
-
     const [formDisplayed, setFormDisplayed] = useState(false);
     const [transactions, setTransactions] = useState<any[]>([]);
     const [editingTransaction, setEditingTransaction] = useState<any>([]);
@@ -23,8 +23,14 @@ const TransactionTable = ({userId} : Props) => {
     }
 
     async function loadTransactions() {
-        const transactions = await get(`${END_POINTS.Users}/${userId}/transactions/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}`);
-        setTransactions(transactions);
+        try {
+            const transactions = await get(`${END_POINTS.Users}/${userId}/transactions/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}`);
+            setTransactions(transactions);
+        } catch (error) {
+            console.error("Failed to load transactions:", error);
+            setError('Failed to load transactions');
+            toast.error('Failed to load transactions')
+        }
     }
     
     useEffect(() =>{ 
