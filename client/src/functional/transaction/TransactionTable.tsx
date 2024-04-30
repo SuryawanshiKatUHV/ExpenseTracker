@@ -30,30 +30,37 @@ const TransactionTable = ({userId} : Props) => {
             toast.error("Failed to load transaction", { autoClose: false});
         }
     }
+
+    async function loadYearMonthRange() {
+        try {
+            const yearMonthRange = await get(`${END_POINTS.Users}/${userId}/transactions/yearMonthRange`);
+            setYearMonthRange(yearMonthRange);
+            if (yearMonthRange && yearMonthRange.length > 0) {
+                setSelectedYearMonth(yearMonthRange[0]);
+            }
+        } catch (error) {
+            toast.error("Failed to load Year-Month range", { autoClose: false});
+        }
+    }
+
+    async function refresh() {
+        await loadYearMonthRange();
+        await loadTransactions();
+    }
     
+    /**
+     * In the begining load the initial view
+     */
     useEffect(() =>{ 
-        get(`${END_POINTS.Users}/${userId}/transactions/yearMonthRange`)
-        .then((data) => {
-            setYearMonthRange(data);
-            return data;
-        })
-        .then((data) => {
-            if (data && data.length > 0) {
-                setSelectedYearMonth(data[0]);
-            }
-        })
-        .then(() => {
-            async function fetchData() {
-                await loadTransactions();
-            }
-            fetchData();
-        })
-        .catch((error) => {
-            // setError(error.message?error.message:error)
-            toast.error(error.message?error.message.error: { autoClose: false});
-        });;
+        async function fetchData() {
+            await refresh();
+        }
+        fetchData();
     }, []);
 
+    /**
+     * When the Year-Month selection changes then reload the transactions
+     */
     useEffect(() =>{ 
         async function fetchData() {
             await loadTransactions();
@@ -68,11 +75,10 @@ const TransactionTable = ({userId} : Props) => {
 
     const SaveClicked = async () => {
         try {
-            await loadTransactions(); // Refresh the table
             setFormDisplayed(false);
+            await refresh(); // Refresh the table
         } 
         catch (error : any) {
-            // setError(error.message);
             toast.error(error.message, { autoClose: false});
         }
     }
@@ -88,11 +94,10 @@ const TransactionTable = ({userId} : Props) => {
         if (isConfirmed) {
             try {
                 await del(`${END_POINTS.Transactions}/${transactionId}`);
-                await loadTransactions(); // Refresh the list after deleting
+                await refresh(); // Refresh the list after deleting
                 toast.success("Transaction deleted", {position: "top-right"});
             } catch (error:any) {
                 console.error("Failed to delete the item:", error);
-                // setError(error.message);
                 toast.error(error.message, { autoClose: false}); 
             }
         } else {
