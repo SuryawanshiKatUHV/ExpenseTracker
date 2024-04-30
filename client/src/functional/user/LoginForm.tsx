@@ -10,35 +10,37 @@ interface Props {
 function LoginForm({loginHandler, showRegistrationHandler}:Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({email:'', password:''});
 
   /**
    * Operations
    */
   const validateInput = () : boolean => {
-    let errors = {email:'', password:''};
+    let isValid = true;
 
     if (email == "") {
-      toast.error('Email is required', {autoClose: false});
+      toast.error('Email is required');
+      isValid = false;
     }
     else if (email.indexOf('@') == -1 || email.indexOf('.') == -1) {
-      toast.error('Email should be in format name@domain.com', { autoClose: false});
+      toast.error('Email should be in format name@domain.com');
+      isValid = false;
     }
 
     if (password == '') {
-      toast.error('Password is required', {autoClose: false});
+      toast.error('Password is required');
+      isValid = false;
     }
 
-    setErrors(errors);
-    return !(errors.email || errors.password);
+    return isValid;
   }
 
   /**
    * Event Handler
    */
   const LoginClicked = () => {
-    if (validateInput())
+    if (validateInput()) {
       loginHandler(email, password);
+    }
   }
 
   return (
@@ -48,13 +50,11 @@ function LoginForm({loginHandler, showRegistrationHandler}:Props) {
         <div className="form-floating mb-3">
           <input type="email" className="form-control" id="inputEmail" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)}/>
           <label htmlFor="inputEmail">Email address</label>
-          {/* {errors.email && <p style={{color:'red'}}>{errors.email}</p>} */}
         </div>
         
         <div className="form-floating mb-3">
           <input type="password" className="form-control" id="inputPassword" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
           <label htmlFor="inputPassword">Password</label>
-          {/* {errors.password && <p style={{color:'red'}}>{errors.password}</p>} */}
         </div>
 
         <button className="loginBtn" onClick={LoginClicked}>Login</button>
