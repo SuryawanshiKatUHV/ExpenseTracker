@@ -98,7 +98,7 @@ const GroupTransactionTable = (props : Props) => {
     }
 
     async function DeleteClicked(transactionId:number) {
-        console.log(`DeleteClicked with transaction id ${transactionId}`);
+        console.log(`Delete Clicked with transaction id ${transactionId}`);
         // Simple confirmation dialog
         const isConfirmed = window.confirm("Are you sure you want to delete?");
         if (isConfirmed) {
