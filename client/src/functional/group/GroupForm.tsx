@@ -24,12 +24,13 @@ const GroupForm = (props:Props) => {
     const [groupTitle, setGroupTitle] = useState(props.editingGroup?.USER_GROUP_TITLE);
     const [groupDescription, setGroupDescription] = useState(props.editingGroup?.USER_GROUP_DESCRIPTION);
     const [groupMembers, setGroupMembers] = useState(props.editingGroup?.members);
+    const [settlementSummary, setSettlementSummary] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]);
     const [checkedBoxState, setCheckedBoxState] = useState(new Array(users.length).fill(false));
     const [validationErrors, setValidationErrors] = useState({groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''});
     const [error, setError] = useState('');
     
-    // Validate category input
+    // Validate group input
     const validateInput = () => {
         let isValid = true;
         let validationErrors = {groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''};
@@ -77,14 +78,31 @@ const GroupForm = (props:Props) => {
             toast.error(error.message, {position: "top-center", autoClose: false});
         }
     }
+    
+    async function loadSettlementSummary() {
+        try {
+            if (props.editingGroup?.USER_GROUP_ID) {
+                const settlementSummaryData = await get(`${END_POINTS.Groups}/${props.editingGroup?.USER_GROUP_ID}/settlementSummary`);
+                setSettlementSummary(settlementSummaryData);
+            } else {
+                setSettlementSummary([]);
+            }
+        }
+        catch (error:any) {
+            console.error("Failed to load settlement summary:", error);
+            setError(error.message);
+        }
+    }
 
     useEffect(() =>{ 
         async function fetchData() {
             await loadUsers();
+            await loadSettlementSummary();
         }
         fetchData();
     }, []);
 
+    // set checkboxes to empty state for creating groups or pre-selected state for editing groups
     useEffect(() => {
         if (groupMembers && users.length > 0) {
             const initialCheckedState = users.map(user =>
@@ -98,7 +116,7 @@ const GroupForm = (props:Props) => {
 
     }, [groupMembers, users]);
 
-    const handleCheckBoxValues = (position: number) => {
+    const handleCheckBoxStates = (position: number) => {
         const updatedCheckedBoxState = checkedBoxState.map((item, index) =>
             index === position ? !item : item
         );
@@ -169,6 +187,8 @@ const GroupForm = (props:Props) => {
                 {users.map((user, index) => {
                     // Check if the user is the owner
                     const isOwner = user.USER_ID === groupOwnerId;
+                    // Check if the user besides owner has pending transactions based on unsettled dues
+                    const hasPendingTransactions = settlementSummary.some((summary) => summary.USER_ID === user.USER_ID && parseFloat(summary.UNSETTLED_DUE) !== 0.00);
 
                     // Render checkbox for members only
                     if (!isOwner) {
@@ -181,7 +201,8 @@ const GroupForm = (props:Props) => {
                                     name={user.USER_ID}
                                     value={user.USER_ID}
                                     checked={checkedBoxState[index]}
-                                    onChange={() => handleCheckBoxValues(index)}
+                                    onChange={() => handleCheckBoxStates(index)}
+                                    disabled={hasPendingTransactions}  // cannot deselect/remove members that has group transactions
                                     style={{ height: "1em" }}
                                 />
                                 <label className="form-check-label" htmlFor={`custom-checkbox-${index}`}>
