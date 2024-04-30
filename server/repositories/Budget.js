@@ -19,7 +19,7 @@ class Budget {
   async create({CATEGORY_ID, BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES}) {
     this._validate({CATEGORY_ID, BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES});
     const result = await execute("INSERT INTO BUDGET (CATEGORY_ID, BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES) VALUES (?, ?, ?, ?)", [CATEGORY_ID, BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES]);
-    return { BUDGET_ID: result.insertId };
+    return { BUDGET_ID: result[0].insertId };
   }
 
   async update(id, {BUDGET_DATE, BUDGET_AMOUNT, BUDGET_NOTES}) {
