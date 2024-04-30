@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const {getConnection} = require('../common/database');
+const {execute, getConnection, executeUsingConnection} = require('../common/database');
 const transactionRepo = require("./Transaction");
 
 // SQL Queries
@@ -40,25 +40,15 @@ const INSERT_SQL =
 class GroupTransaction {
 
   async getAll() {
-    const connection = await getConnection();
-    try {
-        const [rows, fields] = await connection.execute(GET_ALL_SQL, []);
-        return rows;
-    }
-    finally {
-      connection.release();
-    }
+    return await execute(GET_ALL_SQL, []);
   }
 
   async getById(id) {
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute(GET_BY_ID_SQL, [id]);
-      return rows[0];
+    const [rows] = await execute(GET_BY_ID_SQL, [id]);
+    if (!rows || rows.length === 0) {
+      throw new Error(`No group transaction found for id ${id}`);
     }
-    finally {
-      connection.release();
-    }
+    return rows[0];
   }
 
   /**
@@ -73,7 +63,6 @@ class GroupTransaction {
    * @returns {Promise<Object>} An object containing the transaction ID and the IDs of the created group transactions.
    */
   async create({USER_GROUP_ID, CATEGORY_ID, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES, PAID_BY_USER_ID, PAID_TO_USER_IDS}) {
-    console.log(`Invoked Group Transaction create...`);
     this._validate({USER_GROUP_ID, CATEGORY_ID, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES, PAID_BY_USER_ID, PAID_TO_USER_IDS});
 
     const connection = await getConnection();
@@ -82,18 +71,22 @@ class GroupTransaction {
       await connection.beginTransaction();
       try {
 
+        console.log(`Creating main transaction...`);
         // First insert the main transaction
-        const transactionData = await transactionRepo.create({CATEGORY_ID, TRANSACTION_TYPE:"Expense", TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES});
-        
+        const TRANSACTION_TYPE = "Expense";
+        const result = await executeUsingConnection(connection, "INSERT INTO TRANSACTION (CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES) VALUES (?, ?, ?, ?, ?)", 
+        [CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES]);
+        console.log(`result=${JSON.stringify(result)}`);
+
         // Secondly insert the devided group transactions
-        const TRANSACTION_ID = transactionData.TRANSACTION_ID;
+        const TRANSACTION_ID = result[0].insertId;
         const USER_GROUP_TRANSACTION_DATE = TRANSACTION_DATE;
         const USER_GROUP_TRANSACTION_AMOUNT = TRANSACTION_AMOUNT / PAID_TO_USER_IDS.length;
         const USER_GROUP_TRANSACTION_NOTES = TRANSACTION_NOTES;
         const USER_GROUP_TRANSACTION_IDS = [];
 
         for (const PAID_TO_USER_ID of PAID_TO_USER_IDS) {
-          const result = await connection.execute(INSERT_SQL,
+          const result = await executeUsingConnection(connection, INSERT_SQL,
               [USER_GROUP_ID, TRANSACTION_ID, PAID_BY_USER_ID, PAID_TO_USER_ID, USER_GROUP_TRANSACTION_DATE, USER_GROUP_TRANSACTION_AMOUNT, USER_GROUP_TRANSACTION_NOTES]);
           USER_GROUP_TRANSACTION_IDS.push(result[0].insertId);
           console.log(`Group transaction inserted with id ${result[0].insertId}`);
