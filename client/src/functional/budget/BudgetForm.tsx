@@ -108,9 +108,13 @@ const BudgetForm = (props : Props) => {
         <>
         <h5 className="m-5">{props.editingBudget?"Edit budget":"Add budget"}</h5>
         <div className="card" style={{border:1}}>
+            <div className="form-floating mb-3">
+              <input type="date" className="form-control" id="budgetDate" value={formatDate(budgetDate)} onChange={(e) => setBudgetDate(stringToDate(e.target.value))}/>
+              <label htmlFor="budgetDate">Date</label>
+            </div>
 
             <div className="form-floating mb-3">
-                <select className="form-select" id="txCategoryId" style={{ marginBottom: '18px' }} value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))} disabled={props.editingBudget ? true : false}>
+                <select className="form-select" id="txCategoryId" value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))} disabled={props.editingBudget ? true : false}>
                     <option value=""></option>
                     {categories.map((item, index) => (
                         <option key={index} value={item.CATEGORY_ID}>
@@ -126,11 +130,7 @@ const BudgetForm = (props : Props) => {
               <label htmlFor="budgetAmount">Budget Amount</label>
             </div>
     
-            <div className="form-floating mb-3">
-              <input type="date" className="form-control" id="budgetDate" value={formatDate(budgetDate)} onChange={(e) => setBudgetDate(stringToDate(e.target.value))}/>
-              <label htmlFor="budgetDate">Date</label>
-              <small><i>* Selecting a date in a month will reset to the first day in a month. You can create only one budget per category per month.</i></small>
-            </div>
+            <small><i>* Selecting a date in a month will reset to the first day in a month. You can create only one budget per category per month.</i></small>
 
             <div>
                 <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 

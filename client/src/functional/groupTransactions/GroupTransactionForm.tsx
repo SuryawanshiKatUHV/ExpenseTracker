@@ -137,7 +137,11 @@ const GroupTransactionForm = (props : Props) => {
     <h5 className="m-5">Add group transaction</h5>
 
     <div className="card" style={{border:1}}>
-       
+        <div className="form-floating mb-3">
+          <input type="date" className="form-control" id="txDate" value={txDate} onChange={(e) => setTxDate(e.target.value)}/>
+          <label htmlFor="txDate">Date</label>
+        </div>
+
         <div className="form-floating mb-3">
           <select className="form-select" id="txCategoryId" onChange={(e) => setTxCategoryId(parseInt(e.target.value))} value={txCategoryId}>
             {categories.map((category) => (
@@ -145,11 +149,6 @@ const GroupTransactionForm = (props : Props) => {
             ))}
           </select>
           <label htmlFor="txCategoryId">Category</label>
-        </div>
-        
-        <div className="form-floating mb-3">
-          <input type="date" className="form-control" id="txDate" value={txDate} onChange={(e) => setTxDate(e.target.value)}/>
-          <label htmlFor="txDate">Date</label>
         </div>
 
         <div className="form-floating mb-3">
