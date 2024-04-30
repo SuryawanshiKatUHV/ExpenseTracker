@@ -10,7 +10,8 @@ class Transaction {
    * @returns {Promise<Array>} An array of transaction objects.
    */
   async getAll() {
-    return await execute("SELECT * FROM TRANSACTION", []);
+    const [rows] = await execute("SELECT * FROM TRANSACTION", []);
+    return rows;
   }
 
   /**

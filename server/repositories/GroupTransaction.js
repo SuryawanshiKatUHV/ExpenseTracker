@@ -40,7 +40,8 @@ const INSERT_SQL =
 class GroupTransaction {
 
   async getAll() {
-    return await execute(GET_ALL_SQL, []);
+    const [rows] = await execute(GET_ALL_SQL, []);
+    return rows;
   }
 
   async getById(id) {

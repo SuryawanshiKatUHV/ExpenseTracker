@@ -12,7 +12,7 @@ class Category {
    * @returns {Promise<Array>} An array of category objects.
    */
   async getAll() {
-    return await execute(
+    const [rows] = await execute(
       `SELECT C.*, COALESCE(T.TOTAL_TRANSACTIONS, 0) AS TOTAL_TRANSACTIONS, COALESCE(B.TOTAL_BUDGETS, 0) AS TOTAL_BUDGETS
       FROM CATEGORY C
       LEFT JOIN (
@@ -26,6 +26,7 @@ class Category {
           GROUP BY CATEGORY_ID
       ) B ON B.CATEGORY_ID = C.CATEGORY_ID
       ORDER BY C.CATEGORY_TITLE ASC;`, []);
+      return rows;
   }
 
   /**
@@ -120,7 +121,8 @@ class Category {
    * @returns {Promise<Array>} An array of transaction objects.
    */
   async getTransactions(id) {
-    return await execute("SELECT * FROM TRANSACTION WHERE CATEGORY_ID=?", [id]);
+    const [rows] = await execute("SELECT * FROM TRANSACTION WHERE CATEGORY_ID=?", [id]);
+    return rows;
   }
 
    /**
@@ -130,7 +132,8 @@ class Category {
    * @returns {Promise<Array>} An array of budget objects.
    */
   async getBudgets(id) {
-    return await execute("SELECT * FROM BUDGET WHERE CATEGORY_ID=?", [id]);
+    const [rows] = await execute("SELECT * FROM BUDGET WHERE CATEGORY_ID=?", [id]);
+    return rows;
   }
 
   /**

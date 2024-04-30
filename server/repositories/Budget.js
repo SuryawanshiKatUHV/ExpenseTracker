@@ -4,7 +4,8 @@ const {execute} = require('../common/database');
 //interacts with db
 class Budget {
   async getAll() {
-    return await execute("SELECT * FROM BUDGET", []);
+    const [rows] = await execute("SELECT * FROM BUDGET", []);
+    return rows;
   }
 
   async getById(id) {

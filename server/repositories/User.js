@@ -14,7 +14,8 @@ class User {
    * @returns {Promise<Array>} An array of user objects.
    */
   async getAll() {
-    return await execute("SELECT * FROM USER", []);
+    const [rows] = await execute("SELECT * FROM USER", []);
+    return rows;
   }
 
   /**
