@@ -14,7 +14,7 @@ class User {
    * @returns {Promise<Array>} An array of user objects.
    */
   async getAll() {
-    const [rows] = await execute("SELECT * FROM USER", []);
+    const [rows] = await execute(`SELECT *, CONCAT(USER_LNAME, ", ", USER_FNAME) AS USER_FULLNAME FROM USER ORDER BY USER_FULLNAME ASC`, []);
     return rows;
   }
 
