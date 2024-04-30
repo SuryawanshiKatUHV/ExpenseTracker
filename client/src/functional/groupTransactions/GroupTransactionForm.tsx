@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { END_POINTS, get, post } from "../../common/Utilities";
+import { toast } from 'react-toastify';
 
 interface Props {
     userId: number;
@@ -59,7 +60,7 @@ const GroupTransactionForm = (props : Props) => {
         let validationErrors = {txDate:'', txAmount:'', txMembers:'', txNotes:''};
 
         if (txDate == "") {
-            validationErrors["txDate"] = "Date is required.";
+            toast.error('A Date is required', {position: "top-center", autoClose: false});
         }
         else {
             console.log(`txDate=${txDate}`);
@@ -71,20 +72,20 @@ const GroupTransactionForm = (props : Props) => {
             currentDate.setHours(0, 0, 0, 0);
 
             if (selectedDate > currentDate) {
-                validationErrors["txDate"] = "Date must not be in future.";
+                toast.error('Date must not be in future', {position: "top-center", autoClose: false});
             }
         }
 
         if (!txAmount || txAmount <= 0) {
-            validationErrors.txAmount = txAmount === 0 ? "Amount is required." : "Amount cannot be negative value.";
+            toast.error('Amount is required' || 'Amount cannot be a negative value', {position: "top-center", autoClose: false});
         }
 
         if (txMembers.length == 0) {
-            validationErrors['txMembers'] = "Must select at least one member.";
+            toast.error('Must select at least one member.', {position: "top-center", autoClose: false});
         }
 
         if (!txNotes) {
-            validationErrors.txNotes = "Transaction notes are required.";
+            toast.error('Transaction notes are required.', {position: "top-center", autoClose: false});
         }
 
         setValidationErrors(validationErrors);
@@ -120,10 +121,12 @@ const GroupTransactionForm = (props : Props) => {
                 await post(END_POINTS.GroupTransactions, payload)
                 .then(() => {
                     props.saveHandler();
+                    toast.success(`Transaction created for group id: ${props.groupId}`, {position: "top-center"});
                 });
             }
             catch (error : any) {
-                setError(error.message);
+                // setError(error.message);
+                toast.error(error.message, {position: "top-center", autoClose: false});
             }
         }
     }

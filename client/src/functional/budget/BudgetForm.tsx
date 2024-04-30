@@ -28,18 +28,15 @@ const BudgetForm = (props : Props) => {
         let validationErrors = {categoryId: '', budgetDate: '', budgetAmount: ''};
 
         if (!categoryId) {
-            // validationErrors.categoryId = 'A category is required.';
-            toast.error('A category is required');
+            toast.error('A category is required', {position: "top-center", autoClose: false});
             isValid = false;
         }
         if (!budgetDate || isNaN(budgetDate.getDate())) {
-            // validationErrors.budgetDate = 'A valid date is required.';
-            toast.error('A valid date is required');
+            toast.error('A valid date is required', {position: "top-center", autoClose: false});
             isValid = false;
         }
         if (!budgetAmount) {
-            // validationErrors.budgetAmount = 'Budget Amount is required.';
-            toast.error('Budget Amount is required');
+            toast.error('Budget Amount is required', {position: "top-center", autoClose: false});
             isValid = false;
         }
 
@@ -54,7 +51,7 @@ const BudgetForm = (props : Props) => {
         } catch (error:any) {
             console.error("Failed to load categories:", error);
             setError(error.message);
-            toast.error(error.message);
+            toast.error(error.message, {position: "top-center", autoClose: false});
         }
     }
 
@@ -81,13 +78,11 @@ const BudgetForm = (props : Props) => {
                 if (props.editingBudget?.BUDGET_ID) {
                     // Update the existing budget
                     await put(`${END_POINTS.Budgets}/${props.editingBudget.BUDGET_ID}`, budgetData);
-                    console.log(`Budget updated with id ${props.editingBudget.BUDGET_ID}`);
-                    toast.info(`Budget updated with id ${props.editingBudget.BUDGET_ID}`);
+                    toast.info(`Budget updated with id ${props.editingBudget.BUDGET_ID}`, {position: "top-center"});
                 } else {
                     // Create a new budget
                     const result = await post(END_POINTS.Budgets, budgetData);
-                    console.log(`Budget created with id ${result.BUDGET_ID}`);
-                    toast.info(`Budget created with id ${result.BUDGET_ID}`);
+                    toast.success(`Budget created with id ${result.BUDGET_ID}`, {position: "top-center"});
                 }
 
                 // Call the parents' event handler
@@ -95,7 +90,7 @@ const BudgetForm = (props : Props) => {
             } 
             catch (error : any) {
                 // setError(error.message);
-                toast.error(error.message);
+                toast.error(error.message, {position: "top-center", autoClose: false});
             }
         }
     }

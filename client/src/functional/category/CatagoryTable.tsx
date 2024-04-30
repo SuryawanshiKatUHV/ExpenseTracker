@@ -21,8 +21,8 @@ const CategoryTable = ({userId} : Props) => {
             setCategories(categories);
         } catch (error:any) {
             console.error("Failed to load categories:", error);
-            setError(error.message);
-            toast.error(error.message);
+            // setError(error.message);
+            toast.error(error.message, {position: "top-center", autoClose: false});
         }
     }
 
@@ -45,6 +45,7 @@ const CategoryTable = ({userId} : Props) => {
         } 
         catch (error : any) {
             setError(error.message);
+            toast.error(error.message, {position: "top-center", autoClose: false});
         }
     }
 
@@ -64,16 +65,14 @@ const CategoryTable = ({userId} : Props) => {
         if (isConfirmed) {
             try {
                 await del(`${END_POINTS.Categories}/${categoryId}`);
-                console.log("Item deleted");
                 await loadCategories(); // Refresh the list after deleting
-                setError("");
+                toast.success(`Category with id ${categoryId} deleted succesfully`, {position: "top-center"});
             } catch (error: any) {
-                console.error("Failed to delete the item:", error);
                 // setError(error.message); 
-                toast.error(error.message);
+                toast.error(error.message, {position: "top-center", autoClose: false});
             }
         } else {
-            console.log("Delete operation cancelled");
+            toast.error("Delete operation cancelled", {position: "top-center", autoClose: false});
         }
     };
 

@@ -35,7 +35,7 @@ const GroupForm = (props:Props) => {
         let validationErrors = {groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''};
 
         if (!groupDate || isNaN(groupDate.getDate())) {
-            validationErrors.groupDate = 'Group Date is required.';
+            toast.error("Group Date is required.", {position: "top-center", autoClose: false});
             isValid = false;
         } 
         else {
@@ -45,21 +45,21 @@ const GroupForm = (props:Props) => {
             currentDate.setHours(0, 0, 0, 0);
 
             if (groupDate > currentDate) {
-                validationErrors.groupDate = "Date must not be in future.";
+                toast.error("Date must not be in future.", {position: "top-center", autoClose: false});
                 isValid = false;
             }
         }
         
         if (!groupTitle) {
-            validationErrors.groupTitle = 'Group Title is required.';
+            toast.error("Group Title is required", {position: "top-center", autoClose: false});
             isValid = false;
         }
         if (!groupDescription) {
-            validationErrors.groupDescription = 'Group Description is required.';
+            toast.error("Group Description is required.", {position: "top-center", autoClose: false});
             isValid = false;
         }
         if (checkedBoxState.every(state => !state)) {
-            validationErrors.groupMembers = 'Must select at least one member.';
+            toast.error("Must select at least one member", {position: "top-center", autoClose: false});
             isValid = false;
         } 
 
@@ -74,6 +74,7 @@ const GroupForm = (props:Props) => {
         } catch (error:any) {
             console.error("Failed to load users:", error);
             setError(error.message);
+            toast.error(error.message, {position: "top-center", autoClose: false});
         }
     }
 
@@ -120,17 +121,16 @@ const GroupForm = (props:Props) => {
             try {
                 if (props.editingGroup?.USER_GROUP_ID) {
                     await put(`${END_POINTS.Groups}/${props.editingGroup.USER_GROUP_ID}`, groupData);
-                    console.log(`Budget updated with id ${props.editingGroup.USER_GROUP_ID}`);
-                    toast.info(`Group updated with id ${props.editingGroup.USER_GROUP_ID}`);
+                    toast.info(`Group updated with id: ${props.editingGroup.USER_GROUP_ID}`, {position: "top-center"});
                 } else {
                     const result = await post(END_POINTS.Groups, groupData);
-                    console.log(`Group created with id ${result.USER_GROUP_ID}`);
-                    toast.info(`Group created with id ${result.USER_GROUP_ID}`);
+                    toast.success(`Group created with id: ${result.USER_GROUP_ID}`, {position: "top-center"});
                 }
     
                 props.saveHandler();
             } catch (error : any) {
                 setError(error.message);
+                toast.error(error.message, {position: "top-center", autoClose: false});
                 console.error("Error during save:", error.message);
             }
         }

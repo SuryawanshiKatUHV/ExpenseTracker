@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import GroupTransactionForm from "./GroupTransactionForm";
 import { END_POINTS, del, get } from "../../common/Utilities";
 import { TrashFill } from "react-bootstrap-icons";
+import { toast } from 'react-toastify';
 
 interface Props {
     userId: number;
@@ -85,7 +86,8 @@ const GroupTransactionTable = (props : Props) => {
             setFormDisplayed(false);
         })
         .catch((error) => {
-            setError(error.message);
+            // setError(error.message);
+            toast.error(error.message, {position: "top-center", autoClose: false});
         });
     }
 
@@ -106,13 +108,14 @@ const GroupTransactionTable = (props : Props) => {
                 await del(`${END_POINTS.Transactions}/${transactionId}`);
                 console.log("Transaction deleted");
                 await refresh();
-                setError("");
+                toast.success("Transaction deleted successfully", {position: "top-center"})
             } catch (error:any) {
                 console.error("Failed to delete the item:", error);
-                setError(error.message); 
+                // setError(error.message); 
+                toast.error("Failed to delete transaction" + error.message, {position: "top-center", autoClose: false})
             }
         } else {
-            console.log("Delete operation cancelled");
+            toast.error("Delete operation cancelled", {position: "top-center", autoClose: false})
         }
     }
 

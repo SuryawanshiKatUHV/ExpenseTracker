@@ -23,13 +23,11 @@ const CategoryForm = (props : Props) => {
         let validationErrors = {categoryTitle: '', categoryDescription: ''};
 
         if (!categoryTitle) {
-            validationErrors.categoryTitle = 'Category title is required.';
-            toast.error('Category title is required')
+            toast.error('Category title is required', {position: "top-center", autoClose: false})
             isValid = false;
         }
         if (!categoryDescription) {
-            validationErrors.categoryDescription = 'Category description is required.';
-            toast.error('Category description is required')
+            toast.error('Category description is required', {position: "top-center", autoClose: false})
             isValid = false;
         }
 
@@ -52,19 +50,18 @@ const CategoryForm = (props : Props) => {
                 if (props.editingCategory?.CATEGORY_ID) {
                     // Update the existing category
                     await put(`${END_POINTS.Categories}/${props.editingCategory.CATEGORY_ID}`, categoryData);
-                    console.log(`Category updated with id ${props.editingCategory.CATEGORY_ID}`);
-                    toast.info(`Category updated with id ${props.editingCategory.CATEGORY_ID}`);
+                    toast.info(`Category updated with id ${props.editingCategory.CATEGORY_ID}`, {position: "top-center"});
                 } else {
                     // Create a new category
                     const result = await post(END_POINTS.Categories, categoryData);
-                    console.log(`Category created with id ${result.CATEGORY_ID}`);
-                    toast.info(`Category created with id ${result.CATEGORY_ID}`);
+                    toast.success(`Category created with id ${result.CATEGORY_ID}`, {position: "top-center"});
                 }
 
                 props.saveHandler();
             } 
             catch (error : any) {
-                setError(error.message);
+                // setError(error.message);
+                toast.error(error.message, {position: "top-center", autoClose: false})
             }
         }
     }

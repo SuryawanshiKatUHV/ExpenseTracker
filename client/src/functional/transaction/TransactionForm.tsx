@@ -24,15 +24,15 @@ const TransactionForm  = (props : Props) => {
         let validationErrors = {categoryId: '', transactionType: '', transactionDate: '', transactionAmount: '',  transactionNotes: ''};
 
         if (!categoryId) {
-            validationErrors.categoryId = 'A category is required.';
+            toast.error("A category is required", {position: "top-center", autoClose: false});
             isValid = false;
         }
         if (!transactionType) {
-            validationErrors.transactionType = 'A transaction type is required.';
+            toast.error("A transaction type is required", {position: "top-center", autoClose: false});
             isValid = false;
         }
         if (!transactionDate || isNaN(transactionDate.getDate())) {
-            validationErrors.transactionDate = 'A valid date is required.';
+            toast.error("A valid date is required", {position: "top-center", autoClose: false});
             isValid = false;
         }
         else {
@@ -42,17 +42,17 @@ const TransactionForm  = (props : Props) => {
             currentDate.setHours(0, 0, 0, 0);
 
             if (transactionDate > currentDate) {
-                validationErrors.transactionDate = "Date must not be in future.";
+                toast.error("Date must not be in future", {position: "top-center", autoClose: false})
                 isValid = false;
             }
         }
 
         if (!transactionAmount) {
-            validationErrors.transactionAmount = 'Transaction Amount is required.';
+            toast.error("A transaction amount is required", {position: "top-center", autoClose: false})
             isValid = false;
         }
         if (!transactionNotes) {
-            validationErrors.transactionNotes = 'Transaction Notes are required.';
+            toast.error("Transactio notes are required", {position: "top-center", autoClose: false})
             isValid = false;
         }
 
@@ -67,8 +67,8 @@ const TransactionForm  = (props : Props) => {
             setCategories(categories);
         } catch (error:any) {
             console.error("Failed to load categories:", error);
-            setError(error.message);
-            toast.error(error.message);
+            // setError(error.message);
+            toast.error(error.message, {position: "top-center", autoClose: false});
         }
     }
 
@@ -96,18 +96,19 @@ const TransactionForm  = (props : Props) => {
                 if (props.editingTransaction?.TRANSACTION_ID) {
                     // Update the existing transaction
                     await put(`${END_POINTS.Transactions}/${props.editingTransaction.TRANSACTION_ID}`, transactionData);
-                    console.log(`Transaction updated with id ${props.editingTransaction.TRANSACTION_ID}`);
+                    toast.info(`Transaction updated with id ${props.editingTransaction.TRANSACTION_ID}`, {position: "top-center"})
                 } else {
                     // Create a new transaction
                     const result = await post(END_POINTS.Transactions, transactionData);
-                    console.log(`Transaction created with id ${result.TRANSACTION_ID}`);
+                    toast.success(`Transaction created with id ${result.TRANSACTION_ID}`, {position: "top-center"})
                 }
 
                 // Call the parents' event handler
                 props.saveHandler();
             } 
             catch (error : any) {
-                setError(error.message);
+                // setError(error.message);
+                toast.error(error.message, {position: "top-center", autoClose: false});
             }
         }
     }

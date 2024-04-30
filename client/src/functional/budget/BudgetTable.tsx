@@ -21,7 +21,7 @@ const BudgetTable = ({userId} : Props) => {
         } catch (error) {
             console.error("Failed to load budgets:", error);
             setError('Failed to load budgets');
-            toast.error('Failed to load budget')
+            toast.error('Failed to load budget', {position: "top-center", autoClose: false})
         }
     }
 
@@ -45,7 +45,7 @@ const BudgetTable = ({userId} : Props) => {
         } catch (error:any) {
             console.error("Failed to save:", error);
             setError(error.message);
-            toast.error(error.message);
+            toast.error(error.message, {position: "top-center", autoClose: false});
         }
     };
 
@@ -60,17 +60,16 @@ const BudgetTable = ({userId} : Props) => {
         if (isConfirmed) {
             try {
                 await del(`${END_POINTS.Budgets}/${budgetId}`);
-                console.log("Budget deleted");
                 await loadBudgets(); // Refresh the list after deleting
-                setError("");
+                toast.success("Budget deleted successfully", {position: "top-center"})
             } catch (error:any) {
                 console.error("Failed to delete the item:", error);
                 setError(error.message);
-                toast.error(error.message);
+                toast.error("Failed to delete budget", {position: "top-center", autoClose: false});
                  
             }
         } else {
-            console.log("Delete operation cancelled");
+            toast.error("Delete operation cancelled", {position: "top-center", autoClose: false});
         }
     };
 

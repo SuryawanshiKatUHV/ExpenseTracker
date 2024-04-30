@@ -27,9 +27,7 @@ const TransactionTable = ({userId} : Props) => {
             const transactions = await get(`${END_POINTS.Users}/${userId}/transactions/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}`);
             setTransactions(transactions);
         } catch (error) {
-            console.error("Failed to load transactions:", error);
-            setError('Failed to load transactions');
-            toast.error('Failed to load transactions')
+            toast.error("Failed to load transaction", {position: "top-center", autoClose: false});
         }
     }
     
@@ -51,7 +49,8 @@ const TransactionTable = ({userId} : Props) => {
             fetchData();
         })
         .catch((error) => {
-            setError(error.message?error.message:error)
+            // setError(error.message?error.message:error)
+            toast.error(error.message?error.message.error: {position: "top-center", autoClose: false});
         });;
     }, []);
 
@@ -73,7 +72,8 @@ const TransactionTable = ({userId} : Props) => {
             setFormDisplayed(false);
         } 
         catch (error : any) {
-            setError(error.message);
+            // setError(error.message);
+            toast.error(error.message, {position: "top-center", autoClose: false});
         }
     }
 
@@ -88,15 +88,15 @@ const TransactionTable = ({userId} : Props) => {
         if (isConfirmed) {
             try {
                 await del(`${END_POINTS.Transactions}/${transactionId}`);
-                console.log("Transaction deleted");
                 await loadTransactions(); // Refresh the list after deleting
-                setError("");
+                toast.success("Transaction deleted", {position: "top-center"});
             } catch (error:any) {
                 console.error("Failed to delete the item:", error);
-                setError(error.message); 
+                // setError(error.message);
+                toast.error(error.message, {position: "top-center", autoClose: false}); 
             }
         } else {
-            console.log("Delete operation cancelled");
+            toast.error("Delete operation cancelled", {position: "top-center", autoClose: false});
         }
     };
 

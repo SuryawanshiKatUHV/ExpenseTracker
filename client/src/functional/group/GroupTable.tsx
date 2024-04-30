@@ -26,6 +26,7 @@ const GroupTable = ({userId} : Props) => {
         } catch (error) {
             console.error("Failed to load groups:", error);
             setError("error");
+            toast.error("Error", {position: "top-center", autoClose: false});
         }
     }
 
@@ -71,16 +72,16 @@ const GroupTable = ({userId} : Props) => {
             try {
                 await del(`${END_POINTS.Groups}/${groupId}`);
                 console.log({groupId});
-                console.log("group deleted");
+                toast.success("Group deleted successfully", {position: "top-center"});
                 await loadGroups(); // Refresh the list after deleting
-                setError("");
+                // setError("");
             } catch (error) {
                 // console.error("Failed to delete the item:", error);
                 // setError('Failed to delete group'); 
-                toast.error('Failed to delete group');
+                toast.error('Failed to delete group', {position: "top-center", autoClose: false});
             }
         } else {
-            console.log("Delete operation cancelled");
+            toast.error('Delete operation cancelled', {position: "top-center", autoClose: false});
         }
     };
 
