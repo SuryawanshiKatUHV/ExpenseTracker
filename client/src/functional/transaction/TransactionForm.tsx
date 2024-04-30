@@ -11,7 +11,7 @@ interface Props {
 const TransactionForm  = (props : Props) => {
     const [categories, setCategories] = useState<any[]>([]);
     const [categoryId, setCategoryId] = useState(props.editingTransaction?.CATEGORY_ID);
-    const [transactionType, setTransactionType] = useState(props.editingTransaction?.TRANSACTION_TYPE);
+    const [transactionType, setTransactionType] = useState(props.editingTransaction?.TRANSACTION_TYPE? props.editingTransaction?.TRANSACTION_TYPE:"Expense");
     const [transactionDate, setTransactionDate] = useState(props.editingTransaction?.TRANSACTION_DATE ? new Date(props.editingTransaction.TRANSACTION_DATE) : new Date());
     const [transactionAmount, setTransactionAmount] = useState(props.editingTransaction?.TRANSACTION_AMOUNT?props.editingTransaction?.TRANSACTION_AMOUNT: 0.0);
     const [transactionNotes, setTransactionNotes] = useState(props.editingTransaction?.TRANSACTION_NOTES);
