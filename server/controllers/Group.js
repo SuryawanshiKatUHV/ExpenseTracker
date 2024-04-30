@@ -92,6 +92,19 @@ class Group {
     }
   }
 
+  async getActiveMembers(req, res) {
+    const { id } = req.params;
+    try {
+      const data = await repository.getActiveMembers(parseInt(id));
+      console.log(`data=${JSON.stringify(data)}`);
+
+      res.status(200).json(data); // Send the retrieved object as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async getTransactions(req, res) {
     const { id } = req.params;
     try {

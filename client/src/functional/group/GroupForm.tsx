@@ -24,7 +24,7 @@ const GroupForm = (props:Props) => {
     const [groupTitle, setGroupTitle] = useState(props.editingGroup?.USER_GROUP_TITLE);
     const [groupDescription, setGroupDescription] = useState(props.editingGroup?.USER_GROUP_DESCRIPTION);
     const [groupMembers, setGroupMembers] = useState(props.editingGroup?.members);
-    const [settlementSummary, setSettlementSummary] = useState<any[]>([]);
+    const [activeMembers, setActiveMembers] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]);
     const [checkedBoxState, setCheckedBoxState] = useState(new Array(users.length).fill(false));
     
@@ -74,13 +74,14 @@ const GroupForm = (props:Props) => {
         }
     }
     
-    async function loadSettlementSummary() {
+    // Retrieve active members with group transactions from either end
+    async function loadActiveMembers() {
         try {
             if (props.editingGroup?.USER_GROUP_ID) {
-                const settlementSummaryData = await get(`${END_POINTS.Groups}/${props.editingGroup?.USER_GROUP_ID}/settlementSummary`);
-                setSettlementSummary(settlementSummaryData);
+                const activeMembersData = await get(`${END_POINTS.Groups}/${props.editingGroup?.USER_GROUP_ID}/activeMembers`);
+                setActiveMembers(activeMembersData);
             } else {
-                setSettlementSummary([]);
+                setActiveMembers([]);
             }
         }
         catch (error:any) {
@@ -91,7 +92,7 @@ const GroupForm = (props:Props) => {
     useEffect(() =>{ 
         async function fetchData() {
             await loadUsers();
-            await loadSettlementSummary();
+            await loadActiveMembers();
         }
         fetchData();
     }, []);
@@ -176,8 +177,8 @@ const GroupForm = (props:Props) => {
                 {users.map((user, index) => {
                     // Check if the user is the owner
                     const isOwner = user.USER_ID === groupOwnerId;
-                    // Check if the user besides owner has pending transactions based on unsettled dues
-                    const hasPendingTransactions = settlementSummary.some((summary) => summary.USER_ID === user.USER_ID && parseFloat(summary.UNSETTLED_DUE) !== 0.00);
+                    const hasPaidToTransactions = activeMembers.some((member) => member.PAID_TO_USER_ID === user.USER_ID);
+                    const hasPaidByTransactions = activeMembers.some((member) => member.PAID_BY_USER_ID === user.USER_ID);
 
                     // Render checkbox for members only
                     if (!isOwner) {
@@ -191,7 +192,7 @@ const GroupForm = (props:Props) => {
                                     value={user.USER_ID}
                                     checked={checkedBoxState[index]}
                                     onChange={() => handleCheckBoxStates(index)}
-                                    disabled={hasPendingTransactions}  // cannot deselect/remove members that has group transactions
+                                    disabled={hasPaidToTransactions || hasPaidByTransactions}  // cannot deselect/remove members that has group transactions
                                     style={{ height: "1em" }}
                                 />
                                 <label className="form-check-label" htmlFor={`custom-checkbox-${index}`}>

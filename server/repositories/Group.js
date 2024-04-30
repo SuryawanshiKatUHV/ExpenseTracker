@@ -173,6 +173,21 @@ class Group {
     }
   }
 
+  async getActiveMembers(groupId) {
+    const SQL = `SELECT UGT.PAID_BY_USER_ID, UGT.PAID_TO_USER_ID
+    FROM USER_GROUP_TRANSACTION UGT
+    WHERE UGT.USER_GROUP_ID=?;`
+    
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(SQL, [groupId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
   async getTransactions(groupId) {
     // const SQL =
     // `SELECT 
