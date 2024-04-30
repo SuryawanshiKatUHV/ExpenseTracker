@@ -26,8 +26,8 @@ const TransactionTable = ({userId} : Props) => {
         try {
             const transactions = await get(`${END_POINTS.Users}/${userId}/transactions/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}`);
             setTransactions(transactions);
-        } catch (error) {
-            toast.error("Failed to load transaction", { autoClose: false});
+        } catch (error:any) {
+            toast.error(`Failed to load transactions. ${error.message}`, { autoClose: false});
         }
     }
 
@@ -38,8 +38,8 @@ const TransactionTable = ({userId} : Props) => {
             if (yearMonthRange && yearMonthRange.length > 0) {
                 setSelectedYearMonth(yearMonthRange[0]);
             }
-        } catch (error) {
-            toast.error("Failed to load Year-Month range", { autoClose: false});
+        } catch (error:any) {
+            toast.error(`Failed to load Year-Month range. ${error.message}`, { autoClose: false});
         }
     }
 
@@ -101,7 +101,7 @@ const TransactionTable = ({userId} : Props) => {
                 toast.error(error.message, { autoClose: false}); 
             }
         } else {
-            toast.error("Delete operation cancelled", { autoClose: false});
+            toast.info("Delete operation cancelled.");
         }
     };
 

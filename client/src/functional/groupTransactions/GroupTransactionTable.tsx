@@ -84,7 +84,7 @@ const GroupTransactionTable = (props : Props) => {
             setFormDisplayed(false);
         })
         .catch((error) => {
-           toast.error(error.message, {position: "top-center", autoClose: false});
+           toast.error(error.message, {autoClose: false});
         });
     }
 
@@ -105,13 +105,13 @@ const GroupTransactionTable = (props : Props) => {
                 await del(`${END_POINTS.Transactions}/${transactionId}`);
                 console.log("Transaction deleted");
                 await refresh();
-                toast.success("Transaction deleted successfully", {position: "top-center"})
+                toast.success("Transaction deleted successfully")
             } catch (error:any) {
                 console.error("Failed to delete the item:", error);
-               toast.error("Failed to delete transaction" + error.message, {position: "top-center", autoClose: false})
+               toast.error("Failed to delete transaction. " + error.message, {autoClose: false})
             }
         } else {
-            toast.error("Delete operation cancelled", {position: "top-center", autoClose: false})
+            toast.info("Delete operation cancelled");
         }
     }
 
