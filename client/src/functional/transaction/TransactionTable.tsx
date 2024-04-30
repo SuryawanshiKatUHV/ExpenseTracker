@@ -27,7 +27,7 @@ const TransactionTable = ({userId} : Props) => {
             const transactions = await get(`${END_POINTS.Users}/${userId}/transactions/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}`);
             setTransactions(transactions);
         } catch (error) {
-            toast.error("Failed to load transaction", {position: "top-center", autoClose: false});
+            toast.error("Failed to load transaction", { autoClose: false});
         }
     }
     
@@ -50,7 +50,7 @@ const TransactionTable = ({userId} : Props) => {
         })
         .catch((error) => {
             // setError(error.message?error.message:error)
-            toast.error(error.message?error.message.error: {position: "top-center", autoClose: false});
+            toast.error(error.message?error.message.error: { autoClose: false});
         });;
     }, []);
 
@@ -73,7 +73,7 @@ const TransactionTable = ({userId} : Props) => {
         } 
         catch (error : any) {
             // setError(error.message);
-            toast.error(error.message, {position: "top-center", autoClose: false});
+            toast.error(error.message, { autoClose: false});
         }
     }
 
@@ -89,14 +89,14 @@ const TransactionTable = ({userId} : Props) => {
             try {
                 await del(`${END_POINTS.Transactions}/${transactionId}`);
                 await loadTransactions(); // Refresh the list after deleting
-                toast.success("Transaction deleted", {position: "top-center"});
+                toast.success("Transaction deleted", {position: "top-right"});
             } catch (error:any) {
                 console.error("Failed to delete the item:", error);
                 // setError(error.message);
-                toast.error(error.message, {position: "top-center", autoClose: false}); 
+                toast.error(error.message, { autoClose: false}); 
             }
         } else {
-            toast.error("Delete operation cancelled", {position: "top-center", autoClose: false});
+            toast.error("Delete operation cancelled", { autoClose: false});
         }
     };
 

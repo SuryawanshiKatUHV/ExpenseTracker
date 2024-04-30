@@ -60,7 +60,7 @@ const GroupTransactionForm = (props : Props) => {
         let validationErrors = {txDate:'', txAmount:'', txMembers:'', txNotes:''};
 
         if (txDate == "") {
-            toast.error('A Date is required', {position: "top-center", autoClose: false});
+            toast.error('A Date is required', { autoClose: false});
         }
         else {
             console.log(`txDate=${txDate}`);
@@ -72,20 +72,20 @@ const GroupTransactionForm = (props : Props) => {
             currentDate.setHours(0, 0, 0, 0);
 
             if (selectedDate > currentDate) {
-                toast.error('Date must not be in future', {position: "top-center", autoClose: false});
+                toast.error('Date must not be in future', { autoClose: false});
             }
         }
 
         if (!txAmount || txAmount <= 0) {
-            toast.error('Amount is required' || 'Amount cannot be a negative value', {position: "top-center", autoClose: false});
+            toast.error('Amount is required' || 'Amount cannot be a negative value', { autoClose: false});
         }
 
         if (txMembers.length == 0) {
-            toast.error('Must select at least one member.', {position: "top-center", autoClose: false});
+            toast.error('Must select at least one member.', { autoClose: false});
         }
 
         if (!txNotes) {
-            toast.error('Transaction notes are required.', {position: "top-center", autoClose: false});
+            toast.error('Transaction notes are required.', { autoClose: false});
         }
 
         setValidationErrors(validationErrors);
@@ -121,12 +121,12 @@ const GroupTransactionForm = (props : Props) => {
                 await post(END_POINTS.GroupTransactions, payload)
                 .then(() => {
                     props.saveHandler();
-                    toast.success(`Transaction created for group id: ${props.groupId}`, {position: "top-center"});
+                    toast.success(`Transaction created for group id: ${props.groupId}`, {position: "top-right"});
                 });
             }
             catch (error : any) {
                 // setError(error.message);
-                toast.error(error.message, {position: "top-center", autoClose: false});
+                toast.error(error.message, { autoClose: false});
             }
         }
     }
@@ -149,7 +149,7 @@ const GroupTransactionForm = (props : Props) => {
 
     <div className="card" style={{border:1}}>
        
-        {error && <p style={{color:'red'}}>{error}</p>}
+        {/* {error && <p style={{color:'red'}}>{error}</p>} */}
 
         <div className="form-floating mb-3">
           <select className="form-select" id="txCategoryId" onChange={(e) => setTxCategoryId(parseInt(e.target.value))} value={txCategoryId}>
@@ -163,19 +163,19 @@ const GroupTransactionForm = (props : Props) => {
         <div className="form-floating mb-3">
           <input type="date" className="form-control" id="txDate" value={txDate} onChange={(e) => setTxDate(e.target.value)}/>
           <label htmlFor="txDate">Date</label>
-          {validationErrors.txDate && <p style={{color:'red'}}>{validationErrors.txDate}</p>}
+          {/* {validationErrors.txDate && <p style={{color:'red'}}>{validationErrors.txDate}</p>} */}
         </div>
 
         <div className="form-floating mb-3">
           <input type="number" className="form-control" id="txAmount" value={txAmount} onChange={(e) => setTxAmount(parseFloat(e.target.value))}/>
           <label htmlFor="txAmount">Amount ($)</label>
-          {validationErrors.txAmount && <p style={{color:'red'}}>{validationErrors.txAmount}</p>}
+          {/* {validationErrors.txAmount && <p style={{color:'red'}}>{validationErrors.txAmount}</p>} */}
         </div>
 
         <div className="form-floating mb-3">
           <textarea className="form-control" id="txNotes" onChange={(e) => setTxNotes(e.target.value)} value={txNotes}></textarea>
           <label htmlFor="txNotes">Notes</label>
-          {validationErrors.txNotes && <p style={{color:'red'}}>{validationErrors.txNotes}</p>}
+          {/* {validationErrors.txNotes && <p style={{color:'red'}}>{validationErrors.txNotes}</p>} */}
         </div>
 
         <div className="form-floating mb-3">
@@ -201,7 +201,7 @@ const GroupTransactionForm = (props : Props) => {
             </ul>
         </div>
 
-        {validationErrors.txMembers && <p style={{color:'red'}}>{validationErrors.txMembers}</p>}
+        {/* {validationErrors.txMembers && <p style={{color:'red'}}>{validationErrors.txMembers}</p>} */}
 
         <div>
             <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 

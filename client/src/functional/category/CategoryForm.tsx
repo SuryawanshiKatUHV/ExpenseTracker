@@ -23,11 +23,11 @@ const CategoryForm = (props : Props) => {
         let validationErrors = {categoryTitle: '', categoryDescription: ''};
 
         if (!categoryTitle) {
-            toast.error('Category title is required', {position: "top-center", autoClose: false})
+            toast.error('Category title is required', { autoClose: false})
             isValid = false;
         }
         if (!categoryDescription) {
-            toast.error('Category description is required', {position: "top-center", autoClose: false})
+            toast.error('Category description is required', { autoClose: false})
             isValid = false;
         }
 
@@ -50,18 +50,18 @@ const CategoryForm = (props : Props) => {
                 if (props.editingCategory?.CATEGORY_ID) {
                     // Update the existing category
                     await put(`${END_POINTS.Categories}/${props.editingCategory.CATEGORY_ID}`, categoryData);
-                    toast.info(`Category updated with id ${props.editingCategory.CATEGORY_ID}`, {position: "top-center"});
+                    toast.info(`Category updated with id ${props.editingCategory.CATEGORY_ID}`, {position: "top-right"});
                 } else {
                     // Create a new category
                     const result = await post(END_POINTS.Categories, categoryData);
-                    toast.success(`Category created with id ${result.CATEGORY_ID}`, {position: "top-center"});
+                    toast.success(`Category created with id ${result.CATEGORY_ID}`, {position: "top-right"});
                 }
 
                 props.saveHandler();
             } 
             catch (error : any) {
                 // setError(error.message);
-                toast.error(error.message, {position: "top-center", autoClose: false})
+                toast.error(error.message, { autoClose: false})
             }
         }
     }
@@ -80,13 +80,13 @@ const CategoryForm = (props : Props) => {
             <div className="form-floating mb-3">
               <input type="string" className="form-control" id="categoryTitle" value={categoryTitle} onChange={(e) => setCategoryTitle(e.target.value)}/>
               <label htmlFor="categoryTitle">Title</label>
-              {validationErrors.categoryTitle && <p style={{color:'red'}}>{validationErrors.categoryTitle}</p>}
+              {/* {validationErrors.categoryTitle && <p style={{color:'red'}}>{validationErrors.categoryTitle}</p>} */}
             </div>
     
             <div className="form-floating mb-3">
               <input type="string" className="form-control" id="categoryDescription" value={categoryDescription} onChange={(e) => setCategoryDescription(e.target.value)}/>
               <label htmlFor="categoryDescription">Description</label>
-              {validationErrors.categoryDescription && <p style={{color:'red'}}>{validationErrors.categoryDescription}</p>}
+              {/* {validationErrors.categoryDescription && <p style={{color:'red'}}>{validationErrors.categoryDescription}</p>} */}
             </div>
     
             <div>
@@ -94,7 +94,7 @@ const CategoryForm = (props : Props) => {
                 <button className="btn btn-danger" onClick={CancelClicked}>Cancel</button>
             </div>
 
-            {error && <p style={{color:'red'}}>{error}</p>}
+            {/* {error && <p style={{color:'red'}}>{error}</p>} */}
         </div>
         </>
     );

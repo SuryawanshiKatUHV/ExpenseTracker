@@ -36,7 +36,7 @@ const GroupForm = (props:Props) => {
         let validationErrors = {groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''};
 
         if (!groupDate || isNaN(groupDate.getDate())) {
-            toast.error("Group Date is required.", {position: "top-center", autoClose: false});
+            toast.error("Group Date is required.", { autoClose: false});
             isValid = false;
         } 
         else {
@@ -46,21 +46,21 @@ const GroupForm = (props:Props) => {
             currentDate.setHours(0, 0, 0, 0);
 
             if (groupDate > currentDate) {
-                toast.error("Date must not be in future.", {position: "top-center", autoClose: false});
+                toast.error("Date must not be in future.", { autoClose: false});
                 isValid = false;
             }
         }
         
         if (!groupTitle) {
-            toast.error("Group Title is required", {position: "top-center", autoClose: false});
+            toast.error("Group Title is required", { autoClose: false});
             isValid = false;
         }
         if (!groupDescription) {
-            toast.error("Group Description is required.", {position: "top-center", autoClose: false});
+            toast.error("Group Description is required.", { autoClose: false});
             isValid = false;
         }
         if (checkedBoxState.every(state => !state)) {
-            toast.error("Must select at least one member", {position: "top-center", autoClose: false});
+            toast.error("Must select at least one member", { autoClose: false});
             isValid = false;
         } 
 
@@ -75,7 +75,7 @@ const GroupForm = (props:Props) => {
         } catch (error:any) {
             console.error("Failed to load users:", error);
             setError(error.message);
-            toast.error(error.message, {position: "top-center", autoClose: false});
+            toast.error(error.message, { autoClose: false});
         }
     }
     
@@ -89,8 +89,7 @@ const GroupForm = (props:Props) => {
             }
         }
         catch (error:any) {
-            console.error("Failed to load settlement summary:", error);
-            setError(error.message);
+            toast.error(error.message, { autoClose: false});
         }
     }
 
@@ -139,17 +138,15 @@ const GroupForm = (props:Props) => {
             try {
                 if (props.editingGroup?.USER_GROUP_ID) {
                     await put(`${END_POINTS.Groups}/${props.editingGroup.USER_GROUP_ID}`, groupData);
-                    toast.info(`Group updated with id: ${props.editingGroup.USER_GROUP_ID}`, {position: "top-center"});
+                    toast.info(`Group updated with id: ${props.editingGroup.USER_GROUP_ID}`, {position: "top-right"});
                 } else {
                     const result = await post(END_POINTS.Groups, groupData);
-                    toast.success(`Group created with id: ${result.USER_GROUP_ID}`, {position: "top-center"});
+                    toast.success(`Group created with id: ${result.USER_GROUP_ID}`, {position: "top-right"});
                 }
     
                 props.saveHandler();
             } catch (error : any) {
-                setError(error.message);
-                toast.error(error.message, {position: "top-center", autoClose: false});
-                console.error("Error during save:", error.message);
+                toast.error(error.message, { autoClose: false});
             }
         }
     };
@@ -166,19 +163,19 @@ const GroupForm = (props:Props) => {
         <div className="form-floating mb-3">
           <input type="date" className="form-control" id="groupDate" value={formatDate(groupDate)} onChange={(e) => setGroupDate(new Date(e.target.value))}/>
           <label htmlFor="groupDate">Date</label>
-          {validationErrors.groupDate && <p style={{color:'red'}}>{validationErrors.groupDate}</p>}
+          {/* {validationErrors.groupDate && <p style={{color:'red'}}>{validationErrors.groupDate}</p>} */}
         </div>
 
         <div className="form-floating mb-3">
           <input type="string" className="form-control" id="groupTitle" value={groupTitle} onChange={(e) => setGroupTitle(e.target.value)}/>
           <label htmlFor="groupTitle">Group Title</label>
-          {validationErrors.groupTitle && <p style={{color:'red'}}>{validationErrors.groupTitle}</p>}
+          {/* {validationErrors.groupTitle && <p style={{color:'red'}}>{validationErrors.groupTitle}</p>} */}
         </div>
 
         <div className="form-floating mb-3">
           <input type="string" className="form-control" id="groupDescription" value={groupDescription} onChange={(e) => setGroupDescription(e.target.value)}/>
           <label htmlFor="groupDescription">Group Description</label>
-          {validationErrors.groupDescription && <p style={{color:'red'}}>{validationErrors.groupDescription}</p>}
+          {/* {validationErrors.groupDescription && <p style={{color:'red'}}>{validationErrors.groupDescription}</p>} */}
         </div>
 
         <div className="form-floating mb-3">
@@ -213,7 +210,7 @@ const GroupForm = (props:Props) => {
                     }
                 })}
             </ul>
-            {validationErrors.groupMembers && <p style={{ color: 'red' }}>{validationErrors.groupMembers}</p>}
+            {/* {validationErrors.groupMembers && <p style={{ color: 'red' }}>{validationErrors.groupMembers}</p>} */}
         </div>
 
         <div>
@@ -221,7 +218,7 @@ const GroupForm = (props:Props) => {
             <button className="btn btn-danger" onClick={CancelClicked}>Cancel</button>
         </div>
 
-        {error && <p style={{color:'red'}}>{error}</p>}
+        {/* {error && <p style={{color:'red'}}>{error}</p>} */}
     </div>
     </>
     );

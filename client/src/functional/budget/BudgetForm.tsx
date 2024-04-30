@@ -28,15 +28,15 @@ const BudgetForm = (props : Props) => {
         let validationErrors = {categoryId: '', budgetDate: '', budgetAmount: ''};
 
         if (!categoryId) {
-            toast.error('A category is required', {position: "top-center", autoClose: false});
+            toast.error('A category is required', { autoClose: false});
             isValid = false;
         }
         if (!budgetDate || isNaN(budgetDate.getDate())) {
-            toast.error('A valid date is required', {position: "top-center", autoClose: false});
+            toast.error('A valid date is required', { autoClose: false});
             isValid = false;
         }
         if (!budgetAmount) {
-            toast.error('Budget Amount is required', {position: "top-center", autoClose: false});
+            toast.error('Budget Amount is required', { autoClose: false});
             isValid = false;
         }
 
@@ -51,7 +51,7 @@ const BudgetForm = (props : Props) => {
         } catch (error:any) {
             console.error("Failed to load categories:", error);
             setError(error.message);
-            toast.error(error.message, {position: "top-center", autoClose: false});
+            toast.error(error.message, { autoClose: false});
         }
     }
 
@@ -78,11 +78,11 @@ const BudgetForm = (props : Props) => {
                 if (props.editingBudget?.BUDGET_ID) {
                     // Update the existing budget
                     await put(`${END_POINTS.Budgets}/${props.editingBudget.BUDGET_ID}`, budgetData);
-                    toast.info(`Budget updated with id ${props.editingBudget.BUDGET_ID}`, {position: "top-center"});
+                    toast.info(`Budget updated with id ${props.editingBudget.BUDGET_ID}`, {position: "top-right"});
                 } else {
                     // Create a new budget
                     const result = await post(END_POINTS.Budgets, budgetData);
-                    toast.success(`Budget created with id ${result.BUDGET_ID}`, {position: "top-center"});
+                    toast.success(`Budget created with id ${result.BUDGET_ID}`, {position: "top-right"});
                 }
 
                 // Call the parents' event handler
@@ -90,7 +90,7 @@ const BudgetForm = (props : Props) => {
             } 
             catch (error : any) {
                 // setError(error.message);
-                toast.error(error.message, {position: "top-center", autoClose: false});
+                toast.error(error.message, { autoClose: false});
             }
         }
     }
@@ -126,26 +126,26 @@ const BudgetForm = (props : Props) => {
                 </select>
                 <label htmlFor="txCategoryId">Category</label>
             </div>
-            {validationErrors.categoryId && <p style={{color:'red'}}>{validationErrors.categoryId}</p>}
+            {/* {validationErrors.categoryId && <p style={{color:'red'}}>{validationErrors.categoryId}</p>} */}
 
             <div className="form-floating mb-3">
               <input type="number" className="form-control" id="budgetAmount" value={budgetAmount} onChange={(e) => setBudgetAmount(Number(e.target.value))}/>
               <label htmlFor="budgetAmount">Budget Amount</label>
-              {validationErrors.budgetAmount && <p style={{color:'red'}}>{validationErrors.budgetAmount}</p>}
+              {/* {validationErrors.budgetAmount && <p style={{color:'red'}}>{validationErrors.budgetAmount}</p>} */}
             </div>
     
             <div className="form-floating mb-3">
               <input type="date" className="form-control" id="budgetDate" value={formatDate(budgetDate)} onChange={(e) => setBudgetDate(stringToDate(e.target.value))}/>
               <label htmlFor="budgetDate">Date</label>
               <small><i>* Selecting a date in a month will reset to the first day in a month. You can create only one budget per category per month.</i></small>
-              {validationErrors.budgetDate && <p style={{color:'red'}}>{validationErrors.budgetDate}</p>}
+              {/* {validationErrors.budgetDate && <p style={{color:'red'}}>{validationErrors.budgetDate}</p>} */}
             </div>
 
             <div>
                 <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
                 <button className="btn btn-danger" onClick={CancelClicked}>Cancel</button>
             </div>
-            {error && <p style={{color:'red'}}>{error}</p>}
+            {/* {error && <p style={{color:'red'}}>{error}</p>} */}
         </div>
         </>
     );

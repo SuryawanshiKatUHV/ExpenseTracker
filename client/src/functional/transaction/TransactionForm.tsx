@@ -24,15 +24,15 @@ const TransactionForm  = (props : Props) => {
         let validationErrors = {categoryId: '', transactionType: '', transactionDate: '', transactionAmount: '',  transactionNotes: ''};
 
         if (!categoryId) {
-            toast.error("A category is required", {position: "top-center", autoClose: false});
+            toast.error("A category is required", { autoClose: false});
             isValid = false;
         }
         if (!transactionType) {
-            toast.error("A transaction type is required", {position: "top-center", autoClose: false});
+            toast.error("A transaction type is required", { autoClose: false});
             isValid = false;
         }
         if (!transactionDate || isNaN(transactionDate.getDate())) {
-            toast.error("A valid date is required", {position: "top-center", autoClose: false});
+            toast.error("A valid date is required", { autoClose: false});
             isValid = false;
         }
         else {
@@ -42,17 +42,17 @@ const TransactionForm  = (props : Props) => {
             currentDate.setHours(0, 0, 0, 0);
 
             if (transactionDate > currentDate) {
-                toast.error("Date must not be in future", {position: "top-center", autoClose: false})
+                toast.error("Date must not be in future", { autoClose: false})
                 isValid = false;
             }
         }
 
         if (!transactionAmount) {
-            toast.error("A transaction amount is required", {position: "top-center", autoClose: false})
+            toast.error("A transaction amount is required", { autoClose: false})
             isValid = false;
         }
         if (!transactionNotes) {
-            toast.error("Transactio notes are required", {position: "top-center", autoClose: false})
+            toast.error("Transactio notes are required", { autoClose: false})
             isValid = false;
         }
 
@@ -68,7 +68,7 @@ const TransactionForm  = (props : Props) => {
         } catch (error:any) {
             console.error("Failed to load categories:", error);
             // setError(error.message);
-            toast.error(error.message, {position: "top-center", autoClose: false});
+            toast.error(error.message, { autoClose: false});
         }
     }
 
@@ -96,11 +96,11 @@ const TransactionForm  = (props : Props) => {
                 if (props.editingTransaction?.TRANSACTION_ID) {
                     // Update the existing transaction
                     await put(`${END_POINTS.Transactions}/${props.editingTransaction.TRANSACTION_ID}`, transactionData);
-                    toast.info(`Transaction updated with id ${props.editingTransaction.TRANSACTION_ID}`, {position: "top-center"})
+                    toast.info(`Transaction updated with id ${props.editingTransaction.TRANSACTION_ID}`, {position: "top-right"})
                 } else {
                     // Create a new transaction
                     const result = await post(END_POINTS.Transactions, transactionData);
-                    toast.success(`Transaction created with id ${result.TRANSACTION_ID}`, {position: "top-center"})
+                    toast.success(`Transaction created with id ${result.TRANSACTION_ID}`, {position: "top-right"})
                 }
 
                 // Call the parents' event handler
@@ -108,7 +108,7 @@ const TransactionForm  = (props : Props) => {
             } 
             catch (error : any) {
                 // setError(error.message);
-                toast.error(error.message, {position: "top-center", autoClose: false});
+                toast.error(error.message, { autoClose: false});
             }
         }
     }
@@ -152,32 +152,32 @@ const TransactionForm  = (props : Props) => {
                     ))}
                 </select>
                 <label htmlFor="txCategoryId">Category</label>
-                {validationErrors.categoryId && <p style={{color:'red'}}>{validationErrors.categoryId}</p>}
+                {/* {validationErrors.categoryId && <p style={{color:'red'}}>{validationErrors.categoryId}</p>} */}
             </div>
 
             <div className="form-floating mb-3">
               <input type="number" className="form-control" id="transactionAmount" value={transactionAmount} onChange={(e) => setTransactionAmount(Number(e.target.value))}/>
               <label htmlFor="transactionAmount">Transaction Amount</label>
-              {validationErrors.transactionAmount && <p style={{color:'red'}}>{validationErrors.transactionAmount}</p>}
+              {/* {validationErrors.transactionAmount && <p style={{color:'red'}}>{validationErrors.transactionAmount}</p>} */}
             </div>
                     
             <div className="form-floating mb-3">
               <input type="string" className="form-control" id="transactionNotes" value={transactionNotes} onChange={(e) => setTransactionNotes(e.target.value)}/>
               <label htmlFor="transactionNotes">Transaction Notes</label>
-              {validationErrors.transactionNotes && <p style={{color:'red'}}>{validationErrors.transactionNotes}</p>}
+              {/* {validationErrors.transactionNotes && <p style={{color:'red'}}>{validationErrors.transactionNotes}</p>} */}
             </div>
                     
             <div className="form-floating mb-3">
               <input type="date" className="form-control" id="transactionDate" value={formatDate(transactionDate)} onChange={(e) => {setTransactionDate(stringToDate(e.target.value))}}/>
               <label htmlFor="transactionDate">Date</label>
-              {validationErrors.transactionDate && <p style={{color:'red'}}>{validationErrors.transactionDate}</p>}
+              {/* {validationErrors.transactionDate && <p style={{color:'red'}}>{validationErrors.transactionDate}</p>} */}
             </div>
 
             <div>
                 <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
                 <button className="btn btn-danger" onClick={CancelClicked}>Cancel</button>
             </div>
-            {error && <p style={{color:'red'}}>{error}</p>}
+            {/* {error && <p style={{color:'red'}}>{error}</p>} */}
         </div>
         </>
     );

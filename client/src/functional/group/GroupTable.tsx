@@ -24,9 +24,7 @@ const GroupTable = ({userId} : Props) => {
             }));
             setGroups(groupsWithMembers);
         } catch (error) {
-            console.error("Failed to load groups:", error);
-            setError("error");
-            toast.error("Error", {position: "top-center", autoClose: false});
+            toast.error("Error", { autoClose: false});
         }
     }
 
@@ -48,9 +46,7 @@ const GroupTable = ({userId} : Props) => {
             setFormDisplayed(false);
             setError('');
         } catch (error:any) {
-            console.error("Failed to save:", error);
-            setError(error.message);
-            toast.error(error.message);
+            toast.error(error.message, { autoClose: false});
         }
     };
 
@@ -72,16 +68,16 @@ const GroupTable = ({userId} : Props) => {
             try {
                 await del(`${END_POINTS.Groups}/${groupId}`);
                 console.log({groupId});
-                toast.success("Group deleted successfully", {position: "top-center"});
+                toast.success("Group deleted successfully", {position: "top-right"});
                 await loadGroups(); // Refresh the list after deleting
                 // setError("");
             } catch (error) {
                 // console.error("Failed to delete the item:", error);
                 // setError('Failed to delete group'); 
-                toast.error('Failed to delete group', {position: "top-center", autoClose: false});
+                toast.error('Failed to delete group', { autoClose: false});
             }
         } else {
-            toast.error('Delete operation cancelled', {position: "top-center", autoClose: false});
+            toast.error('Delete operation cancelled', { autoClose: false});
         }
     };
 

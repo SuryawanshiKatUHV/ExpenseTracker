@@ -23,37 +23,37 @@ function RegistrationForm({registerHandler, showLoginHandler}:Props) {
       let errors = {email:'', firstName:'', lastName:'', password:'', confirmedPassword:''};
 
       if (email == "") {
-        toast.error('Email is required', {position: "top-center", autoClose: false});
+        toast.error('Email is required', { autoClose: false});
       }
       else if (email.indexOf('@') == -1 || email.indexOf('.') == -1) {
-        toast.error('Email should be in format name@domain.com.', {position: "top-center", autoClose: false});
+        toast.error('Email should be in format name@domain.com.', { autoClose: false});
       }
       
       if (firstName == '') {
-        toast.error('First Name is required.', {position: "top-center", autoClose: false});
+        toast.error('First Name is required.', { autoClose: false});
       }
       else if (firstName.length < 3 || firstName.length > 50) {
-        toast.error('First Name should be between 3 to 50 characters.', {position: "top-center", autoClose: false});
+        toast.error('First Name should be between 3 to 50 characters.', { autoClose: false});
       }
       
       if (lastName == '') {
-        toast.error('Last Name is required.', {position: "top-center", autoClose: false});
+        toast.error('Last Name is required.', { autoClose: false});
       }
       else if (lastName.length < 3 || lastName.length > 50) {
-        toast.error('Last Name should be between 3 to 50 characters.', {position: "top-center", autoClose: false});
+        toast.error('Last Name should be between 3 to 50 characters.', { autoClose: false});
       }
 
       if (password == '') {
-        toast.error('Password is required.', {position: "top-center", autoClose: false});
+        toast.error('Password is required.', { autoClose: false});
       }
 
       if (confirmedPassword == '') {
-        toast.error('Confirmed Password is required.', {position: "top-center", autoClose: false});
+        toast.error('Confirmed Password is required.', { autoClose: false});
       }
 
       if (password && confirmedPassword && password != confirmedPassword) {
-        toast.error('Password does not match with confirm password.', {position: "top-center", autoClose: false});
-        toast.error('Confirmed Password does not match with password.', {position: "top-center", autoClose: false});
+        toast.error('Password does not match with confirm password.', { autoClose: false});
+        toast.error('Confirmed Password does not match with password.', { autoClose: false});
       }
 
       setErrors(errors);
@@ -69,7 +69,7 @@ function RegistrationForm({registerHandler, showLoginHandler}:Props) {
       if (validateInput())
         registerHandler(email, firstName, lastName, password);
 
-        toast.success('Registration Successfull', {position: "top-center"})
+        toast.success('Registration Successfull', {position: "top-right"})
     }
 
   return (
