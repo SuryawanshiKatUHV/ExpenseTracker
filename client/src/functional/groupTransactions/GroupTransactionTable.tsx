@@ -17,8 +17,6 @@ const GroupTransactionTable = (props : Props) => {
     const [formDisplayed, setFormDisplayed] = useState(false);  // Flag to display the create form
     const [groupTransactions, setGroupTransactions] = useState<any[]>([]);  // All the group transactions from the selected group
     const [settlementSummary, setSettlementSummary] = useState<any[]>([]);  // The settlement summary data for the selected group
-    const [error, setError] = useState(''); // Any error captured during the processing
-
     /**
      * Opertions
      */
@@ -86,8 +84,7 @@ const GroupTransactionTable = (props : Props) => {
             setFormDisplayed(false);
         })
         .catch((error) => {
-            // setError(error.message);
-            toast.error(error.message, {position: "top-center", autoClose: false});
+           toast.error(error.message, {position: "top-center", autoClose: false});
         });
     }
 
@@ -111,8 +108,7 @@ const GroupTransactionTable = (props : Props) => {
                 toast.success("Transaction deleted successfully", {position: "top-center"})
             } catch (error:any) {
                 console.error("Failed to delete the item:", error);
-                // setError(error.message); 
-                toast.error("Failed to delete transaction" + error.message, {position: "top-center", autoClose: false})
+               toast.error("Failed to delete transaction" + error.message, {position: "top-center", autoClose: false})
             }
         } else {
             toast.error("Delete operation cancelled", {position: "top-center", autoClose: false})
@@ -138,8 +134,6 @@ const GroupTransactionTable = (props : Props) => {
         {/* Show the add new form*/}
         {formDisplayed && <GroupTransactionForm userId={props.userId} groupId={selectedGroupId} saveHandler={SaveClicked} cancelHandler={CancelClicked}/>}
 
-        {error && <p style={{color:'red'}}>{error}</p>}
-
         <table className="table table-hover">
             <thead>
                 <tr>
@@ -160,7 +154,7 @@ const GroupTransactionTable = (props : Props) => {
                         <td>{item.PAID_BY_USER_FULLNAME}</td>
                         <td>{item.PAID_TO_USER_FULLNAME.split(";").map((user:string) =>(<div key={user}>{user}</div>))}</td>
                         <td>
-                            <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/>
+                            {props.userId == item.PAID_BY_USER_ID && <TrashFill onClick={() => DeleteClicked(item.TRANSACTION_ID)} style={{cursor: 'pointer'}}/>}
                         </td>
                     </tr>                
                 ))}
