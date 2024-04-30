@@ -16,7 +16,6 @@ const TransactionForm  = (props : Props) => {
     const [transactionAmount, setTransactionAmount] = useState(props.editingTransaction?.TRANSACTION_AMOUNT);
     const [transactionNotes, setTransactionNotes] = useState(props.editingTransaction?.TRANSACTION_NOTES);
     const [validationErrors, setValidationErrors] = useState({categoryId: '', transactionType: '', transactionDate: '', transactionAmount: '', transactionNotes: ''});
-    const [error, setError] = useState('');
     
     // Validate transaction input
     const validateInput = () => {
