@@ -143,6 +143,19 @@ class User {
       return rows;
   }
 
+  async getBudgetsByMonth(userId, year, month) {
+    const [rows, fields] = await execute(
+      `SELECT C.CATEGORY_ID, C.CATEGORY_TITLE, B.BUDGET_ID, B.BUDGET_AMOUNT, DATE_FORMAT(B.BUDGET_DATE, '%m/%d/%Y') AS BUDGET_DATE
+      FROM USER U
+      JOIN CATEGORY C ON U.USER_ID = C.OWNER_ID
+      JOIN BUDGET B ON C.CATEGORY_ID = B.CATEGORY_ID
+      WHERE U.USER_ID = ? AND YEAR(B.BUDGET_DATE) = ? AND MONTH(B.BUDGET_DATE) = ?
+      ORDER BY B.BUDGET_DATE DESC;`, 
+      [userId, year, month]);
+    
+    return rows;
+}
+
   async getTransactions(userId) {
       const [rows, fields] = await execute(
         `SELECT 
@@ -280,6 +293,22 @@ class User {
       FROM TRANSACTION t
       JOIN CATEGORY c ON t.CATEGORY_ID = c.CATEGORY_ID
       WHERE t.TRANSACTION_DATE IS NOT NULL AND c.OWNER_ID = ?
+      ORDER BY Year DESC, Month DESC`, 
+      [userId]);
+    return rows;
+  }
+
+  /**
+   * Get year month range of the Budgets.
+   *
+   * @returns {Promise<Array>} An array of objects {year, month}.
+   */
+  async getBudgetsYearMonthRange(userId) {
+    const [rows, fields] = await execute(
+      `SELECT DISTINCT YEAR(B.BUDGET_DATE) AS Year, MONTH(B.BUDGET_DATE) AS Month
+      FROM BUDGET B
+      JOIN CATEGORY C ON B.CATEGORY_ID = C.CATEGORY_ID
+      WHERE B.BUDGET_DATE IS NOT NULL AND C.OWNER_ID = ?
       ORDER BY Year DESC, Month DESC`, 
       [userId]);
     return rows;
