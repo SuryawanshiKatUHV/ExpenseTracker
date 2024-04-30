@@ -1,36 +1,24 @@
 const Joi = require("joi");
-const {getConnection} = require('../common/database');
+const {execute, getConnection} = require('../common/database');
 
 class Group {
 
   async getAll() {
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute("SELECT *, DATE_FORMAT(USER_GROUP_DATE, '%Y-%m-%d') AS USER_GROUP_DATE FROM USER_GROUP", []);
-      return rows;
-    }
-    finally {
-      connection.release();
-    }
+    const [rows, fields] = await execute("SELECT *, DATE_FORMAT(USER_GROUP_DATE, '%Y-%m-%d') AS USER_GROUP_DATE FROM USER_GROUP", []);
+    return rows;
   }
 
   async getById(groupId) {
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute(`SELECT * FROM USER_GROUP WHERE USER_GROUP_ID=?`, [groupId]);
-      if (!rows || rows.length == 0) {
-        throw new Error(`No group found for id ${groupId}`);
-      }
-
-      const group = rows[0];
-      const [rows2, fields2] = await connection.execute(`SELECT USER_ID, USER_FNAME, USER_LNAME, USER_EMAIL FROM USER_GROUP_MEMBERSHIP JOIN USER ON USER.USER_ID = USER_GROUP_MEMBERSHIP.MEMBER_ID WHERE USER_GROUP_ID=?`, [groupId]);
-      group.USER_GROUP_MEMBERS = rows2;
-
-      return group;
+    const [rows, fields] = await execute(`SELECT * FROM USER_GROUP WHERE USER_GROUP_ID=?`, [groupId]);
+    if (!rows || rows.length == 0) {
+      throw new Error(`No group found for id ${groupId}`);
     }
-    finally {
-      connection.release();
-    }
+
+    const group = rows[0];
+    const [rows2, fields2] = await execute(`SELECT USER_ID, USER_FNAME, USER_LNAME, USER_EMAIL FROM USER_GROUP_MEMBERSHIP JOIN USER ON USER.USER_ID = USER_GROUP_MEMBERSHIP.MEMBER_ID WHERE USER_GROUP_ID=?`, [groupId]);
+    group.USER_GROUP_MEMBERS = rows2;
+
+    return group;
   }
 
   /**
@@ -86,10 +74,6 @@ class Group {
    * @throws {Error} To be implemented.
    */
   async update(userGroupId, {USER_GROUP_DATE, USER_GROUP_TITLE, USER_GROUP_DESCRIPTION, USER_GROUP_MEMBERS}) {
-    // console.log("inside group repo");
-    // console.log(`USER_GROUP_DATE=${USER_GROUP_DATE} USER_GROUP_TITLE=${USER_GROUP_TITLE} USER_GROUP_DESCRIPTION=${USER_GROUP_DESCRIPTION}`);
-    // console.log(`USER_GROUP_MEMBERS=${USER_GROUP_MEMBERS}`); //ids 
-
     const connection = await getConnection();
     try {
 
@@ -133,25 +117,19 @@ class Group {
 
   /**
    * Delete a group.
-   *
    * 
    * @param {number} userGroupId - The group ID.
    * @returns {Promise<void>}
    * @throws {Error} To be implemented.
    */
   async delete(userGroupId) {
-    const connection = await getConnection();
-    try {
-      const result = await connection.execute("DELETE FROM USER_GROUP WHERE USER_GROUP_ID=? ", [userGroupId]);
-  
-      if (result.affectedRows === 0) {
-        throw new Error(`No group found with USER_GROUP_ID=${userGroupId}`);
-      }
-  
-      return result;
-    } finally {
-      connection.release();
+    const result = await execute("DELETE FROM USER_GROUP WHERE USER_GROUP_ID=? ", [userGroupId]);
+
+    if (result.affectedRows === 0) {
+      throw new Error(`No group found with USER_GROUP_ID=${userGroupId}`);
     }
+
+    return result;
   }
 
   async getMembers(groupId) {
@@ -163,14 +141,8 @@ class Group {
     WHERE UG.USER_GROUP_ID=?
     ORDER BY USER_FULLNAME ASC`;
   
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute(SQL, [groupId]);
-      return rows;
-    }
-    finally {
-      connection.release();
-    }
+    const [rows, fields] = await execute(SQL, [groupId]);
+    return rows;
   }
 
   async getActiveMembers(groupId) {
@@ -178,14 +150,8 @@ class Group {
     FROM USER_GROUP_TRANSACTION UGT
     WHERE UGT.USER_GROUP_ID=?;`
     
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute(SQL, [groupId]);
-      return rows;
-    }
-    finally {
-      connection.release();
-    }
+    const [rows, fields] = await execute(SQL, [groupId]);
+    return rows;
   }
 
   async getTransactions(groupId) {
@@ -207,14 +173,8 @@ class Group {
       T.TRANSACTION_ID, T.TRANSACTION_DATE, T.TRANSACTION_AMOUNT, T.TRANSACTION_NOTES, UGT.PAID_BY_USER_ID, CONCAT(U1.USER_LNAME, ", ", U1.USER_FNAME)
     ORDER BY T.TRANSACTION_DATE DESC`;
 
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute(SQL, [groupId]);
-      return rows;
-    }
-    finally {
-      connection.release();
-    }
+    const [rows, fields] = await execute(SQL, [groupId]);
+    return rows;
   }
 
   async getSettlementSummary(groupId) {
@@ -256,16 +216,12 @@ class Group {
             WHERE USER_GROUP_ID = ?
         )
     GROUP BY
-        u.USER_ID`;
+      u.USER_ID
+    ORDER BY 
+      USER_FULLNAME ASC`;
       
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute(SQL, [groupId, groupId, groupId]);
-      return rows;
-    }
-    finally {
-      connection.release();
-    }
+    const [rows, fields] = await execute(SQL, [groupId, groupId, groupId]);
+    return rows;
   }
 
   /**
