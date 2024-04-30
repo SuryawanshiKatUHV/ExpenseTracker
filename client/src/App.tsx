@@ -3,15 +3,12 @@ import './App.css'
 import Layout from './layout/Layout';
 import LoginForm from './functional/user/LoginForm';
 import RegistrationForm from './functional/user/RegistrationForm';
-import {VIEW, post} from './common/Utilities';
-import Alert from './common/Alert';
-import { END_POINTS } from './common/Utilities';
+import {VIEW, post, END_POINTS} from './common/Utilities';
+import { toast } from 'react-toastify';
 
 function App() {
   
   const [view, setView] = useState(VIEW.LoginForm);
-  const [error, setError] = useState('');
-  const [info, setInfo] = useState('');
   const [loggedInUser, setLoggedInUser] = useState({USER_FULL_NAME:'', USER_ID:0});
 
   /**
@@ -40,6 +37,7 @@ function App() {
   const LogoutClicked = () => {
     localStorage.removeItem('login_token');
     setView(VIEW.LoginForm);
+    toast.success("Successfully logged out.");
   }
 
   const LoginClicked = async (USER_EMAIL : string, USER_PASSWORD: string) => {
@@ -51,7 +49,7 @@ function App() {
       setLoggedInUser({USER_FULL_NAME:`${user.USER_LNAME}, ${user.USER_FNAME}`, USER_ID:user.USER_ID});
       setView(VIEW.AppHome);
     } catch (error : any) {
-      setError(error.message);
+      toast.error(error.message, {autoClose: false});
     }
   }
 
@@ -60,10 +58,10 @@ function App() {
       const payload = {USER_EMAIL, USER_FNAME, USER_LNAME, USER_PASSWORD};
       const data = await post(END_POINTS.Users, payload);
 
-      setInfo('Registration is successful.');
+      toast.success('Registration is successful.');
       setView(VIEW.LoginForm);
     } catch (error : any) {
-      setError(error.message);
+      toast.error(error.message, {autoClose: false});
     }
   }
 
@@ -75,21 +73,11 @@ function App() {
     setView(VIEW.LoginForm);
   }
 
-  const ErrorClosed = () => {
-    setError('');
-  }
-
-  const InfoClosed = () => {
-    setInfo('');
-  }
-
   return (
     <>
       <div style={{ padding: '20px', textAlign: 'center' }}>
         <h1>Expense Tracker</h1>
       </div>
-      {error && (<Alert subject="Error" message={error} closeHandler={ErrorClosed}/>)}
-      {info && (<Alert subject="Information" message={info} closeHandler={InfoClosed}/>)}
       {loadContent()}
     </>
   );
