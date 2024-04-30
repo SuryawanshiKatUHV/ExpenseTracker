@@ -21,6 +21,8 @@ router.delete("/:userGroupId", authenticator, controller.delete);
  */
 router.get("/:id/members", authenticator, controller.getMembers);
 
+router.get("/:id/activeMembers", authenticator, controller.getActiveMembers);
+
 router.get("/:id/transactions", authenticator, controller.getTransactions);
 
 router.get("/:id/settlementSummary", authenticator, controller.getSettlementSummary);

@@ -173,6 +173,21 @@ class Group {
     }
   }
 
+  async getActiveMembers(groupId) {
+    const SQL = `SELECT UGT.PAID_BY_USER_ID, UGT.PAID_TO_USER_ID
+    FROM USER_GROUP_TRANSACTION UGT
+    WHERE UGT.USER_GROUP_ID=?;`
+    
+    const connection = await getConnection();
+    try {
+      const [rows, fields] = await connection.execute(SQL, [groupId]);
+      return rows;
+    }
+    finally {
+      connection.release();
+    }
+  }
+
   async getTransactions(groupId) {
     // const SQL =
     // `SELECT 
@@ -195,7 +210,7 @@ class Group {
     const SQL = 
     `SELECT 
       T.TRANSACTION_ID,
-      DATE_FORMAT(T.TRANSACTION_DATE, '%Y-%m-%d') AS TRANSACTION_DATE,
+      DATE_FORMAT(T.TRANSACTION_DATE, '%m/%d/%Y') AS TRANSACTION_DATE,
       T.TRANSACTION_AMOUNT,
       T.TRANSACTION_NOTES,
       CONCAT(U1.USER_LNAME, ", ", U1.USER_FNAME) AS PAID_BY_USER_FULLNAME,
