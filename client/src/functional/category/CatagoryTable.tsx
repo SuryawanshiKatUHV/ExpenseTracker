@@ -20,7 +20,6 @@ const CategoryTable = ({userId} : Props) => {
             const categories = await get(`${END_POINTS.Users}/${userId}/categories`);
             setCategories(categories);
         } catch (error:any) {
-            // setError(error.message);
             toast.error(error.message, { autoClose: false});
         }
     }
@@ -67,11 +66,10 @@ const CategoryTable = ({userId} : Props) => {
                 await loadCategories(); // Refresh the list after deleting
                 toast.success(`Category with id ${categoryId} deleted succesfully`, {position: "top-right"});
             } catch (error: any) {
-                // setError(error.message); 
                 toast.error(error.message, { autoClose: false});
             }
         } else {
-            toast.error("Delete operation cancelled", { autoClose: false});
+            toast.info("Delete operation cancelled.");
         }
     };
 
