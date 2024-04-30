@@ -156,10 +156,10 @@ export function stringToYearMonth(stringYearMonth : string) : YearMonthRange {
 
 // Formats date into to yyyy-mm-dd 
 export function formatDate (date: Date) {
-    let year = date.getUTCFullYear();
+    let year = date.getFullYear();
     // Pad month and day with leading zeros if necessary
-    let month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-    let day = date.getUTCDate().toString().padStart(2, '0');
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
     
     return `${year}-${month}-${day}`;
 }
