@@ -25,9 +25,13 @@ router.get("/:id/categories", authenticator, controller.getCategories);
 
 router.get("/:id/budgets", authenticator, controller.getBudgets);
 
+router.get("/:id/budgets/:year/:month", authenticator, controller.getBudgetsByMonth); // used for budgets table
+
+router.get("/:id/budgets/yearMonthRange", authenticator, controller.getBudgetsYearMonthRange);
+
 router.get("/:id/transactions", authenticator, controller.getTransactions);
 
-router.get("/:id/transactions/:year/:month", authenticator, controller.getTransactionsByMonth); // used for transaction table
+router.get("/:id/transactions/:year/:month", authenticator, controller.getTransactionsByMonth); // used for transactions table
 
 router.get("/:id/transactions/yearMonthRange", authenticator, controller.getTransactionsYearMonthRange);
 
