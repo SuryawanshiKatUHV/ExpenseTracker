@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const {getConnection} = require('../common/database');
+const {execute} = require('../common/database');
 
 /**
  * Category class to interact with the 'CATEGORY' database table.
@@ -12,26 +12,20 @@ class Category {
    * @returns {Promise<Array>} An array of category objects.
    */
   async getAll() {
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute(`SELECT C.*, COALESCE(T.TOTAL_TRANSACTIONS, 0) AS TOTAL_TRANSACTIONS, COALESCE(B.TOTAL_BUDGETS, 0) AS TOTAL_BUDGETS
+    return await execute(
+      `SELECT C.*, COALESCE(T.TOTAL_TRANSACTIONS, 0) AS TOTAL_TRANSACTIONS, COALESCE(B.TOTAL_BUDGETS, 0) AS TOTAL_BUDGETS
       FROM CATEGORY C
-        LEFT JOIN (
-        SELECT CATEGORY_ID, COUNT(*) AS TOTAL_TRANSACTIONS
-            FROM TRANSACTION
-            GROUP BY CATEGORY_ID
-        ) T ON T.CATEGORY_ID = C.CATEGORY_ID
-        LEFT JOIN (
-        SELECT CATEGORY_ID, COUNT(*) AS TOTAL_BUDGETS
-            FROM BUDGET
-            GROUP BY CATEGORY_ID
-        ) B ON B.CATEGORY_ID = C.CATEGORY_ID
-        ORDER BY C.CATEGORY_TITLE ASC;`, []);
-      return rows;
-    }
-    finally {
-      connection.release();
-    }
+      LEFT JOIN (
+      SELECT CATEGORY_ID, COUNT(*) AS TOTAL_TRANSACTIONS
+          FROM TRANSACTION
+          GROUP BY CATEGORY_ID
+      ) T ON T.CATEGORY_ID = C.CATEGORY_ID
+      LEFT JOIN (
+      SELECT CATEGORY_ID, COUNT(*) AS TOTAL_BUDGETS
+          FROM BUDGET
+          GROUP BY CATEGORY_ID
+      ) B ON B.CATEGORY_ID = C.CATEGORY_ID
+      ORDER BY C.CATEGORY_TITLE ASC;`, []);
   }
 
   /**
@@ -42,9 +36,7 @@ class Category {
    * @throws {Error} If the category is not found.
    */
   async getById(id) {
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute(`SELECT C.*, COALESCE(T.TOTAL_TRANSACTIONS, 0) AS TOTAL_TRANSACTIONS, COALESCE(B.TOTAL_BUDGETS, 0) AS TOTAL_BUDGETS
+    const [rows] = await execute(`SELECT C.*, COALESCE(T.TOTAL_TRANSACTIONS, 0) AS TOTAL_TRANSACTIONS, COALESCE(B.TOTAL_BUDGETS, 0) AS TOTAL_BUDGETS
       FROM CATEGORY C
         LEFT JOIN (
         SELECT CATEGORY_ID, COUNT(*) AS TOTAL_TRANSACTIONS
@@ -58,15 +50,11 @@ class Category {
         ) B ON B.CATEGORY_ID = C.CATEGORY_ID
         WHERE C.CATEGORY_ID=?
         ORDER BY C.CATEGORY_TITLE ASC;`, [id]);
-      if (!rows || rows.length == 0) {
+      if (!rows || rows.length === 0) {
         throw new Error(`No category found for id ${id}`);
       }
 
       return rows[0];
-    }
-    finally {
-      connection.release();
-    }
   }
 
   /**
@@ -77,18 +65,9 @@ class Category {
    * @throws {Error} If the data is not valid.
    */
   async create({OWNER_ID, CATEGORY_TITLE, CATEGORY_DESCRIPTION}) {
-    const connection = await getConnection();
-    try {
-      this._validate({OWNER_ID, CATEGORY_TITLE, CATEGORY_DESCRIPTION});
-
-      const result = await connection.execute("INSERT INTO CATEGORY (OWNER_ID, CATEGORY_TITLE, CATEGORY_DESCRIPTION) VALUES (?, ?, ?)", [OWNER_ID, CATEGORY_TITLE, CATEGORY_DESCRIPTION]);
-      console.log(`Category inserted with id ${result[0].insertId}`);
-
-      return {CATEGORY_ID:result[0].insertId};
-    }
-    finally {
-      connection.release();
-    }
+    this._validate({OWNER_ID, CATEGORY_TITLE, CATEGORY_DESCRIPTION});
+    const result = await execute("INSERT INTO CATEGORY (OWNER_ID, CATEGORY_TITLE, CATEGORY_DESCRIPTION) VALUES (?, ?, ?)", [OWNER_ID, CATEGORY_TITLE, CATEGORY_DESCRIPTION]);
+    return {CATEGORY_ID:result[0].insertId};
   }
 
   /**
@@ -100,18 +79,11 @@ class Category {
    * @throws {Error} If the category is not found.
    */
   async update(id, { CATEGORY_TITLE, CATEGORY_DESCRIPTION }) {
-    const connection = await getConnection();
-    try {
-      const result = await connection.execute("UPDATE CATEGORY SET CATEGORY_TITLE=?, CATEGORY_DESCRIPTION=? WHERE CATEGORY_ID=?", [CATEGORY_TITLE, CATEGORY_DESCRIPTION, id]);
-  
-      if (result.affectedRows === 0) {
-        throw new Error(`No category found for id ${id}`);
-      }
-  
-      return result;
-    } finally {
-      connection.release();
+    const result = await execute("UPDATE CATEGORY SET CATEGORY_TITLE=?, CATEGORY_DESCRIPTION=? WHERE CATEGORY_ID=?", [CATEGORY_TITLE, CATEGORY_DESCRIPTION, id]);
+    if (result.affectedRows === 0) {
+      throw new Error(`No category found for id ${id}`);
     }
+    return result;
   }
 
    /**
@@ -122,30 +94,23 @@ class Category {
    * @throws {Error} If the category is not found.
    */
   async delete(id) {
-    const connection = await getConnection();
-    try {
-      // Ensure if this item can be deleted
-      const categoryData = await this.getById(id);
-      const totalTransactions = parseInt(categoryData.TOTAL_TRANSACTIONS);
-      const totalBudgets = parseInt(categoryData.TOTAL_BUDGETS);
-      if (totalTransactions > 0 ) {
-        throw new Error(`Cannot delete '${categoryData.CATEGORY_TITLE}' category as it has ${totalTransactions} transaction(s).`);
-      }
-      if (totalBudgets > 0 ) {
-        throw new Error(`Cannot delete '${categoryData.CATEGORY_TITLE}' category as it has ${totalBudgets} budget(s).`);
-      }
-
-      // Delete this item
-      const result = await connection.execute("DELETE FROM CATEGORY WHERE CATEGORY_ID=?", [id]);
-  
-      if (result.affectedRows === 0) {
-        throw new Error(`No category found for id ${id}`);
-      }
-  
-      return result;
-    } finally {
-      connection.release();
+    // Ensure if this item can be deleted
+    const categoryData = await this.getById(id);
+    const totalTransactions = parseInt(categoryData.TOTAL_TRANSACTIONS);
+    const totalBudgets = parseInt(categoryData.TOTAL_BUDGETS);
+    if (totalTransactions > 0 ) {
+      throw new Error(`Cannot delete '${categoryData.CATEGORY_TITLE}' category as it has ${totalTransactions} transaction(s).`);
     }
+    if (totalBudgets > 0 ) {
+      throw new Error(`Cannot delete '${categoryData.CATEGORY_TITLE}' category as it has ${totalBudgets} budget(s).`);
+    }
+
+    // Delete this item
+    const result = await execute("DELETE FROM CATEGORY WHERE CATEGORY_ID=?", [id]);
+    if (result.affectedRows === 0) {
+      throw new Error(`No category found for id ${id}`);
+    }
+    return result;
   }
 
   /**
@@ -155,14 +120,7 @@ class Category {
    * @returns {Promise<Array>} An array of transaction objects.
    */
   async getTransactions(id) {
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute("SELECT * FROM TRANSACTION WHERE CATEGORY_ID=?", [id]);
-      return rows;
-    }
-    finally {
-      connection.release();
-    }
+    return await execute("SELECT * FROM TRANSACTION WHERE CATEGORY_ID=?", [id]);
   }
 
    /**
@@ -172,14 +130,7 @@ class Category {
    * @returns {Promise<Array>} An array of budget objects.
    */
   async getBudgets(id) {
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute("SELECT * FROM BUDGET WHERE CATEGORY_ID=?", [id]);
-      return rows;
-    }
-    finally {
-      connection.release();
-    }
+    return await execute("SELECT * FROM BUDGET WHERE CATEGORY_ID=?", [id]);
   }
 
   /**
