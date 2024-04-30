@@ -196,13 +196,15 @@ const GroupForm = (props:Props) => {
                                             style={{ height: "1em" }}
                                         />
                                         <label className="form-check-label" htmlFor={`custom-checkbox-${index}`}>
-                                            {user.USER_LNAME}, {user.USER_FNAME}
+                                            {user.USER_LNAME}, {user.USER_FNAME} {(hasPaidToTransactions || hasPaidByTransactions) && <small>*</small>}
                                         </label>
                                     </li>
                                 );
                             }
                         })}
                     </ul>
+
+                    {props.editingGroup && <small><i>* Members involved in group transactions cannot be removed from the group.</i></small>}
                 </div>
 
                 <div>
