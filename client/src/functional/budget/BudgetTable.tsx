@@ -85,18 +85,18 @@ const BudgetTable = ({userId} : Props) => {
             <table className="table table-hover">
                 <thead>
                     <tr>
+                        <th scope="col">Date</th>
                         <th scope="col">Category</th>
                         <th scope="col">Budget</th>
-                        <th scope="col">Date</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {budgets.map((item) => (
                         <tr>
+                            <td>{item.BUDGET_DATE}</td>
                             <td>{item.CATEGORY_TITLE}</td>
                             <td>{item.BUDGET_AMOUNT}</td>
-                            <td className="descriptionCat">{item.BUDGET_DATE}</td>
                             <td>
                                 <div>
                                     <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} /> {/* Edit icon */}

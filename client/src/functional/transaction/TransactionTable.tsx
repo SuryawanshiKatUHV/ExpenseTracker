@@ -131,10 +131,10 @@ const TransactionTable = ({userId} : Props) => {
             <table className="table table-hover">
                 <thead>
                     <tr>
+                        <th scope="col">Date</th>
                         <th scope="col">Type</th>
                         <th scope="col">Category</th>
                         <th scope="col">Amount</th>
-                        <th scope="col">Date</th>
                         <th scope="col">GroupTx</th>
                         <th scope="col">Notes</th>
                         <th scope="col"></th>
@@ -143,10 +143,10 @@ const TransactionTable = ({userId} : Props) => {
                 <tbody>
                     {transactions.map((item) => (
                         <tr>
+                            <td>{item.TRANSACTION_DATE}</td>
                             <td>{item.TRANSACTION_TYPE}</td>
                             <td>{item.CATEGORY_TITLE}</td>
                             <td>{item.TRANSACTION_AMOUNT}</td>
-                            <td>{item.TRANSACTION_DATE}</td>
                             <td>{item.TOTAL_USER_GROUP_TRANSACTIONS>0?item.TOTAL_USER_GROUP_TRANSACTIONS:''}</td>
                             <td>{item.TRANSACTION_NOTES}</td>
                             <td>
