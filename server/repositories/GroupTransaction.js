@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const {execute, getConnection, executeUsingConnection} = require('../common/database');
+const {execute, getConnection} = require('../common/database');
 const transactionRepo = require("./Transaction");
 
 // SQL Queries
@@ -74,7 +74,7 @@ class GroupTransaction {
         console.log(`Creating main transaction...`);
         // First insert the main transaction
         const TRANSACTION_TYPE = "Expense";
-        const result = await executeUsingConnection(connection, "INSERT INTO TRANSACTION (CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES) VALUES (?, ?, ?, ?, ?)", 
+        const result = await connection.execute("INSERT INTO TRANSACTION (CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES) VALUES (?, ?, ?, ?, ?)", 
         [CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES]);
         console.log(`result=${JSON.stringify(result)}`);
 
@@ -86,7 +86,7 @@ class GroupTransaction {
         const USER_GROUP_TRANSACTION_IDS = [];
 
         for (const PAID_TO_USER_ID of PAID_TO_USER_IDS) {
-          const result = await executeUsingConnection(connection, INSERT_SQL,
+          const result = await connection.execute(INSERT_SQL,
               [USER_GROUP_ID, TRANSACTION_ID, PAID_BY_USER_ID, PAID_TO_USER_ID, USER_GROUP_TRANSACTION_DATE, USER_GROUP_TRANSACTION_AMOUNT, USER_GROUP_TRANSACTION_NOTES]);
           USER_GROUP_TRANSACTION_IDS.push(result[0].insertId);
           console.log(`Group transaction inserted with id ${result[0].insertId}`);
