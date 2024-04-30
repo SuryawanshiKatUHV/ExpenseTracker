@@ -27,16 +27,13 @@ const GroupForm = (props:Props) => {
     const [settlementSummary, setSettlementSummary] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]);
     const [checkedBoxState, setCheckedBoxState] = useState(new Array(users.length).fill(false));
-    const [validationErrors, setValidationErrors] = useState({groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''});
-    const [error, setError] = useState('');
     
     // Validate group input
     const validateInput = () => {
         let isValid = true;
-        let validationErrors = {groupDate: '', groupTitle: '', groupDescription: '', groupMembers: ''};
 
         if (!groupDate || isNaN(groupDate.getDate())) {
-            toast.error("Group Date is required.", { autoClose: false});
+            toast.error("Group Date is required.");
             isValid = false;
         } 
         else {
@@ -46,25 +43,24 @@ const GroupForm = (props:Props) => {
             currentDate.setHours(0, 0, 0, 0);
 
             if (groupDate > currentDate) {
-                toast.error("Date must not be in future.", { autoClose: false});
+                toast.error("Date must not be in future.");
                 isValid = false;
             }
         }
         
         if (!groupTitle) {
-            toast.error("Group Title is required", { autoClose: false});
+            toast.error("Group Title is required");
             isValid = false;
         }
         if (!groupDescription) {
-            toast.error("Group Description is required.", { autoClose: false});
+            toast.error("Group Description is required.");
             isValid = false;
         }
         if (checkedBoxState.every(state => !state)) {
-            toast.error("Must select at least one member", { autoClose: false});
+            toast.error("Must select at least one member");
             isValid = false;
         } 
 
-        setValidationErrors(validationErrors);
         return isValid;
     };
 
@@ -74,7 +70,6 @@ const GroupForm = (props:Props) => {
             setUsers(response);
         } catch (error:any) {
             console.error("Failed to load users:", error);
-            setError(error.message);
             toast.error(error.message, { autoClose: false});
         }
     }
@@ -163,19 +158,16 @@ const GroupForm = (props:Props) => {
         <div className="form-floating mb-3">
           <input type="date" className="form-control" id="groupDate" value={formatDate(groupDate)} onChange={(e) => setGroupDate(new Date(e.target.value))}/>
           <label htmlFor="groupDate">Date</label>
-          {/* {validationErrors.groupDate && <p style={{color:'red'}}>{validationErrors.groupDate}</p>} */}
         </div>
 
         <div className="form-floating mb-3">
           <input type="string" className="form-control" id="groupTitle" value={groupTitle} onChange={(e) => setGroupTitle(e.target.value)}/>
           <label htmlFor="groupTitle">Group Title</label>
-          {/* {validationErrors.groupTitle && <p style={{color:'red'}}>{validationErrors.groupTitle}</p>} */}
         </div>
 
         <div className="form-floating mb-3">
           <input type="string" className="form-control" id="groupDescription" value={groupDescription} onChange={(e) => setGroupDescription(e.target.value)}/>
           <label htmlFor="groupDescription">Group Description</label>
-          {/* {validationErrors.groupDescription && <p style={{color:'red'}}>{validationErrors.groupDescription}</p>} */}
         </div>
 
         <div className="form-floating mb-3">
@@ -210,15 +202,12 @@ const GroupForm = (props:Props) => {
                     }
                 })}
             </ul>
-            {/* {validationErrors.groupMembers && <p style={{ color: 'red' }}>{validationErrors.groupMembers}</p>} */}
         </div>
 
         <div>
             <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
             <button className="btn btn-danger" onClick={CancelClicked}>Cancel</button>
         </div>
-
-        {/* {error && <p style={{color:'red'}}>{error}</p>} */}
     </div>
     </>
     );
