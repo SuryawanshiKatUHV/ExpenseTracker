@@ -13,7 +13,7 @@ const TransactionForm  = (props : Props) => {
     const [categoryId, setCategoryId] = useState(props.editingTransaction?.CATEGORY_ID);
     const [transactionType, setTransactionType] = useState(props.editingTransaction?.TRANSACTION_TYPE);
     const [transactionDate, setTransactionDate] = useState(props.editingTransaction?.TRANSACTION_DATE ? new Date(props.editingTransaction.TRANSACTION_DATE) : new Date());
-    const [transactionAmount, setTransactionAmount] = useState(props.editingTransaction?.TRANSACTION_AMOUNT);
+    const [transactionAmount, setTransactionAmount] = useState(props.editingTransaction?.TRANSACTION_AMOUNT?props.editingTransaction?.TRANSACTION_AMOUNT: 0.0);
     const [transactionNotes, setTransactionNotes] = useState(props.editingTransaction?.TRANSACTION_NOTES);
     
     // Validate transaction input
@@ -126,8 +126,14 @@ const TransactionForm  = (props : Props) => {
         <>
         <h5 className="m-5">{props.editingTransaction?"Edit transaction":"Add transaction"}</h5>
         <div className="card" style={{border:1}}>
+            
             <div className="form-floating mb-3">
-                <select className="form-select" id="txTransactionType" style={{ marginBottom: '18px' }} value={transactionType} onChange={(e) => setTransactionType(e.target.value)}>
+              <input type="date" className="form-control" id="transactionDate" value={formatDate(transactionDate)} onChange={(e) => {setTransactionDate(stringToDate(e.target.value))}}/>
+              <label htmlFor="transactionDate">Date</label>
+            </div>
+
+            <div className="form-floating mb-3">
+                <select className="form-select" id="txTransactionType" value={transactionType} onChange={(e) => setTransactionType(e.target.value)}>
                     <option key="blank" value=""></option>
                     <option key="Expense" value="Expense">Expense</option>
                     <option key="Income" value="Income">Income</option>
@@ -136,7 +142,7 @@ const TransactionForm  = (props : Props) => {
             </div>
 
             <div className="form-floating mb-3">
-                <select className="form-select" id="txCategoryId" style={{ marginBottom: '18px' }} value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))}>
+                <select className="form-select" id="txCategoryId" value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))}>
                     <option value=""></option>
                     {categories.map((item, index) => (
                         <option key={index} value={item.CATEGORY_ID}>
@@ -157,10 +163,6 @@ const TransactionForm  = (props : Props) => {
               <label htmlFor="transactionNotes">Transaction Notes</label>
             </div>
                     
-            <div className="form-floating mb-3">
-              <input type="date" className="form-control" id="transactionDate" value={formatDate(transactionDate)} onChange={(e) => {setTransactionDate(stringToDate(e.target.value))}}/>
-              <label htmlFor="transactionDate">Date</label>
-            </div>
 
             <div>
                 <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
