@@ -14,24 +14,20 @@ const CategoryForm = (props : Props) => {
     // State for category input form
     const [categoryTitle, setCategoryTitle] = useState(props.editingCategory?.CATEGORY_TITLE);
     const [categoryDescription, setCategoryDescription] = useState(props.editingCategory?.CATEGORY_DESCRIPTION);
-    const [validationErrors, setValidationErrors] = useState({categoryTitle: '', categoryDescription: ''});
-    const [error, setError] = useState('');
 
     // Validate category input
     const validateInput = () => {
         let isValid = true;
-        let validationErrors = {categoryTitle: '', categoryDescription: ''};
 
         if (!categoryTitle) {
-            toast.error('Category title is required', { autoClose: false})
+            toast.error('Category title is required')
             isValid = false;
         }
         if (!categoryDescription) {
-            toast.error('Category description is required', { autoClose: false})
+            toast.error('Category description is required')
             isValid = false;
         }
 
-        setValidationErrors(validationErrors);
         return isValid;
     };
 
@@ -50,7 +46,7 @@ const CategoryForm = (props : Props) => {
                 if (props.editingCategory?.CATEGORY_ID) {
                     // Update the existing category
                     await put(`${END_POINTS.Categories}/${props.editingCategory.CATEGORY_ID}`, categoryData);
-                    toast.info(`Category updated with id ${props.editingCategory.CATEGORY_ID}`, {position: "top-right"});
+                    toast.success(`Category updated with id ${props.editingCategory.CATEGORY_ID}`, {position: "top-right"});
                 } else {
                     // Create a new category
                     const result = await post(END_POINTS.Categories, categoryData);
@@ -60,7 +56,6 @@ const CategoryForm = (props : Props) => {
                 props.saveHandler();
             } 
             catch (error : any) {
-                // setError(error.message);
                 toast.error(error.message, { autoClose: false})
             }
         }
@@ -80,21 +75,17 @@ const CategoryForm = (props : Props) => {
             <div className="form-floating mb-3">
               <input type="string" className="form-control" id="categoryTitle" value={categoryTitle} onChange={(e) => setCategoryTitle(e.target.value)}/>
               <label htmlFor="categoryTitle">Title</label>
-              {/* {validationErrors.categoryTitle && <p style={{color:'red'}}>{validationErrors.categoryTitle}</p>} */}
             </div>
     
             <div className="form-floating mb-3">
               <input type="string" className="form-control" id="categoryDescription" value={categoryDescription} onChange={(e) => setCategoryDescription(e.target.value)}/>
               <label htmlFor="categoryDescription">Description</label>
-              {/* {validationErrors.categoryDescription && <p style={{color:'red'}}>{validationErrors.categoryDescription}</p>} */}
             </div>
     
             <div>
                 <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
                 <button className="btn btn-danger" onClick={CancelClicked}>Cancel</button>
             </div>
-
-            {/* {error && <p style={{color:'red'}}>{error}</p>} */}
         </div>
         </>
     );

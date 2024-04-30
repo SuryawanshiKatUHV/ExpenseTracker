@@ -15,23 +15,21 @@ const TransactionForm  = (props : Props) => {
     const [transactionDate, setTransactionDate] = useState(props.editingTransaction?.TRANSACTION_DATE ? new Date(props.editingTransaction.TRANSACTION_DATE) : new Date());
     const [transactionAmount, setTransactionAmount] = useState(props.editingTransaction?.TRANSACTION_AMOUNT);
     const [transactionNotes, setTransactionNotes] = useState(props.editingTransaction?.TRANSACTION_NOTES);
-    const [validationErrors, setValidationErrors] = useState({categoryId: '', transactionType: '', transactionDate: '', transactionAmount: '', transactionNotes: ''});
     
     // Validate transaction input
     const validateInput = () => {
         let isValid = true;
-        let validationErrors = {categoryId: '', transactionType: '', transactionDate: '', transactionAmount: '',  transactionNotes: ''};
 
         if (!categoryId) {
-            toast.error("A category is required", { autoClose: false});
+            toast.error("A category is required");
             isValid = false;
         }
         if (!transactionType) {
-            toast.error("A transaction type is required", { autoClose: false});
+            toast.error("A transaction type is required");
             isValid = false;
         }
         if (!transactionDate || isNaN(transactionDate.getDate())) {
-            toast.error("A valid date is required", { autoClose: false});
+            toast.error("A valid date is required");
             isValid = false;
         }
         else {
@@ -41,21 +39,20 @@ const TransactionForm  = (props : Props) => {
             currentDate.setHours(0, 0, 0, 0);
 
             if (transactionDate > currentDate) {
-                toast.error("Date must not be in future", { autoClose: false})
+                toast.error("Date must not be in future")
                 isValid = false;
             }
         }
 
         if (!transactionAmount) {
-            toast.error("A transaction amount is required", { autoClose: false})
+            toast.error("A transaction amount is required")
             isValid = false;
         }
         if (!transactionNotes) {
-            toast.error("Transactio notes are required", { autoClose: false})
+            toast.error("Transactio notes are required")
             isValid = false;
         }
 
-        setValidationErrors(validationErrors);
         return isValid;
     };
 
@@ -66,7 +63,6 @@ const TransactionForm  = (props : Props) => {
             setCategories(categories);
         } catch (error:any) {
             console.error("Failed to load categories:", error);
-            // setError(error.message);
             toast.error(error.message, { autoClose: false});
         }
     }
@@ -106,7 +102,6 @@ const TransactionForm  = (props : Props) => {
                 props.saveHandler();
             } 
             catch (error : any) {
-                // setError(error.message);
                 toast.error(error.message, { autoClose: false});
             }
         }
@@ -138,7 +133,6 @@ const TransactionForm  = (props : Props) => {
                     <option key="Income" value="Income">Income</option>
                 </select>
                 <label htmlFor="txTransactionType">Type</label>
-                {validationErrors.transactionType && <p style={{ color: 'red' }}>{validationErrors.transactionType}</p>}
             </div>
 
             <div className="form-floating mb-3">
@@ -151,32 +145,27 @@ const TransactionForm  = (props : Props) => {
                     ))}
                 </select>
                 <label htmlFor="txCategoryId">Category</label>
-                {/* {validationErrors.categoryId && <p style={{color:'red'}}>{validationErrors.categoryId}</p>} */}
             </div>
 
             <div className="form-floating mb-3">
               <input type="number" className="form-control" id="transactionAmount" value={transactionAmount} onChange={(e) => setTransactionAmount(Number(e.target.value))}/>
               <label htmlFor="transactionAmount">Transaction Amount</label>
-              {/* {validationErrors.transactionAmount && <p style={{color:'red'}}>{validationErrors.transactionAmount}</p>} */}
             </div>
                     
             <div className="form-floating mb-3">
               <input type="string" className="form-control" id="transactionNotes" value={transactionNotes} onChange={(e) => setTransactionNotes(e.target.value)}/>
               <label htmlFor="transactionNotes">Transaction Notes</label>
-              {/* {validationErrors.transactionNotes && <p style={{color:'red'}}>{validationErrors.transactionNotes}</p>} */}
             </div>
                     
             <div className="form-floating mb-3">
               <input type="date" className="form-control" id="transactionDate" value={formatDate(transactionDate)} onChange={(e) => {setTransactionDate(stringToDate(e.target.value))}}/>
               <label htmlFor="transactionDate">Date</label>
-              {/* {validationErrors.transactionDate && <p style={{color:'red'}}>{validationErrors.transactionDate}</p>} */}
             </div>
 
             <div>
                 <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
                 <button className="btn btn-danger" onClick={CancelClicked}>Cancel</button>
             </div>
-            {/* {error && <p style={{color:'red'}}>{error}</p>} */}
         </div>
         </>
     );

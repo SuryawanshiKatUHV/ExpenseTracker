@@ -115,7 +115,6 @@ const GroupTransactionForm = (props : Props) => {
                 });
             }
             catch (error : any) {
-                // setError(error.message);
                 toast.error(error.message, { autoClose: false});
             }
         }
@@ -139,8 +138,6 @@ const GroupTransactionForm = (props : Props) => {
 
     <div className="card" style={{border:1}}>
        
-        {/* {error && <p style={{color:'red'}}>{error}</p>} */}
-
         <div className="form-floating mb-3">
           <select className="form-select" id="txCategoryId" onChange={(e) => setTxCategoryId(parseInt(e.target.value))} value={txCategoryId}>
             {categories.map((category) => (
@@ -153,19 +150,16 @@ const GroupTransactionForm = (props : Props) => {
         <div className="form-floating mb-3">
           <input type="date" className="form-control" id="txDate" value={txDate} onChange={(e) => setTxDate(e.target.value)}/>
           <label htmlFor="txDate">Date</label>
-          {/* {validationErrors.txDate && <p style={{color:'red'}}>{validationErrors.txDate}</p>} */}
         </div>
 
         <div className="form-floating mb-3">
           <input type="number" className="form-control" id="txAmount" value={txAmount} onChange={(e) => setTxAmount(parseFloat(e.target.value))}/>
           <label htmlFor="txAmount">Amount ($)</label>
-          {/* {validationErrors.txAmount && <p style={{color:'red'}}>{validationErrors.txAmount}</p>} */}
         </div>
 
         <div className="form-floating mb-3">
           <textarea className="form-control" id="txNotes" onChange={(e) => setTxNotes(e.target.value)} value={txNotes}></textarea>
           <label htmlFor="txNotes">Notes</label>
-          {/* {validationErrors.txNotes && <p style={{color:'red'}}>{validationErrors.txNotes}</p>} */}
         </div>
 
         <div className="form-floating mb-3">
@@ -190,8 +184,6 @@ const GroupTransactionForm = (props : Props) => {
                 ))}
             </ul>
         </div>
-
-        {/* {validationErrors.txMembers && <p style={{color:'red'}}>{validationErrors.txMembers}</p>} */}
 
         <div>
             <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
