@@ -19,7 +19,7 @@ const BudgetForm = (props : Props) => {
     const [categories, setCategories] = useState<any[]>([]);
     const [categoryId, setCategoryId] = useState(props.editingBudget?.CATEGORY_ID);
     const [budgetDate, setBudgetDate] = useState(props.editingBudget?.BUDGET_DATE ? new Date(props.editingBudget.BUDGET_DATE) : currentMonthStart);
-    const [budgetAmount, setBudgetAmount] = useState(props.editingBudget?.BUDGET_AMOUNT);
+    const [budgetAmount, setBudgetAmount] = useState(props.editingBudget?.BUDGET_AMOUNT?props.editingBudget?.BUDGET_AMOUNT:0);
     
      // Validate budget input
      const validateInput = () => {
