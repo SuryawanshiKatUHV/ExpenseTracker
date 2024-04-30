@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { END_POINTS, get, post } from "../../common/Utilities";
+import { END_POINTS, get, post, formatDate } from "../../common/Utilities";
 import { toast } from 'react-toastify';
 
 interface Props {
@@ -16,13 +16,10 @@ const GroupTransactionForm = (props : Props) => {
      * State
      */
     const [txCategoryId, setTxCategoryId] = useState(0);
-    const [txDate, setTxDate] = useState('');
+    const [txDate, setTxDate] = useState(formatDate(new Date()));
     const [txAmount, setTxAmount] = useState(0.00);
     const [txNotes, setTxNotes] = useState('');
     const [txMembers, setTxMembers] = useState<number[]>([]);
-
-    const [validationErrors, setValidationErrors] = useState({txDate:'', txAmount:'', txMembers:'', txNotes:''});
-    const [error, setError] = useState('');
 
     const [categories, setCategories] = useState<any[]>([]);
     const [availableGroupMembers, setAvailableGroupMembers] = useState<any[]>([]);
@@ -57,10 +54,11 @@ const GroupTransactionForm = (props : Props) => {
      * Operations
      */
     const validateInput = () : boolean => {
-        let validationErrors = {txDate:'', txAmount:'', txMembers:'', txNotes:''};
+        let isValid = true;
 
         if (txDate == "") {
-            toast.error('A Date is required', { autoClose: false});
+            toast.error('A Date is required');
+            isValid = false;
         }
         else {
             console.log(`txDate=${txDate}`);
@@ -72,35 +70,27 @@ const GroupTransactionForm = (props : Props) => {
             currentDate.setHours(0, 0, 0, 0);
 
             if (selectedDate > currentDate) {
-                toast.error('Date must not be in future', { autoClose: false});
+                toast.error('Date must not be in future');
+                isValid = false;
             }
         }
 
         if (!txAmount || txAmount <= 0) {
-            toast.error('Amount is required' || 'Amount cannot be a negative value', { autoClose: false});
-        }
-
-        if (txMembers.length == 0) {
-            toast.error('Must select at least one member.', { autoClose: false});
+            toast.error('A non-negative amount is required.');
+            isValid = false;
         }
 
         if (!txNotes) {
-            toast.error('Transaction notes are required.', { autoClose: false});
+            toast.error('Transaction notes are required.');
+            isValid = false;
         }
 
-        setValidationErrors(validationErrors);
-        return !(validationErrors.txDate || validationErrors.txAmount || validationErrors.txMembers || validationErrors.txNotes);
+        if (txMembers.length == 0) {
+            toast.error('Must select at least one member.');
+            isValid = false;
+        }
 
-        // I did check if the above return statement be written as below
-        // return Object.keys(validationErrors).length === 0;
-        //
-        // - No I cannot do that as, the Object.keys would return 4 even if none of the keys have values assigned
-        // let validationErrors = {txDate:'', txAmount:'', txMembers:'', txNotes:''};
-        // undefined
-        // validationErrors
-        // {txDate: '', txAmount: '', txMembers: '', txNotes: ''}
-        // Object.keys(validationErrors).length
-        // 4
+        return isValid;
     }
 
     /**
