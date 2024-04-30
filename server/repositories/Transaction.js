@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const {getConnection} = require('../common/database');
+const {execute, getConnection} = require('../common/database');
 
 class Transaction {
 
@@ -10,14 +10,7 @@ class Transaction {
    * @returns {Promise<Array>} An array of transaction objects.
    */
   async getAll() {
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute("SELECT * FROM TRANSACTION", []);
-      return rows;
-    }
-    finally {
-      connection.release();
-    }
+    return await execute("SELECT * FROM TRANSACTION", []);
   }
 
   /**
@@ -28,18 +21,11 @@ class Transaction {
    * @throws {Error} If the transaction is not found.
    */
   async getById(id) {
-    const connection = await getConnection();
-    try {
-      const [rows, fields] = await connection.execute("SELECT * FROM TRANSACTION WHERE TRANSACTION_ID=?", [id]);
+      const [rows] = await execute("SELECT * FROM TRANSACTION WHERE TRANSACTION_ID=?", [id]);
       if (!rows || rows.length == 0) {
         throw new Error(`No transaction found for the id ${id}`);
       }
-
       return rows[0];
-    }
-    finally {
-      connection.release();
-    }
   }
 
   /**
@@ -50,18 +36,9 @@ class Transaction {
    * @throws {Error} If the data is not valid.
    */
   async create({CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES}) {
-    const connection = await getConnection();
-    try {
-      this._validate({CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES});
-
-      const result = await connection.execute("INSERT INTO TRANSACTION (CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES) VALUES (?, ?, ?, ?, ?)", [CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES]);
-      console.log(`Transaction inserted with id ${result[0].insertId}`);
-
-      return {TRANSACTION_ID:result[0].insertId};
-    }
-    finally {
-      connection.release();
-    }
+    this._validate({CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES});
+    const result = await execute("INSERT INTO TRANSACTION (CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES) VALUES (?, ?, ?, ?, ?)", [CATEGORY_ID, TRANSACTION_TYPE, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES]);
+    return {TRANSACTION_ID:result[0].insertId};
   }
 
   /**
@@ -73,21 +50,14 @@ class Transaction {
    * @throws {Error} If the transaction is not found.
    */
   async update(id, { TRANSACTION_TYPE, CATEGORY_ID, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES }) {
-    const connection = await getConnection();
-    try {
-      const result = await connection.execute("UPDATE TRANSACTION SET TRANSACTION_TYPE=?, CATEGORY_ID=?, TRANSACTION_DATE=?, TRANSACTION_AMOUNT=?, TRANSACTION_NOTES=? WHERE TRANSACTION_ID=?", [TRANSACTION_TYPE, CATEGORY_ID, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES, id]);
-  
-      if (result.affectedRows === 0) {
-        throw new Error(`No transaction found for id ${id}`);
-      }
-  
-      return result;
-    } finally {
-      connection.release();
+    const result = await execute("UPDATE TRANSACTION SET TRANSACTION_TYPE=?, CATEGORY_ID=?, TRANSACTION_DATE=?, TRANSACTION_AMOUNT=?, TRANSACTION_NOTES=? WHERE TRANSACTION_ID=?", [TRANSACTION_TYPE, CATEGORY_ID, TRANSACTION_DATE, TRANSACTION_AMOUNT, TRANSACTION_NOTES, id]);
+    if (result.affectedRows === 0) {
+      throw new Error(`No transaction found for id ${id}`);
     }
+    return result;
   }
 
-     /**
+  /**
    * Delete a category.
    *
    * @param {number} id - The transaction ID.
@@ -95,18 +65,11 @@ class Transaction {
    * @throws {Error} If the transaction is not found.
    */
   async delete(id) {
-    const connection = await getConnection();
-    try {
-      const result = await connection.execute("DELETE FROM TRANSACTION WHERE TRANSACTION_ID=?", [id]);
-  
-      if (result.affectedRows === 0) {
-        throw new Error(`No transaction found for id ${id}`);
-      }
-  
-      return result;
-    } finally {
-      connection.release();
+    const result = await execute("DELETE FROM TRANSACTION WHERE TRANSACTION_ID=?", [id]);
+    if (result.affectedRows === 0) {
+      throw new Error(`No transaction found for id ${id}`);
     }
+    return result;
   }
 
   /**
