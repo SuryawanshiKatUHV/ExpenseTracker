@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const {execute, getConnection} = require('../common/database');
+const {execute} = require('../common/database');
 
 class Transaction {
 
