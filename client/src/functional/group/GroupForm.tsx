@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { END_POINTS, get, post, put, formatDate } from "../../common/Utilities";
-import { Display } from "react-bootstrap-icons";
+import { Modal } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 
 interface Member {
@@ -153,65 +153,67 @@ const GroupForm = (props:Props) => {
 
     return (
         <>
-            <h5 className="m-5">{props.editingGroup?"Edit group":"Add group"}</h5>
-            <div className="card" style={{border:1}}>
+            <Modal show={true}>
+                <Modal.Header>
+                    <Modal.Title>{props.editingGroup?"Edit group":"Add group"}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="form-floating mb-3">
+                        <input type="date" className="form-control" id="groupDate" value={formatDate(groupDate)} onChange={(e) => setGroupDate(new Date(e.target.value))}/>
+                        <label htmlFor="groupDate">Date</label>
+                    </div>
 
-                <div className="form-floating mb-3">
-                <input type="date" className="form-control" id="groupDate" value={formatDate(groupDate)} onChange={(e) => setGroupDate(new Date(e.target.value))}/>
-                <label htmlFor="groupDate">Date</label>
-                </div>
+                    <div className="form-floating mb-3">
+                        <input type="string" className="form-control" id="groupTitle" value={groupTitle} onChange={(e) => setGroupTitle(e.target.value)}/>
+                        <label htmlFor="groupTitle">Group Title</label>
+                    </div>
 
-                <div className="form-floating mb-3">
-                <input type="string" className="form-control" id="groupTitle" value={groupTitle} onChange={(e) => setGroupTitle(e.target.value)}/>
-                <label htmlFor="groupTitle">Group Title</label>
-                </div>
+                    <div className="form-floating mb-3">
+                        <input type="string" className="form-control" id="groupDescription" value={groupDescription} onChange={(e) => setGroupDescription(e.target.value)}/>
+                        <label htmlFor="groupDescription">Group Description</label>
+                    </div>
 
-                <div className="form-floating mb-3">
-                <input type="string" className="form-control" id="groupDescription" value={groupDescription} onChange={(e) => setGroupDescription(e.target.value)}/>
-                <label htmlFor="groupDescription">Group Description</label>
-                </div>
+                    <div className="form-floating mb-3">
+                        <ul className="list-group">
+                            <label htmlFor="UserId" style={{ textAlign: "left", paddingLeft: "1em" }}>Members</label>
+                            {users.map((user, index) => {
+                                // Check if the user is the owner
+                                const isOwner = user.USER_ID === groupOwnerId;
+                                const hasPaidToTransactions = activeMembers.some((member) => member.PAID_TO_USER_ID === user.USER_ID);
+                                const hasPaidByTransactions = activeMembers.some((member) => member.PAID_BY_USER_ID === user.USER_ID);
 
-                <div className="form-floating mb-3">
-                    <ul className="list-group">
-                        <label htmlFor="UserId" style={{ textAlign: "left", paddingLeft: "1em" }}>Members</label>
-                        {users.map((user, index) => {
-                            // Check if the user is the owner
-                            const isOwner = user.USER_ID === groupOwnerId;
-                            const hasPaidToTransactions = activeMembers.some((member) => member.PAID_TO_USER_ID === user.USER_ID);
-                            const hasPaidByTransactions = activeMembers.some((member) => member.PAID_BY_USER_ID === user.USER_ID);
+                                // Render checkbox for members only
+                                if (!isOwner) {
+                                    return (
+                                        <li key={user.USER_ID} className="list-group-item" style={{ textAlign: "left", height: "3em" }}>
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input me-1"
+                                                id={`custom-checkbox-${index}`}
+                                                name={user.USER_ID}
+                                                value={user.USER_ID}
+                                                checked={checkedBoxState[index]}
+                                                onChange={() => handleCheckBoxStates(index)}
+                                                disabled={hasPaidToTransactions || hasPaidByTransactions}  // cannot deselect/remove members that has group transactions
+                                                style={{ height: "1em" }}
+                                            />
+                                            <label className="form-check-label" htmlFor={`custom-checkbox-${index}`}>
+                                                {user.USER_LNAME}, {user.USER_FNAME} {(hasPaidToTransactions || hasPaidByTransactions) && <small>*</small>}
+                                            </label>
+                                        </li>
+                                    );
+                                }
+                            })}
+                        </ul>
 
-                            // Render checkbox for members only
-                            if (!isOwner) {
-                                return (
-                                    <li key={user.USER_ID} className="list-group-item" style={{ textAlign: "left", height: "3em" }}>
-                                        <input
-                                            type="checkbox"
-                                            className="form-check-input me-1"
-                                            id={`custom-checkbox-${index}`}
-                                            name={user.USER_ID}
-                                            value={user.USER_ID}
-                                            checked={checkedBoxState[index]}
-                                            onChange={() => handleCheckBoxStates(index)}
-                                            disabled={hasPaidToTransactions || hasPaidByTransactions}  // cannot deselect/remove members that has group transactions
-                                            style={{ height: "1em" }}
-                                        />
-                                        <label className="form-check-label" htmlFor={`custom-checkbox-${index}`}>
-                                            {user.USER_LNAME}, {user.USER_FNAME} {(hasPaidToTransactions || hasPaidByTransactions) && <small>*</small>}
-                                        </label>
-                                    </li>
-                                );
-                            }
-                        })}
-                    </ul>
-
-                    {props.editingGroup && <small><i>* Members involved in group transactions cannot be removed from the group.</i></small>}
-                </div>
-
-                <div>
+                        {props.editingGroup && <small><i>* Members involved in group transactions cannot be removed from the group.</i></small>}
+                    </div>    
+                </Modal.Body>
+                <Modal.Footer>
                     <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
                     <button className="btn btn-danger" onClick={CancelClicked}>Cancel</button>
-                </div>
-            </div>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 }

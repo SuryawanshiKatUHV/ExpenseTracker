@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { END_POINTS, post, put } from "../../common/Utilities";
 import { toast } from 'react-toastify';
+import { Modal } from 'react-bootstrap';
 
 interface Props {
     userId: number;
@@ -65,28 +66,28 @@ const CategoryForm = (props : Props) => {
         props.cancelHandler();
     }
 
-
     return (
         <>
-        <h5 className="m-5">{props.editingCategory?"Edit category":"Add category"}</h5>
-
-        <div className="card" style={{border:1}}>
-
-            <div className="form-floating mb-3">
-              <input type="string" className="form-control" id="categoryTitle" value={categoryTitle} onChange={(e) => setCategoryTitle(e.target.value)}/>
-              <label htmlFor="categoryTitle">Title</label>
-            </div>
-    
-            <div className="form-floating mb-3">
-              <input type="string" className="form-control" id="categoryDescription" value={categoryDescription} onChange={(e) => setCategoryDescription(e.target.value)}/>
-              <label htmlFor="categoryDescription">Description</label>
-            </div>
-    
-            <div>
-                <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp; 
-                <button className="btn btn-danger" onClick={CancelClicked}>Cancel</button>
-            </div>
-        </div>
+            <Modal show={true}>
+                <Modal.Header>
+                    <Modal.Title>{props.editingCategory ? "Edit category" : "Add category"}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="form-floating mb-3">
+                        <input type="string" className="form-control" id="categoryTitle" value={categoryTitle} onChange={(e) => setCategoryTitle(e.target.value)}/>
+                        <label htmlFor="categoryTitle">Title</label>
+                    </div>
+            
+                    <div className="form-floating mb-3">
+                        <input type="string" className="form-control" id="categoryDescription" value={categoryDescription} onChange={(e) => setCategoryDescription(e.target.value)}/>
+                        <label htmlFor="categoryDescription">Description</label>
+                    </div>  
+                </Modal.Body>
+                <Modal.Footer>
+                    <button className="btn btn-success" onClick={SaveClicked}>Save</button> &nbsp;
+                    <button className="btn btn-danger" onClick={CancelClicked}>Cancel</button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 };
