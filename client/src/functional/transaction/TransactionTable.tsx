@@ -53,7 +53,7 @@ const TransactionTable = ({userId} : Props) => {
      */
     useEffect(() =>{ 
         async function fetchData() {
-            await refresh();
+            await loadYearMonthRange();
         }
         fetchData();
     }, []);
