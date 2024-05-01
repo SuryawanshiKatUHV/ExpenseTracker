@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { END_POINTS, get, post, put, formatDate, stringToDate } from "../../common/Utilities";
+import { END_POINTS, get, post, put, formatDate, stringToDateAsFirstOfTheMonth } from "../../common/Utilities";
 import { toast } from 'react-toastify';
 import { Modal } from 'react-bootstrap';
 
@@ -102,7 +102,7 @@ const BudgetForm = (props : Props) => {
                 </Modal.Header>
                 <Modal.Body>
                     <div className="form-floating mb-3">
-                        <input type="date" className="form-control" id="budgetDate" value={formatDate(budgetDate)} onChange={(e) => setBudgetDate(stringToDate(e.target.value))}/>
+                        <input type="date" className="form-control" id="budgetDate" value={formatDate(budgetDate)} onChange={(e) => setBudgetDate(stringToDateAsFirstOfTheMonth(e.target.value))}/>
                         <label htmlFor="budgetDate">Date</label>
                     </div>
 
