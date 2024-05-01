@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { END_POINTS, get, post, put, formatDate } from "../../common/Utilities";
+import { END_POINTS, get, post, put, formatDate, stringToDate } from "../../common/Utilities";
 import { toast } from 'react-toastify';
 import { Modal } from 'react-bootstrap';
 
@@ -92,17 +92,6 @@ const BudgetForm = (props : Props) => {
 
     const CancelClicked = () => {
         props.cancelHandler();
-    }
-
-    /**
-     * Converts date string to date object
-     * @param dateString Date in format "yyyy-mm-dd"
-     * @returns Date object
-     */
-    const stringToDate = (dateString: string) => {
-        const dateTokens : string[] = dateString.split("-");
-        const dateWithoutTime = new Date(Number(dateTokens[0]), Number(dateTokens[1]) - 1, 1);
-        return dateWithoutTime;
     }
     
     return (
