@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import GroupForm from "./GroupForm";
 import { END_POINTS, get, del } from "../../common/Utilities";
-import { PencilSquare, TrashFill } from 'react-bootstrap-icons';
+import { PencilSquare, TrashFill, PersonX } from 'react-bootstrap-icons';
 import { toast } from 'react-toastify';
 
 interface Props {
@@ -136,7 +136,7 @@ const GroupTable = ({userId} : Props) => {
                                     
                                     {/* Only owner of the group can delete the group. The group which has group transactions cannot be deleted. */}
                                     {(item.TOTAL_USER_GROUP_TRANSACTIONS === 0 && item.OWNER_ID === userId) && <TrashFill onClick={() => DeleteGroupClicked(item.USER_GROUP_ID)} style={{cursor: 'pointer'}}/>} {/* Delete icon */}
-                                    {(item.TOTAL_USER_GROUP_TRANSACTIONS === 0 && item.OWNER_ID !== userId) && <TrashFill onClick={() => LeaveGroupClicked(item.USER_GROUP_ID, userId)} style={{cursor: 'pointer'}}/>} {/* Leave icon */}
+                                    {(item.TOTAL_USER_GROUP_TRANSACTIONS === 0 && item.OWNER_ID !== userId) && <PersonX onClick={() => LeaveGroupClicked(item.USER_GROUP_ID, userId)} style={{cursor: 'pointer'}}/>} {/* Leave icon */}
                                 </div>        
                             </td>
                         </tr>
