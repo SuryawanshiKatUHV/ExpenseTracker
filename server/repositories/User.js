@@ -14,7 +14,7 @@ class User {
    * @returns {Promise<Array>} An array of user objects.
    */
   async getAll() {
-    const [rows] = await execute(`SELECT *, CONCAT(USER_LNAME, ", ", USER_FNAME) AS USER_FULLNAME FROM USER ORDER BY USER_FULLNAME ASC`, []);
+    const [rows] = await execute(`SELECT USER_ID, USER_FNAME, USER_LNAME, USER_EMAIL, CONCAT(USER_LNAME, ", ", USER_FNAME) AS USER_FULLNAME FROM USER ORDER BY USER_FULLNAME ASC`, []);
     return rows;
   }
 
@@ -26,7 +26,7 @@ class User {
    * @throws {Error} If the user is not found.
    */
   async getById(id) {
-    const [rows, fields] = await execute("SELECT * FROM USER WHERE USER_ID=?", [id]);
+    const [rows, fields] = await execute("SELECT USER_ID, USER_FNAME, USER_LNAME, USER_EMAIL, CONCAT(USER_LNAME, ", ", USER_FNAME) AS USER_FULLNAME FROM USER WHERE USER_ID=?", [id]);
     if (!rows || rows.length == 0) {
       throw new Error(`No user found for id ${id}`);
     }
