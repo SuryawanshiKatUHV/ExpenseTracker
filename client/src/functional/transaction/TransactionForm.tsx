@@ -50,7 +50,7 @@ const TransactionForm  = (props : Props) => {
             isValid = false;
         }
         if (!transactionNotes) {
-            toast.error("Transactio notes are required")
+            toast.error("Transaction notes are required")
             isValid = false;
         }
 
