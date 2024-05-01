@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { END_POINTS, get, post, put, formatDate } from "../../common/Utilities";
+import { END_POINTS, get, post, put, formatDate, stringToDate } from "../../common/Utilities";
 import { Modal } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 
@@ -159,7 +159,7 @@ const GroupForm = (props:Props) => {
                 </Modal.Header>
                 <Modal.Body>
                     <div className="form-floating mb-3">
-                        <input type="date" className="form-control" id="groupDate" value={formatDate(groupDate)} onChange={(e) => setGroupDate(new Date(e.target.value))}/>
+                        <input type="date" className="form-control" id="groupDate" value={formatDate(groupDate)} onChange={(e) => setGroupDate(stringToDate(e.target.value))}/>
                         <label htmlFor="groupDate">Date</label>
                     </div>
 
