@@ -78,6 +78,25 @@ class Group {
       res.status(500).json({ message: error.message });
     }
   }
+
+  async deleteMember(req, res) {
+    console.log("Group delete is invoked...");
+    try {
+      const { userGroupId } = req.params;
+      const { memberId } = req.params;
+      console.log("userGroupId=", userGroupId);
+      console.log("memberId=", memberId);
+      console.log("params=", req.params);
+      console.log("Requested URL:", req.originalUrl);
+
+      const data = await repository.deleteMember(parseInt(userGroupId), parseInt(memberId));
+
+      res.status(201).json(data); // Send the saved object as a JSON response
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
+  }
   
   async getMembers(req, res) {
     const { id } = req.params;

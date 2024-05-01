@@ -16,6 +16,8 @@ router.put("/:userGroupId", authenticator, controller.update);
 
 router.delete("/:userGroupId", authenticator, controller.delete);
 
+router.delete("/:userGroupId/:memberId", authenticator, controller.deleteMember);
+
 /**
  * Extended services
  */

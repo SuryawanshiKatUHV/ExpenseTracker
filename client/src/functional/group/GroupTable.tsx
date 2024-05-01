@@ -61,7 +61,7 @@ const GroupTable = ({userId} : Props) => {
         setFormDisplayed(true);
     }
 
-    const DeleteClicked = async (groupId: number) => {
+    const DeleteGroupClicked = async (groupId: number) => {
         // Simple confirmation dialog
         const isConfirmed = window.confirm("Are you sure you want to delete?");
         if (isConfirmed) {
@@ -72,6 +72,24 @@ const GroupTable = ({userId} : Props) => {
                 await loadGroups(); // Refresh the list after deleting
             } catch (error:any) {
                 toast.error(`Failed to delete group. ${error.message}`, { autoClose: false});
+            }
+        } else {
+            toast.info('Delete operation cancelled.');
+        }
+    };
+
+    const LeaveGroupClicked = async (groupId: number, memberId: number) => {
+        // Simple confirmation dialog
+        const isConfirmed = window.confirm("Are you sure you want to leave this group?");
+        if (isConfirmed) {
+            try {
+                await del(`${END_POINTS.Groups}/${groupId}/${memberId}`);
+                console.log({groupId});
+                console.log({memberId});
+                toast.success("You have left the group successfully", {position: "top-right"});
+                await loadGroups(); // Refresh the list after deleting
+            } catch (error:any) {
+                toast.error(`Failed to leave the group. ${error.message}`, { autoClose: false});
             }
         } else {
             toast.info('Delete operation cancelled.');
@@ -117,7 +135,8 @@ const GroupTable = ({userId} : Props) => {
                                     {item.OWNER_ID === userId && <PencilSquare onClick={() => EditClicked(item)} style={{cursor: 'pointer', marginRight: '10px'}} />} {/* Edit icon */}
                                     
                                     {/* Only owner of the group can delete the group. The group which has group transactions cannot be deleted. */}
-                                    {(item.TOTAL_USER_GROUP_TRANSACTIONS === 0 && item.OWNER_ID === userId) && <TrashFill onClick={() => DeleteClicked(item.USER_GROUP_ID)} style={{cursor: 'pointer'}}/>} {/* Delete icon */}
+                                    {(item.TOTAL_USER_GROUP_TRANSACTIONS === 0 && item.OWNER_ID === userId) && <TrashFill onClick={() => DeleteGroupClicked(item.USER_GROUP_ID)} style={{cursor: 'pointer'}}/>} {/* Delete icon */}
+                                    {(item.TOTAL_USER_GROUP_TRANSACTIONS === 0 && item.OWNER_ID !== userId) && <TrashFill onClick={() => LeaveGroupClicked(item.USER_GROUP_ID, userId)} style={{cursor: 'pointer'}}/>} {/* Leave icon */}
                                 </div>        
                             </td>
                         </tr>

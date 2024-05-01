@@ -132,6 +132,16 @@ class Group {
     return result;
   }
 
+  async deleteMember(userGroupId, memberId) {
+    const result = await execute("DELETE FROM USER_GROUP_MEMBERSHIP WHERE USER_GROUP_ID=? AND MEMBER_ID=?", [userGroupId, memberId]);
+    
+    if (result.affectedRows === 0) {
+      throw new Error(`No group found with USER_GROUP_ID=${userGroupId}`);
+    }
+
+    return result;
+  }
+
   async getMembers(groupId) {
     const SQL =
     `SELECT UGM.USER_GROUP_ID, UGM.MEMBER_ID, CONCAT(U.USER_LNAME, ", ", U.USER_FNAME) AS USER_FULLNAME
