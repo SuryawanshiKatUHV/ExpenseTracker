@@ -1,11 +1,14 @@
+// Import necessary hooks and components from 'react' and 'recharts' libraries, and utility functions from 'Utilities' module
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LabelList} from 'recharts';
 import { END_POINTS, get } from '../../common/Utilities';
 
+// Define interface for component props
 interface Props {
     userId: number;
 }
 
+// Define interface for settlement summary data
 interface SettlementSummary {
     USER_ID : number;
     USER_FULLNAME: string;
@@ -14,25 +17,30 @@ interface SettlementSummary {
     UNSETTLED_DUE: number;
 }
 
+// Define the DashboardForGroupTransactions component which takes in userId as a prop
 const DashboardForGroupTransactions = ({userId} : Props) => {
-    const [groups, setGroups] = useState<any[]>([]);    // All the groups this user is member of
-    const [selectedGroupId, setSelectedGroupId] = useState(0);  // The selected group from the list for displaying the information
-    const [settlementSummary, setSettlementSummary] = useState<SettlementSummary[]>([]);  // The settlement summary data for the selected group
+    // Initialize state variables for groups, selectedGroupId, settlementSummary, and error using the useState hook
+    const [groups, setGroups] = useState<any[]>([]);
+    const [selectedGroupId, setSelectedGroupId] = useState(0);
+    const [settlementSummary, setSettlementSummary] = useState<SettlementSummary[]>([]);
     const [error, setError] = useState('');
 
+    // Fetch groups data when the component mounts using the useEffect hook
     useEffect(() => {
         loadGroups();
     }, []);
 
+    // Fetch settlement summary data when the selectedGroupId state variable changes using the useEffect hook
     useEffect(() => {
         loadSettlementSummary();
     }, [selectedGroupId]);
 
+    // Define loadGroups function to fetch groups data for the user using the get utility function
     async function loadGroups() {
         try {
             const groups = await get(`${END_POINTS.Users}/${userId}/groups`)
             setGroups(groups);
-            // First in the list of group is a selected group
+            // Set the first group in the list as the selected group
             if (groups && groups.length > 0) {
                 setSelectedGroupId(groups[0].USER_GROUP_ID);
             }
@@ -41,6 +49,7 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
         }
     }
 
+    // Define loadSettlementSummary function to fetch settlement summary data for the selected group using the get utility function
     async function loadSettlementSummary() {
         try {
             if (selectedGroupId == 0) {
@@ -53,13 +62,13 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
         } catch(error:any) {
             setError(error.message);
         }
-        
     }
 
+    // Define separateSettlements function to separate settlement summary data into positive and negative unsettled amounts
     function separateSettlements(settlementSummary : SettlementSummary[]) {
         let positiveUnsettled : SettlementSummary[] = [];
         let negativeUnsettled : SettlementSummary[] = [];
-    
+
         settlementSummary.forEach(object => {
             if (object.UNSETTLED_DUE > 0) {
                 positiveUnsettled.push(object);
@@ -69,12 +78,14 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
                 negativeUnsettled.push(newObject);
             }
         });
-    
+
         return { positiveUnsettled, negativeUnsettled };
     }
-    
+
+    // Separate settlement summary data into positive and negative unsettled amounts using the separateSettlements function
     let { positiveUnsettled, negativeUnsettled } = separateSettlements(settlementSummary);
 
+    // Render a dropdown to select a group, error message if any, and two bar charts to display settlement summary data
     return (
         <>
             <div className="form-floating mb-3">
@@ -90,7 +101,7 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
             {groups.length == 0 && <p style={{color:'red'}}>No groups found.</p>}
 
             {error && <p style={{color:'red'}}>{error}</p>}
-            
+
             <table width="100%">
                 <thead>
                     <tr>
@@ -146,9 +157,10 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
                         </td>
                     </tr>
                 </tbody>
-            </table> 
+            </table>
         </>
     );
 }
 
+// Export the DashboardForGroupTransactions component
 export default DashboardForGroupTransactions;
