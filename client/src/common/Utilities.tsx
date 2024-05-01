@@ -163,3 +163,14 @@ export function formatDate (date: Date) {
     
     return `${year}-${month}-${day}`;
 }
+
+/**
+ * Converts date string to date object
+ * @param dateString Date in format "yyyy-mm-dd"
+ * @returns Date object
+ */
+export function stringToDate (dateString: string) {
+    const dateTokens : string[] = dateString.split("-");
+    const dateWithoutTime = new Date(Number(dateTokens[0]), Number(dateTokens[1]) - 1, Number(dateTokens[2]));
+    return dateWithoutTime;
+}
