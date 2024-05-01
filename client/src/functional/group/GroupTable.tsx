@@ -6,7 +6,7 @@
 import { useEffect, useState } from "react";
 import GroupForm from "./GroupForm";
 import { END_POINTS, get, del } from "../../common/Utilities";
-import { PencilSquare, TrashFill } from 'react-bootstrap-icons';
+import { PencilSquare, TrashFill, PersonX, CheckCircleFill } from 'react-bootstrap-icons';
 import { toast } from 'react-toastify';
 
 /**
@@ -57,12 +57,33 @@ const GroupTable = ({userId} : Props) => {
         try {
             const groups = await get(`${END_POINTS.Users}/${userId}/groups`);
             const groupsWithMembers = await Promise.all(groups.map(async (group: any) => {
-                const members = await get(`${END_POINTS.Groups}/${group.USER_GROUP_ID}/members`);
-                return { ...group, members };
+                try {
+                    const members = await get(`${END_POINTS.Groups}/${group.USER_GROUP_ID}/members`);
+                    return { ...group, members };
+                } catch (error: any) {
+                    return { ...group, members: [] };
+                }
             }));
-            setGroups(groupsWithMembers);
+
+            const settlementSummaries = await Promise.all(groupsWithMembers.map(async (group: any) => {
+                try {
+                    const settlementSummaryData = await get(`${END_POINTS.Groups}/${group.USER_GROUP_ID}/settlementSummary`);
+                    return settlementSummaryData;
+                } catch (error: any) {
+                    return null;
+                }
+            }));
+    
+            // Combine groupsWithMembers with settlement summaries
+            const groupsWithSettlement = groupsWithMembers.map((group, index) => ({
+                ...group,
+                isSettled: settlementSummaries[index]?.every((summary: any) => parseFloat(summary.UNSETTLED_DUE) === 0.00)
+            }));
+    
+            // Set the state with groupsWithSettlement
+            setGroups(groupsWithSettlement);
         } catch (error:any) {
-            toast.error(`Failed to load groups. ${error.message}`, { autoClose: false});
+            toast.error(`${error.message}`, { autoClose: false});
         }
     }
 
@@ -181,6 +202,7 @@ const GroupTable = ({userId} : Props) => {
                         <th scope="col">Title</th>
                         <th scope="col">Owner</th>
                         <th scope="col">Members</th>
+                        <th scope="col">Settled</th>
                         <th scope="col">Description</th>
                         <th scope="col"></th>
                     </tr>
@@ -195,6 +217,7 @@ const GroupTable = ({userId} : Props) => {
                             <td>{item.members.map((member: any) => (
                                 <div key={member.MEMBER_ID}>{member.USER_FULLNAME}</div>
                             ))}</td>
+                            <td>{(item.isSettled) && <CheckCircleFill style={{ color: 'green' }} />}</td>
                             <td className="descriptionCat">{item.USER_GROUP_DESCRIPTION}</td>
                             <td>
                                 <div>
@@ -203,8 +226,8 @@ const GroupTable = ({userId} : Props) => {
 
                                     {/* Only owner of the group can delete the group. The group which has group transactions cannot be deleted. */}
                                     {(item.TOTAL_USER_GROUP_TRANSACTIONS === 0 && item.OWNER_ID === userId) && <TrashFill onClick={() => DeleteGroupClicked(item.USER_GROUP_ID)} style={{cursor: 'pointer'}}/>} {/* Delete icon */}
-                                    {(item.TOTAL_USER_GROUP_TRANSACTIONS === 0 && item.OWNER_ID !== userId) && <TrashFill onClick={() => LeaveGroupClicked(item.USER_GROUP_ID, userId)} style={{cursor: 'pointer'}}/>} {/* Leave icon */}
-                                </div>
+                                    {(item.TOTAL_USER_GROUP_TRANSACTIONS === 0 && item.OWNER_ID !== userId) && <PersonX onClick={() => LeaveGroupClicked(item.USER_GROUP_ID, userId)} style={{cursor: 'pointer'}}/>} {/* Leave icon */}
+                                </div>        
                             </td>
                         </tr>
                     ))}
