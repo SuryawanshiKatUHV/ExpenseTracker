@@ -1,10 +1,15 @@
-
 interface Props {
     subject: string;
     message: string;
     closeHandler: () => void;
 }
 
+/**
+* The Alert component renders a customizable toast message using the React Toastify library.
+ * @param {Props} subject - The subject of the alert
+ * @param {Props} message - The message content of the alert
+ * @param {Props} closeHandler - Function to handle closing the alert
+ */
 function Alert({subject, message, closeHandler} : Props) {
   return (
     <div className="toast" style={{display:'block'}} role="alert" aria-live="assertive" aria-atomic="true">

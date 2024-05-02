@@ -9,6 +9,12 @@ interface Props {
     cancelHandler: () => void;
     editingTransaction?: { TRANSACTION_ID: number, CATEGORY_ID: number; TRANSACTION_TYPE: string; TRANSACTION_DATE: Date; TRANSACTION_AMOUNT: number; TRANSACTION_NOTES: string}; 
 }
+
+/**
+ * Renders a form for adding or editing a transaction.
+ * @param {Props} props - The component props.
+ * @returns {JSX.Element} A JSX element representing the TransactionForm component.
+ */
 const TransactionForm  = (props : Props) => {
     const [categories, setCategories] = useState<any[]>([]);
     const [categoryId, setCategoryId] = useState(props.editingTransaction?.CATEGORY_ID);
@@ -17,7 +23,10 @@ const TransactionForm  = (props : Props) => {
     const [transactionAmount, setTransactionAmount] = useState(props.editingTransaction?.TRANSACTION_AMOUNT?props.editingTransaction?.TRANSACTION_AMOUNT: 0.0);
     const [transactionNotes, setTransactionNotes] = useState(props.editingTransaction?.TRANSACTION_NOTES);
     
-    // Validate transaction input
+    
+    /**
+     * Validate transaction input.
+     */
     const validateInput = () => {
         let isValid = true;
 
@@ -68,6 +77,9 @@ const TransactionForm  = (props : Props) => {
         }
     }
 
+    /**
+     * This function is executed once when the BudgetForm component is first rendered.
+     */
     useEffect(() =>{ 
         async function fetchData() {
             await loadCategories();
@@ -75,9 +87,14 @@ const TransactionForm  = (props : Props) => {
         fetchData();
     }, []);
 
+
+    /**
+     * Handles the save action for the transaction form.
+     */
     const SaveClicked = async () => {
         console.log("Selected category for transaction:", categoryId); 
         
+         // Validates input, sends a request to save or update the transaction
         if (validateInput()) {
             const transactionData = {
                 CATEGORY_ID: categoryId,
@@ -112,6 +129,12 @@ const TransactionForm  = (props : Props) => {
         props.cancelHandler();
     }
 
+
+    /**
+     * Renders the TransactionForm component.
+     * This component displays a form for adding or editing a transaction.
+     * The form includes fields for date, transaction type, category, transaction amount, and notes. 
+     */
     return (
         <>
             <Modal show={true}>

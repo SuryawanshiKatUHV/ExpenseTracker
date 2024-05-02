@@ -10,8 +10,12 @@ interface Props {
     editingBudget?: { BUDGET_ID: number; CATEGORY_ID: number; BUDGET_DATE: Date; BUDGET_AMOUNT: number;}; 
 }
 
+/**
+ * Renders a form for adding or editing a budget.
+ * @param {Props} props - The component props.
+ * @returns {JSX.Element} A JSX element representing the BudgetForm component.
+ */
 const BudgetForm = (props : Props) => {
-    // Find the first date of the current month
     const currentMonthStart = new Date();
     currentMonthStart.setHours(0, 0, 0, 0);
     currentMonthStart.setDate(1);
@@ -21,7 +25,9 @@ const BudgetForm = (props : Props) => {
     const [budgetDate, setBudgetDate] = useState(props.editingBudget?.BUDGET_DATE ? new Date(props.editingBudget.BUDGET_DATE) : currentMonthStart);
     const [budgetAmount, setBudgetAmount] = useState(props.editingBudget?.BUDGET_AMOUNT?props.editingBudget?.BUDGET_AMOUNT:0);
     
-     // Validate budget input
+    /**
+     * Validate budget input.
+     */
      const validateInput = () => {
         let isValid = true;
 
@@ -50,7 +56,10 @@ const BudgetForm = (props : Props) => {
             toast.error(error.message, { autoClose: false});
         }
     }
-
+    
+    /**
+     * This function is executed once when the BudgetForm component is first rendered.
+     */
     useEffect(() =>{ 
         async function fetchData() {
             await loadCategories();
@@ -58,9 +67,13 @@ const BudgetForm = (props : Props) => {
         fetchData();
     }, []);
 
+    /**
+     * Handles the save action for the budget form.
+     */
     const SaveClicked = async () => {
         console.log("Selected category for budget:", categoryId); 
         
+        // Validates input, sends a request to save or update the budget
         if (validateInput()) {
             const budgetData = {
                 CATEGORY_ID: categoryId,
@@ -94,6 +107,11 @@ const BudgetForm = (props : Props) => {
         props.cancelHandler();
     }
     
+    /**
+     * Renders the BudgetForm component.
+     * This component displays a form for adding or editing a budget.
+     * The form includes fields for date, category, and budget amount.
+     */
     return (
         <>
             <Modal show={true}>

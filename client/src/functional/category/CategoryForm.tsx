@@ -10,13 +10,18 @@ interface Props {
     editingCategory?: { CATEGORY_ID: number; CATEGORY_TITLE: string; CATEGORY_DESCRIPTION: string }; 
 }
 
+/**
+ * Renders a form for adding or editing a category.
+ * @param {Props} props - The component props.
+ * @returns {JSX.Element} A JSX element representing the CategoryForm component.
+ */
 const CategoryForm = (props : Props) => {
-
-    // State for category input form
     const [categoryTitle, setCategoryTitle] = useState(props.editingCategory?.CATEGORY_TITLE);
     const [categoryDescription, setCategoryDescription] = useState(props.editingCategory?.CATEGORY_DESCRIPTION);
 
-    // Validate category input
+    /**
+     * Validate category input.
+     */
     const validateInput = () => {
         let isValid = true;
 
@@ -32,10 +37,12 @@ const CategoryForm = (props : Props) => {
         return isValid;
     };
 
-
+    /**
+     * Handles the save action for the category form.
+     */
     const SaveClicked = async () => {
+        // Validates input, sends a request to save or update the category
         if(validateInput()) {
-
             const categoryData = {
                 OWNER_ID: props.userId,
                 CATEGORY_TITLE: categoryTitle,
@@ -66,6 +73,12 @@ const CategoryForm = (props : Props) => {
         props.cancelHandler();
     }
 
+        
+    /**
+     * Renders the CategoryForm component.
+     * This component displays a form for adding or editing a category.
+     * The form includes fields for title and description.
+     */
     return (
         <>
             <Modal show={true}>

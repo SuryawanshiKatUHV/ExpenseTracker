@@ -7,6 +7,9 @@ interface Props {
     showLoginHandler: () => void;
 }
 
+/**
+ * Component for user registration.
+ */
 function RegistrationForm({registerHandler, showLoginHandler}:Props) {
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -15,9 +18,8 @@ function RegistrationForm({registerHandler, showLoginHandler}:Props) {
   const [confirmedPassword, setConfirmedPassword] = useState('');
 
     /**
-     * Operations
+     * Validate user input.
      */
- 
     const validateInput = () : boolean => {
       let isValid = true;
 
@@ -67,7 +69,7 @@ function RegistrationForm({registerHandler, showLoginHandler}:Props) {
     }
 
     /**
-     * Event handler
+     * Event handler for the register button click
      */
     const RegisterClicked = () => {
       
@@ -76,6 +78,9 @@ function RegistrationForm({registerHandler, showLoginHandler}:Props) {
       }
     }
 
+  /**
+   * Renders the registration form.
+   */
   return (
     <div className="card">
         <h2 className="m-5">Register a new account</h2>

@@ -7,6 +7,9 @@ interface Props {
     userId: number;
 }
 
+/**
+ * Interface representing a summary of a transaction.
+ */
 interface TransactionSummary {
     Name: string;
     Category: string;
@@ -15,13 +18,20 @@ interface TransactionSummary {
     Percentage: number;
 }
 
+/**
+ * Component that displays a dashboard for transactions.
+ * @param {Props} userId - The ID of the current user.
+ */
 const DashboardForTransactions = ({userId} : Props) => {
     const [yearMonthRange, setYearMonthRange] = useState<YearMonthRange[]>([]);
     const [selectedYearMonth, setSelectedYearMonth] = useState<YearMonthRange>();
     const [incomeSummary, setIncomeSummary] = useState<TransactionSummary[]>([]);
     const [expenseSummary, setExpenseSummary] = useState<TransactionSummary[]>([]);
     const [error, setError] = useState('');
-   
+    
+    /**
+     * Load year month range for transactions on component mount.
+     */
     useEffect(() =>{ 
         get(`${END_POINTS.Users}/${userId}/transactions/yearMonthRange`)
         .then((data) => {
@@ -46,6 +56,9 @@ const DashboardForTransactions = ({userId} : Props) => {
         fetchData();    
     }, [selectedYearMonth]);
 
+    /**
+     * Load transactions for the selected year and month.
+     */
     async function loadTransactions() {
         if (selectedYearMonth) {
             // Fetch both income and expense summaries
@@ -79,6 +92,9 @@ const DashboardForTransactions = ({userId} : Props) => {
         }
     }
 
+    /**
+     * Renders the pie charts and bar charts for income and expense types. 
+     */
     return (
         <>
             {error && <p style={{color:'red'}}>{error}</p>}

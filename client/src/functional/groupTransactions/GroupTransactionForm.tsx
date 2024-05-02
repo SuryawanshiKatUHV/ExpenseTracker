@@ -10,18 +10,19 @@ interface Props {
     cancelHandler: () => void;
 }
 
+/**
+ * Renders a form for adding a group transaction.
+ * @param {Props} props - The component props.
+ * @returns {JSX.Element} A JSX element representing the GroupTransactionForm component.
+ */
 const GroupTransactionForm = (props : Props) => {
     console.log(`GroupTransactionForm received userId=${props.userId}, groupId=${props.groupId}`);
 
-    /**
-     * State
-     */
     const [txCategoryId, setTxCategoryId] = useState(0);
     const [txDate, setTxDate] = useState(formatDate(new Date()));
     const [txAmount, setTxAmount] = useState(0.00);
     const [txNotes, setTxNotes] = useState('');
     const [txMembers, setTxMembers] = useState<number[]>([]);
-
     const [categories, setCategories] = useState<any[]>([]);
     const [availableGroupMembers, setAvailableGroupMembers] = useState<any[]>([]);
 
@@ -43,6 +44,9 @@ const GroupTransactionForm = (props : Props) => {
         });
     }
 
+    /**
+     * This function is executed once when the GroupTransactionForm component is first rendered.
+     */
     useEffect(() =>{ 
         async function fetchData() {
             await loadCategories();
@@ -52,7 +56,7 @@ const GroupTransactionForm = (props : Props) => {
     }, []);
 
     /**
-     * Operations
+     * Validate group transaction input.
      */
     const validateInput = () : boolean => {
         let isValid = true;
@@ -95,9 +99,10 @@ const GroupTransactionForm = (props : Props) => {
     }
 
     /**
-     * Event Handlers
+     * Handles the save action for the group transaction form.
      */
     const SaveClicked = async () => {
+        // Validates input, sends a request to save group transaction
         if(validateInput()) {
             try {
                 const payload = {
@@ -109,6 +114,7 @@ const GroupTransactionForm = (props : Props) => {
                     PAID_BY_USER_ID: props.userId, 
                     PAID_TO_USER_IDS:txMembers
                 };
+                // Create a new group transaction
                 await post(END_POINTS.GroupTransactions, payload)
                 .then(() => {
                     props.saveHandler();
@@ -125,14 +131,22 @@ const GroupTransactionForm = (props : Props) => {
         props.cancelHandler();
     }
 
+    /**
+     * Handles the selection of a member for a transaction.
+     */
     const handleMemberSelect = (memberId:number) => {
         if (txMembers.includes(memberId)) {
             setTxMembers(txMembers.filter(id => id !== memberId));
-          } else {
+        } else {
             setTxMembers([...txMembers, memberId]);
-          }
+        }
     }
 
+    /**
+     * Renders the GroupTransactionForm component.
+     * This component displays a form for adding a group transaction
+     * The form includes fields for date, category, transaction amount, notes, and list of members to choose from.
+     */
     return (
         <>
             <Modal show={true}>

@@ -1,9 +1,15 @@
+/**
+ * Constants for defining different views.
+ */
 export const VIEW = {
     LoginForm:"LoginForm", 
     RegistrationForm:"RegistrationForm", 
     AppHome:"AppHome"
 };
 
+/**
+ * Constants for defining various functions or features.
+ */
 export const FUNCTIONS = {
     Dashboard:"Dashboard", 
     DashboardForTransactions:"Dashboard For Transactions",
@@ -15,6 +21,9 @@ export const FUNCTIONS = {
     GroupTransactions:"Group Transactions"
 };
 
+/**
+ * Constants for defining API endpoints used.
+ */
 export const END_POINTS = {
     Users:"/api/users",
     Login:"/api/users/login",
@@ -25,15 +34,21 @@ export const END_POINTS = {
     GroupTransactions:`/api/groupTransactions`
 };
 
+/**
+ * Interface for defining request parameters used in API calls.
+ */
 interface RequestParams {
     method: string;
     headers: {
       'Content-Type': string;
       Authorization: string;
     };
-    body?: string; // Optional body property
+    body?: string; 
   }
 
+/**
+ * Interface for defining a year-month range.
+ */
 export interface YearMonthRange {
     Year: number;
     Month: number;
@@ -57,7 +72,7 @@ async function invokeWS(method:string, url:string, payload?:object) {
         console.log(`invokeWS(method=${method}, url=${url})`);
     }
     
-
+    // Set up request parameters including authentication token retrieved from local storage
     const token = localStorage.getItem('login_token');
     let requestParams:RequestParams = {
         method,
@@ -67,12 +82,14 @@ async function invokeWS(method:string, url:string, payload?:object) {
         }
       };
 
+    // Add payload to request if provided
     if (payload) {
         const strPayload = JSON.stringify(payload);
         console.log(`Payload=${strPayload}`);
         requestParams.body = strPayload;
     }
 
+    // Send request and handle response
     const response = await fetch(url, requestParams);
     console.log(`response.status=${response.status}`);
     console.log(`response.statusText=${response.statusText}`);
@@ -80,12 +97,14 @@ async function invokeWS(method:string, url:string, payload?:object) {
     const data = await response.json();  
     console.log(`response.json()=${JSON.stringify(data)}`);
 
+    // Throw error if response is not successful
     if (!response.ok) {
         const message = `HTTP error ${response.status} - ${response.statusText} : ${data.message}`;
         console.error(message);
         throw new Error(message);
     }
 
+    // Return response data if successful
     return data;
 }
 
@@ -153,10 +172,15 @@ export function stringToYearMonth(stringYearMonth : string) : YearMonthRange {
     return {Year:Number(tokens[0]), Month:Number(tokens[1])};
 }
 
-
-// Formats date into to yyyy-mm-dd 
+/*
+ * Formats a date into the yyyy-mm-dd format
+ * 
+ * @param {Date} date - The date to be formatted
+ * @returns {string} The formatted date string
+ */
 export function formatDate (date: Date) {
     let year = date.getFullYear();
+
     // Pad month and day with leading zeros if necessary
     let month = (date.getMonth() + 1).toString().padStart(2, '0');
     let day = date.getDate().toString().padStart(2, '0');
@@ -166,6 +190,7 @@ export function formatDate (date: Date) {
 
 /**
  * Converts date string to date object
+ * 
  * @param dateString Date in format "yyyy-mm-dd"
  * @returns Date object
  */
@@ -175,7 +200,12 @@ export function stringToDate (dateString: string) {
     return dateWithoutTime;
 }
 
-
+/*
+ * Converts a string formatted as yyyy-mm-dd to a Date object representing the first day of the month.
+ * 
+ * @param {string} dateString - The string representing the date in the format yyyy-mm-dd
+ * @returns {Date} A Date object representing the first day of the month
+ */
 export function stringToDateAsFirstOfTheMonth (dateString: string) {
     const dateTokens : string[] = dateString.split("-");
     const dateWithoutTime = new Date(Number(dateTokens[0]), Number(dateTokens[1]) - 1, 1);

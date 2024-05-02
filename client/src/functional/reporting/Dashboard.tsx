@@ -7,11 +7,16 @@ interface Props {
   userId: number;
 }
 
+/**
+ * Dashboard component that displays different dashboards based on user selection.
+ * @param {number} userId - The ID of the current user.
+ */
 function Dashboard({userId} : Props) {
   const [currentDashboard, setCurrentDashboard] = useState(FUNCTIONS.DashboardForTransactions);
 
   /**
-   * Operations
+   * Loads the selected dashboard based on the currentDashboard state.
+   * @returns {ReactNode} - The selected dashboard component.
    */
   const loadDashboard = () : ReactNode => {
     if (currentDashboard == FUNCTIONS.DashboardForTransactions)
@@ -24,10 +29,16 @@ function Dashboard({userId} : Props) {
    * Event Handlers
    */
 
+  /**
+   * Sets the currentDashboard state to show the Dashboard for Group Transactions.
+   */
   const DashboardForGroupTransactionsClicked = () : void => {
     setCurrentDashboard(FUNCTIONS.DashboardForGroupTransactions);
   }
 
+  /**
+   * Sets the currentDashboard state to show the Dashboard for Transactions.
+   */
   const DashboardForTransactionsClicked = () : void => {
     setCurrentDashboard(FUNCTIONS.DashboardForTransactions);
   }

@@ -11,18 +11,20 @@ interface Props {
   logoutHandler : () => void;
 }
 
+/**
+ * Layout component represents the overall structure of the application, including the header, navigation, and content sections.
+ * @param {Props} userId - ID of the logged-in user.
+ * @param {Props} userFullName - Full name of the logged-in user.
+ * @param {Props} logoutHandler - Function to handle logout.
+ * @returns {JSX.Element} The rendered Layout component.
+ */
 const Layout = ({ userId, userFullName, logoutHandler } : Props) => {
   const [currentFunction, setCurrentFunction] = useState(FUNCTIONS.Dashboard);
 
-  /**
-   * Operations
+    /**
+   * Handle click event on navigation items.
+   * @param {string} item - The selected item.
    */
-
-
-  /**
-   * Event Handlers
-   */
-
   const ItemClicked = (item:string) => {
     setCurrentFunction(item);
   }

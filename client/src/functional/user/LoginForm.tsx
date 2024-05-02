@@ -7,12 +7,15 @@ interface Props {
     showRegistrationHandler: () => void;
 }
 
+/**
+ * Component for user login.
+ */
 function LoginForm({loginHandler, showRegistrationHandler}:Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   /**
-   * Operations
+   * Validate user input.
    */
   const validateInput = () : boolean => {
     let isValid = true;
@@ -35,7 +38,8 @@ function LoginForm({loginHandler, showRegistrationHandler}:Props) {
   }
 
   /**
-   * Event Handler
+   * Handles the login button click event.
+   * Calls the loginHandler function if input is valid.
    */
   const LoginClicked = () => {
     if (validateInput()) {
@@ -43,6 +47,9 @@ function LoginForm({loginHandler, showRegistrationHandler}:Props) {
     }
   }
 
+  /**
+   * Renders the login form.
+   */
   return (
     <div className="card">
         <h2 className="m-5">Login</h2>

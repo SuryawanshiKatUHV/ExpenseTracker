@@ -12,10 +12,16 @@ interface Props {
   selectedFunction: string;
 }
 
+/**
+ * Content component displays the selected content based on the user's choice.
+ * @param {Props} userId - ID of the logged-in user.
+ * @param {Props} selectedFunction - Selected function for displaying content.
+ * @returns {JSX.Element} The rendered Content component.
+ */
 const Content = ({userId, selectedFunction }: Props) => {
-
   /**
-   * Operations
+   * Load content based on the selected function.
+   * @returns {ReactNode} The JSX element representing the loaded content.
    */
   const loadContent = () : ReactNode => {
     switch(selectedFunction) {

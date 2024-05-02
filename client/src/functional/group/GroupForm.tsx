@@ -16,9 +16,12 @@ interface Props {
     editingGroup?: { USER_GROUP_ID: number; OWNER_ID: number; USER_GROUP_DATE: Date; USER_GROUP_TITLE: string; USER_GROUP_DESCRIPTION: string; members: Member[];}; 
 }
 
+/**
+ * Renders a form for adding or editing a group.
+ * @param {Props} props - The component props.
+ * @returns {JSX.Element} A JSX element representing the GroupForm component.
+ */
 const GroupForm = (props:Props) => {
-
-    // State for group input form
     const [groupOwnerId, setGroupOwnerId] = useState(props.editingGroup ? props.editingGroup.OWNER_ID : props.userId);
     const [groupDate, setGroupDate] = useState(props.editingGroup?.USER_GROUP_DATE ? new Date(props.editingGroup?.USER_GROUP_DATE) : new Date());
     const [groupTitle, setGroupTitle] = useState(props.editingGroup?.USER_GROUP_TITLE);
@@ -28,7 +31,9 @@ const GroupForm = (props:Props) => {
     const [users, setUsers] = useState<any[]>([]);
     const [checkedBoxState, setCheckedBoxState] = useState(new Array(users.length).fill(false));
     
-    // Validate group input
+    /**
+     * Validate group input.
+     */
     const validateInput = () => {
         let isValid = true;
 
@@ -73,8 +78,10 @@ const GroupForm = (props:Props) => {
             toast.error(error.message, { autoClose: false});
         }
     }
-    
-    // Retrieve active members with group transactions from either end
+
+    /**
+     * Retrieve active members with group transactions from either ends.
+     */
     async function loadActiveMembers() {
         try {
             if (props.editingGroup?.USER_GROUP_ID) {
@@ -89,6 +96,10 @@ const GroupForm = (props:Props) => {
         }
     }
 
+    
+    /**
+     * In the beginning, load the initial data
+     */
     useEffect(() =>{ 
         async function fetchData() {
             await loadUsers();
@@ -97,7 +108,9 @@ const GroupForm = (props:Props) => {
         fetchData();
     }, []);
 
-    // set checkboxes to empty state for creating groups or pre-selected state for editing groups
+    /**
+     *  Set checkboxes to empty state for creating groups or pre-selected state for editing groups
+     */
     useEffect(() => {
         if (groupMembers && users.length > 0) {
             const initialCheckedState = users.map(user =>
@@ -111,6 +124,9 @@ const GroupForm = (props:Props) => {
 
     }, [groupMembers, users]);
 
+    /**
+     * handleCheckBoxStates function updates the checked state of checkboxes for group members.
+     */
     const handleCheckBoxStates = (position: number) => {
         const updatedCheckedBoxState = checkedBoxState.map((item, index) =>
             index === position ? !item : item
@@ -119,9 +135,14 @@ const GroupForm = (props:Props) => {
         setCheckedBoxState(updatedCheckedBoxState); // Update state
     };
     
+    /**
+     * Handles the save action for the group form.
+     */
     const SaveClicked = async () => {
+        // Filter the list of users based on the checked state of checkboxes, then map to retrieve the IDs of selected users.
         const memberIdsList = users.filter((_, index) => checkedBoxState[index]).map(user => user.USER_ID);
-    
+                
+        // Validates input, sends a request to save or update the group
         if (validateInput()) {
             const groupData = {
                 USER_GROUP_DATE: formatDate(groupDate),
@@ -133,13 +154,16 @@ const GroupForm = (props:Props) => {
     
             try {
                 if (props.editingGroup?.USER_GROUP_ID) {
+                    // Update the existing group
                     await put(`${END_POINTS.Groups}/${props.editingGroup.USER_GROUP_ID}`, groupData);
                     toast.info(`Group updated with id: ${props.editingGroup.USER_GROUP_ID}`, {position: "top-right"});
                 } else {
+                    // Create a new group
                     const result = await post(END_POINTS.Groups, groupData);
                     toast.success(`Group created with id: ${result.USER_GROUP_ID}`, {position: "top-right"});
                 }
-    
+                
+                // Call the parents' event handler
                 props.saveHandler();
             } catch (error : any) {
                 toast.error(error.message, { autoClose: false});
@@ -151,6 +175,11 @@ const GroupForm = (props:Props) => {
         props.cancelHandler();
     }
 
+    /**
+     * Renders the GroupForm component.
+     * This component displays a form for adding or editing a group.
+     * The form includes fields for date, title, description, and list of members to select.
+     */
     return (
         <>
             <Modal show={true}>

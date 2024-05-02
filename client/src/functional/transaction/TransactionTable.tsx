@@ -8,6 +8,10 @@ interface Props {
     userId: number;
 }
 
+/**
+ * Functional component representing the transaction table.
+ * @param {number} userId - The ID of the user for whom the transaction table is displayed.
+ */
 const TransactionTable = ({userId} : Props) => {
     const [yearMonthRange, setYearMonthRange] = useState<YearMonthRange[]>([]);
     const [selectedYearMonth, setSelectedYearMonth] = useState<YearMonthRange>(defaultYearMonth());
@@ -16,12 +20,19 @@ const TransactionTable = ({userId} : Props) => {
     const [editingTransaction, setEditingTransaction] = useState<any>([]);
     const [error, setError] = useState('');
 
+    /**
+     * Generates the default year-month range based on the current date.
+     * @returns {YearMonthRange} The default year-month range.
+     */
     function defaultYearMonth() : YearMonthRange {
         let currentDate = new Date();
         let yearMonth:YearMonthRange = {Year:currentDate.getFullYear(), Month:currentDate.getMonth()+1};
         return yearMonth;
     }
 
+    /**
+     *  Loads transactions for the selected year and month.
+     */
     async function loadTransactions() {
         try {
             const transactions = await get(`${END_POINTS.Users}/${userId}/transactions/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}`);
@@ -31,6 +42,9 @@ const TransactionTable = ({userId} : Props) => {
         }
     }
 
+    /**
+     * Loads the range of available year and month combinations for transactions data.
+     */
     async function loadYearMonthRange() {
         try {
             const yearMonthRange = await get(`${END_POINTS.Users}/${userId}/transactions/yearMonthRange`);
@@ -43,13 +57,16 @@ const TransactionTable = ({userId} : Props) => {
         }
     }
 
+    /**
+     * Refreshes the transaction table by reloading data from the server.
+     */
     async function refresh() {
         await loadYearMonthRange();
         await loadTransactions();
     }
     
     /**
-     * In the begining load the initial view
+     * In the beginning, load the initial view
      */
     useEffect(() =>{ 
         async function fetchData() {
@@ -88,6 +105,11 @@ const TransactionTable = ({userId} : Props) => {
         setFormDisplayed(true);
     }
 
+    /**
+     * Event handler for the "Delete" button click.
+     * Deletes the specified transaction and refreshes the table.
+     * @param {number} transactionId - The ID of the transaction to delete.
+     */
     const DeleteClicked = async (transactionId: number) => {
         // Simple confirmation dialog
         const isConfirmed = window.confirm("Are you sure you want to delete?");
@@ -110,6 +132,12 @@ const TransactionTable = ({userId} : Props) => {
         setEditingTransaction(null);
     }
 
+    /**
+     * Renders the TransactionTable component.
+     * This component displays a select input for selecting the year-month range, an add new button when the form is not displayed,
+     * and a transaction form when the form is displayed. It also renders a table to display transaction data including
+     * date, transaction type, category, transaction amount, number of group transaction, notes, and icons for editing and deleting transactions entries.
+     */
     return (
         <>
         <div className="form-floating mb-3">

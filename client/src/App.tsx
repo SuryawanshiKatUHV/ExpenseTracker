@@ -12,7 +12,8 @@ function App() {
   const [loggedInUser, setLoggedInUser] = useState({USER_FULL_NAME:'', USER_ID:0});
 
   /**
-   * Operations
+   * Load the appropriate content based on the current view state.
+   * @returns {ReactNode} The JSX element representing the loaded content.
    */
   const loadContent = () : ReactNode => {
     
@@ -31,15 +32,23 @@ function App() {
   }
 
   /**
-   * Event handler
+   * Event handlers
    */
 
+  /**
+   * Handle logout event.
+  */
   const LogoutClicked = () => {
     localStorage.removeItem('login_token');
     setView(VIEW.LoginForm);
     toast.success("Successfully logged out.");
   }
 
+  /**
+   * Handle login event.
+   * @param {string} USER_EMAIL - User's email.
+   * @param {string} USER_PASSWORD - User's password.
+  */
   const LoginClicked = async (USER_EMAIL : string, USER_PASSWORD: string) => {
     try {
       const payload = {USER_EMAIL, USER_PASSWORD};
@@ -52,7 +61,14 @@ function App() {
       toast.error(error.message, {autoClose: false});
     }
   }
-
+  
+  /**
+   * Handle registration event.
+   * @param {string} USER_EMAIL - User's email.
+   * @param {string} USER_FNAME - User's first name.
+   * @param {string} USER_LNAME - User's last name.
+   * @param {string} USER_PASSWORD - User's password.
+  */
   const RegisterClicked = async (USER_EMAIL: string, USER_FNAME: string, USER_LNAME: string, USER_PASSWORD: string) => {
     try {
       const payload = {USER_EMAIL, USER_FNAME, USER_LNAME, USER_PASSWORD};
@@ -73,6 +89,9 @@ function App() {
     setView(VIEW.LoginForm);
   }
 
+  /* 
+   * Render the application title and load the appropriate content 
+  */
   return (
     <>
       <div style={{ padding: '20px', textAlign: 'center' }}>

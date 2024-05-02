@@ -8,17 +8,21 @@ interface Props {
     userId: number;
 }
 
+/**
+ * Functional component representing the group transaction table.
+ * @param {number} userId - The ID of the user for whom the group transaction  table is displayed.
+ */
 const GroupTransactionTable = (props : Props) => {
-    /**
-     * State
-     */
     const [groups, setGroups] = useState<any[]>([]);    // All the groups this user is member of
     const [selectedGroupId, setSelectedGroupId] = useState(0);  // The selected group from the list for displaying the information
     const [formDisplayed, setFormDisplayed] = useState(false);  // Flag to display the create form
     const [groupTransactions, setGroupTransactions] = useState<any[]>([]);  // All the group transactions from the selected group
     const [settlementSummary, setSettlementSummary] = useState<any[]>([]);  // The settlement summary data for the selected group
+
     /**
-     * Opertions
+     * Loads groups associated with the user.
+     * Sets the groups state with the fetched groups.
+     * If groups are fetched and not empty, sets the selected group ID to the first group in the list and loads tables.
      */
     async function loadGroups() {
         await get(`${END_POINTS.Users}/${props.userId}/groups`)
@@ -32,6 +36,10 @@ const GroupTransactionTable = (props : Props) => {
         })
     }
 
+    /**
+     * Loads group transactions based on the selected group.
+     * If no group is selected, clears the group transactions.
+     */
     async function loadGroupTransactions() {
         if (selectedGroupId == 0) {
             setGroupTransactions([]);
@@ -44,6 +52,10 @@ const GroupTransactionTable = (props : Props) => {
         }
     }
 
+    /**
+     * Loads settlement summary based on the selected group.
+     * If no group is selected, clears the settlement summary.
+     */
     async function loadSettlementSummary() {
         if (selectedGroupId == 0) {
             setSettlementSummary([]);
@@ -54,7 +66,6 @@ const GroupTransactionTable = (props : Props) => {
                 setSettlementSummary(settlementSummary);
             });
         }
-        
     }
 
     async function loadTables() {
@@ -96,6 +107,11 @@ const GroupTransactionTable = (props : Props) => {
         await refresh();
     }
 
+    /**
+     * Event handler for the "Delete" button click.
+     * Deletes the specified group transaction and refreshes the table.
+     * @param {number} transactionId - The ID of the transaction to delete.
+     */
     async function DeleteClicked(transactionId:number) {
         console.log(`Delete Clicked with transaction id ${transactionId}`);
         // Simple confirmation dialog
@@ -115,6 +131,12 @@ const GroupTransactionTable = (props : Props) => {
         }
     }
 
+    /**
+     * Renders the GroupTransactionTable component.
+     * This component displays a select input for selecting the group, an add new button when the form is not displayed,
+     * and a group transactionT form when the form is displayed. It also renders a table to display group transaction data including
+     * date, total amount, notes, paid by, paid to, and icons for editing and deleting group transaction entries.
+     */
     return (<>
         <div className="form-floating mb-3">
             <select className="form-select" id="selectedGroupId" onChange={(e) => setSelectedGroupId(parseInt(e.target.value))} value={selectedGroupId}>

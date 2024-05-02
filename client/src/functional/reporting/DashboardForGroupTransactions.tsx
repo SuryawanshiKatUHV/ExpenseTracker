@@ -1,14 +1,14 @@
-// Import necessary hooks and components from 'react' and 'recharts' libraries, and utility functions from 'Utilities' module
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LabelList} from 'recharts';
 import { END_POINTS, get } from '../../common/Utilities';
 
-// Define interface for component props
 interface Props {
     userId: number;
 }
 
-// Define interface for settlement summary data
+/**
+ * Define interface for settlement summary data
+ */
 interface SettlementSummary {
     USER_ID : number;
     USER_FULLNAME: string;
@@ -17,7 +17,9 @@ interface SettlementSummary {
     UNSETTLED_DUE: number;
 }
 
-// Define the DashboardForGroupTransactions component which takes in userId as a prop
+/**
+ * Define the DashboardForGroupTransactions component which takes in userId as a prop
+ */
 const DashboardForGroupTransactions = ({userId} : Props) => {
     // Initialize state variables for groups, selectedGroupId, settlementSummary, and error using the useState hook
     const [groups, setGroups] = useState<any[]>([]);
@@ -25,17 +27,23 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
     const [settlementSummary, setSettlementSummary] = useState<SettlementSummary[]>([]);
     const [error, setError] = useState('');
 
-    // Fetch groups data when the component mounts using the useEffect hook
+    /**
+     * Fetch groups data when the component mounts using the useEffect hook
+     */
     useEffect(() => {
         loadGroups();
     }, []);
 
-    // Fetch settlement summary data when the selectedGroupId state variable changes using the useEffect hook
+    /**
+     * Fetch settlement summary data when the selectedGroupId state variable changes using the useEffect hook
+     */
     useEffect(() => {
         loadSettlementSummary();
     }, [selectedGroupId]);
 
-    // Define loadGroups function to fetch groups data for the user using the get utility function
+    /**
+     * Define loadGroups function to fetch groups data for the user using the get utility function
+     */
     async function loadGroups() {
         try {
             const groups = await get(`${END_POINTS.Users}/${userId}/groups`)
@@ -49,7 +57,9 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
         }
     }
 
-    // Define loadSettlementSummary function to fetch settlement summary data for the selected group using the get utility function
+    /**
+     * Define loadSettlementSummary function to fetch settlement summary data for the selected group using the get utility function
+     */
     async function loadSettlementSummary() {
         try {
             if (selectedGroupId == 0) {
@@ -64,7 +74,9 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
         }
     }
 
-    // Define separateSettlements function to separate settlement summary data into positive and negative unsettled amounts
+    /**
+     * Define separateSettlements function to separate settlement summary data into positive and negative unsettled amounts
+     */
     function separateSettlements(settlementSummary : SettlementSummary[]) {
         let positiveUnsettled : SettlementSummary[] = [];
         let negativeUnsettled : SettlementSummary[] = [];
@@ -85,7 +97,9 @@ const DashboardForGroupTransactions = ({userId} : Props) => {
     // Separate settlement summary data into positive and negative unsettled amounts using the separateSettlements function
     let { positiveUnsettled, negativeUnsettled } = separateSettlements(settlementSummary);
 
-    // Render a dropdown to select a group, error message if any, and two bar charts to display settlement summary data
+    /**
+     * Render a dropdown to select a group, error message if any, and two bar charts to display settlement summary data
+     */
     return (
         <>
             <div className="form-floating mb-3">

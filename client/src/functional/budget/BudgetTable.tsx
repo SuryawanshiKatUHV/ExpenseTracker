@@ -8,19 +8,30 @@ interface Props {
     userId: number;
 }
 
+/**
+ * Functional component representing the budget table.
+ * @param {number} userId - The ID of the user for whom the budget table is displayed.
+ */
 const BudgetTable = ({userId} : Props) => {
     const [yearMonthRange, setYearMonthRange] = useState<YearMonthRange[]>([]);
     const [selectedYearMonth, setSelectedYearMonth] = useState<YearMonthRange>(defaultYearMonth());
-
     const [formDisplayed, setFormDisplayed] = useState(false);
     const [budgets, setBudgets] = useState<any[]>([]);
     const [editingBudget, setEditingBudget] = useState<any>([]);
     
+    /**
+     * Generates the default year-month range based on the current date.
+     * @returns {YearMonthRange} The default year-month range.
+     */
     function defaultYearMonth() : YearMonthRange {
         let currentDate = new Date();
         let yearMonth:YearMonthRange = {Year:currentDate.getFullYear(), Month:currentDate.getMonth()+1};
         return yearMonth;
     }
+
+    /**
+     * Loads the range of available year and month combinations for budget data.
+     */
     async function loadYearMonthRange() {
         try {
             const yearMonthRange = await get(`${END_POINTS.Users}/${userId}/budgets/yearMonthRange`);
@@ -33,6 +44,9 @@ const BudgetTable = ({userId} : Props) => {
         }
     }
 
+    /**
+     * Loads budget data based on the selected year and month.
+     */
     async function loadBudgets() {
         try {
             const response = await get(`${END_POINTS.Users}/${userId}/budgets/${selectedYearMonth?.Year}/${selectedYearMonth?.Month}`);
@@ -42,23 +56,26 @@ const BudgetTable = ({userId} : Props) => {
         }
     }
 
+    /**
+     * Refreshes the budget table by reloading data from the server.
+     */
     async function refresh() {
         await loadYearMonthRange();
         await loadBudgets();
     }
 
     /**
-     * In the begining load the initial view
+     * In the beginning, load the initial view
      */
     useEffect(() =>{ 
         async function fetchData() {
-            await loadYearMonthRange();
+            await refresh();
         }
         fetchData();
     }, []);
 
     /**
-     * When the Year-Month selection changes then reload the budgets
+     * When the Year-Month selection changes, reload the budgets
      */
     useEffect(() =>{ 
         async function fetchData() {
@@ -86,6 +103,11 @@ const BudgetTable = ({userId} : Props) => {
         setFormDisplayed(true);
     }
     
+    /**
+     * Event handler for the "Delete" button click.
+     * Deletes the specified budget and refreshes the table.
+     * @param {number} budgetId - The ID of the budget to delete.
+     */
     const DeleteClicked = async (budgetId: number) => {
         // Simple confirmation dialog
         const isConfirmed = window.confirm("Are you sure you want to delete?");
@@ -107,6 +129,13 @@ const BudgetTable = ({userId} : Props) => {
         setEditingBudget(null);
     }
 
+
+    /**
+     * Renders the BudgetTable component.
+     * This component displays a select input for selecting the year-month range, an add new button when the form is not displayed,
+     * and a budget form when the form is displayed. It also renders a table to display budget data including
+     * date, category, budget amount, and icons for editing and deleting budget entries.
+     */
     return (
         <>
             <div className="form-floating mb-3">

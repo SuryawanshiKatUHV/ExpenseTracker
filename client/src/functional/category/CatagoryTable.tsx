@@ -8,8 +8,11 @@ interface Props {
     userId: number;
 }
 
+/**
+ * Functional component representing the category table.
+ * @param {number} userId - The ID of the user for whom the category table is displayed.
+ */
 const CategoryTable = ({userId} : Props) => {
-
     const [formDisplayed, setFormDisplayed] = useState(false);
     const [categories, setCategories] = useState<any[]>([]);
     const [editingCategory, setEditingCategory] = useState<any>([]);
@@ -24,6 +27,9 @@ const CategoryTable = ({userId} : Props) => {
         }
     }
 
+    /**
+     * Loads categories when the CategoryTable component mounts.
+     */
     useEffect(() =>{ 
         async function fetchData() {
             await loadCategories();
@@ -57,6 +63,12 @@ const CategoryTable = ({userId} : Props) => {
         setFormDisplayed(true);
     }
 
+        
+    /**
+     * Event handler for the "Delete" button click.
+     * Deletes the specified category and refreshes the table.
+     * @param {number} categoryId - The ID of the category to delete.
+     */
     const DeleteClicked = async (categoryId: number) => {
         // Simple confirmation dialog
         const isConfirmed = window.confirm("Are you sure you want to delete?");
@@ -64,7 +76,7 @@ const CategoryTable = ({userId} : Props) => {
             try {
                 await del(`${END_POINTS.Categories}/${categoryId}`);
                 await loadCategories(); // Refresh the list after deleting
-                toast.success(`Category with id ${categoryId} deleted succesfully`, {position: "top-right"});
+                toast.success(`Category with id ${categoryId} deleted successfully`, {position: "top-right"});
             } catch (error: any) {
                 toast.error(error.message, { autoClose: false});
             }
@@ -73,6 +85,12 @@ const CategoryTable = ({userId} : Props) => {
         }
     };
 
+    /**
+     * Renders the CategoryTable component.
+     * This component displays an add new button when the form is not displayed,
+     * and a category form when the form is displayed. It also renders a table to display category data including
+     * tile and description, and icons for editing and deleting category entries.
+     */
     return (
         <div className="form-floating mb-3">
 
@@ -109,7 +127,6 @@ const CategoryTable = ({userId} : Props) => {
             </table>
 
             {categories.length === 0 && <p>No records found.</p>}
-
             {categories.length > 0 && <small><i>* A category having transactions and/or budgets define against it, cannot be deleted.</i></small>}
         </div>
     );
