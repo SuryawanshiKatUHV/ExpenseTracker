@@ -1,7 +1,15 @@
 const repository = require("../repositories/Budget");
 
+/**
+ * Class representing a Budget Controller.
+ */
 class Budget {
-
+  /**
+   * Get all budgets.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getAll(req, res) {
     console.log("budget getAll in controller is invoked...");
     try {
@@ -14,6 +22,12 @@ class Budget {
     }
   }
 
+  /**
+   * Get a budget by ID.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getById(req, res) {
     const { id } = req.params;
     console.log("budget getID in controller is invoked...");
@@ -28,6 +42,12 @@ class Budget {
     }
   }
 
+  /**
+   * Create a new budget.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async create(req, res) {
     console.log("Budget create is invoked...");
     try {
@@ -44,6 +64,12 @@ class Budget {
     }
   }
 
+  /**
+   * Update a budget.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async update(req, res) {
     console.log("Budget update is invoked");
     try {
@@ -62,6 +88,12 @@ class Budget {
     }
   }
 
+  /**
+   * Delete a budget.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async delete(req, res) {
     console.log("Budget delete is invoked...");
     try {

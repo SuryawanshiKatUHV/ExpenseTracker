@@ -1,7 +1,15 @@
 const repository = require("../repositories/Category");
 
+/**
+ * Class representing a Category Controller.
+ */
 class Category {
-
+  /**
+   * Get all categories.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getAll(req, res) {
     console.log("Category getAll is invoked...");
     try {
@@ -14,6 +22,12 @@ class Category {
     }
   }
 
+  /**
+   * Get a category by ID.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getById(req, res) {
     const { id } = req.params;
     try {
@@ -27,6 +41,12 @@ class Category {
     }
   }
 
+  /**
+   * Create a new category.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async create(req, res) {
     console.log("Category create is invoked...");
     try {
@@ -43,6 +63,12 @@ class Category {
     }
   }
 
+  /**
+   * Update a category.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async update(req, res) {
     console.log("Category update is invoked");
     try {
@@ -61,6 +87,12 @@ class Category {
     }
   }
 
+  /**
+   * Delete a category.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async delete(req, res) {
     console.log("Category delete is invoked...");
     try {
@@ -75,7 +107,13 @@ class Category {
       res.status(500).json({ message: error.message });
     }
   }
-  
+
+  /**
+   * Get transactions for a category.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getTransactions(req, res) {
     const { id } = req.params;
     try {
@@ -89,6 +127,12 @@ class Category {
     }
   }
 
+  /**
+   * Get budgets for a category.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getBudgets(req, res) {
     const { id } = req.params;
     try {
@@ -101,7 +145,6 @@ class Category {
       res.status(500).json({ message: error.message });
     }
   }
-
 }
 
 module.exports = new Category();

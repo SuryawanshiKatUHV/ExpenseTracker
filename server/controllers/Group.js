@@ -1,7 +1,15 @@
 const repository = require("../repositories/Group");
 
+/**
+ * Class representing a Group Controller.
+ */
 class Group {
-
+  /**
+   * Get all user groups.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getAll(req, res) {
     console.log("User Group getAll is invoked...");
     try {
@@ -15,6 +23,12 @@ class Group {
     }
   }
 
+  /**
+   * Get a user group by ID.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getById(req, res) {
     const { id } = req.params;
     try {
@@ -28,6 +42,12 @@ class Group {
     }
   }
 
+  /**
+   * Create a new user group.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async create(req, res) {
     console.log("User Group create is invoked...");
     try {
@@ -42,6 +62,12 @@ class Group {
     }
   }
 
+  /**
+   * Update a user group.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async update(req, res) {
     console.log("Group update is invoked");
 
@@ -62,6 +88,12 @@ class Group {
     }
   }
 
+  /**
+   * Delete a user group.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async delete(req, res) {
     console.log("Group delete is invoked...");
     try {
@@ -79,6 +111,12 @@ class Group {
     }
   }
 
+  /**
+   * Delete a member from a user group.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async deleteMember(req, res) {
     console.log("Group delete is invoked...");
     try {
@@ -97,7 +135,13 @@ class Group {
       res.status(500).json({ message: error.message });
     }
   }
-  
+
+  /**
+   * Get members of a user group.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getMembers(req, res) {
     const { id } = req.params;
     try {
@@ -111,6 +155,12 @@ class Group {
     }
   }
 
+  /**
+   * Get active members of a user group.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getActiveMembers(req, res) {
     const { id } = req.params;
     try {
@@ -124,6 +174,12 @@ class Group {
     }
   }
 
+  /**
+   * Get transactions of a user group.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getTransactions(req, res) {
     const { id } = req.params;
     try {
@@ -137,6 +193,12 @@ class Group {
     }
   }
 
+  /**
+   * Get settlement summary of a user group.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getSettlementSummary(req, res) {
     const { id } = req.params;
     try {
@@ -149,7 +211,6 @@ class Group {
       res.status(500).json({ message: error.message });
     }
   }
-
 }
 
 module.exports = new Group();
