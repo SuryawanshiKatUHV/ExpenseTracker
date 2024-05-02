@@ -113,6 +113,12 @@ class User {
     return result;
   }
 
+  /**
+   * Get categories for a user.
+   *
+   * @param {number} userId - The user ID.
+   * @returns {Promise<Array>} An array of category objects.
+   */
   async getCategories(userId) {
     const [rows, fields] = await execute(
       `SELECT C.*, COALESCE(T.TOTAL_TRANSACTIONS, 0) AS TOTAL_TRANSACTIONS, COALESCE(B.TOTAL_BUDGETS, 0) AS TOTAL_BUDGETS
@@ -132,6 +138,12 @@ class User {
     return rows;
   }
 
+  /**
+   * Get budgets for a user.
+   *
+   * @param {number} userId - The user ID.
+   * @returns {Promise<Array>} An array of budget objects.
+   */
   async getBudgets(userId) {
       const [rows, fields] = await execute(
         `SELECT C.CATEGORY_ID, C.CATEGORY_TITLE, B.BUDGET_ID, B.BUDGET_AMOUNT, DATE_FORMAT(B.BUDGET_DATE, '%m/%d/%Y') AS BUDGET_DATE
@@ -143,6 +155,14 @@ class User {
       return rows;
   }
 
+  /**
+   * Get budgets for a user by month.
+   *
+   * @param {number} userId - The user ID.
+   * @param {number} year - The year.
+   * @param {number} month - The month.
+   * @returns {Promise<Array>} An array of budget objects.
+   */
   async getBudgetsByMonth(userId, year, month) {
     const [rows, fields] = await execute(
       `SELECT C.CATEGORY_ID, C.CATEGORY_TITLE, B.BUDGET_ID, B.BUDGET_AMOUNT, DATE_FORMAT(B.BUDGET_DATE, '%m/%d/%Y') AS BUDGET_DATE
@@ -156,73 +176,100 @@ class User {
     return rows;
 }
 
-  async getTransactions(userId) {
-      const [rows, fields] = await execute(
-        `SELECT 
-          C.CATEGORY_ID, 
-          C.CATEGORY_TITLE, 
-          T.TRANSACTION_ID, 
-          T.TRANSACTION_TYPE, 
-          T.TRANSACTION_AMOUNT, 
-          T.TRANSACTION_NOTES, 
-          DATE_FORMAT(T.TRANSACTION_DATE, '%m/%d/%Y') AS TRANSACTION_DATE, 
-          COALESCE(UGT.num_user_group_transactions, 0) AS TOTAL_USER_GROUP_TRANSACTIONS
-        FROM TRANSACTION T
-        JOIN CATEGORY C ON T.CATEGORY_ID = C.CATEGORY_ID
-        LEFT JOIN (
-          SELECT TRANSACTION_ID, COUNT(*) AS num_user_group_transactions
+/**
+ * Get transactions for a user.
+ *
+ * @param {number} userId - The user ID.
+ * @returns {Promise<Array>} An array of transaction objects.
+ */
+async getTransactions(userId) {
+    const [rows, fields] = await execute(
+      `SELECT 
+        C.CATEGORY_ID, 
+        C.CATEGORY_TITLE, 
+        T.TRANSACTION_ID, 
+        T.TRANSACTION_TYPE, 
+        T.TRANSACTION_AMOUNT, 
+        T.TRANSACTION_NOTES, 
+        DATE_FORMAT(T.TRANSACTION_DATE, '%m/%d/%Y') AS TRANSACTION_DATE, 
+        COALESCE(UGT.num_user_group_transactions, 0) AS TOTAL_USER_GROUP_TRANSACTIONS
+      FROM TRANSACTION T
+      JOIN CATEGORY C ON T.CATEGORY_ID = C.CATEGORY_ID
+      LEFT JOIN (
+        SELECT TRANSACTION_ID, COUNT(*) AS num_user_group_transactions
+        FROM USER_GROUP_TRANSACTION
+        GROUP BY TRANSACTION_ID
+      ) UGT ON T.TRANSACTION_ID = UGT.TRANSACTION_ID
+    WHERE C.OWNER_ID=?
+    ORDER BY T.TRANSACTION_DATE DESC;`, [userId]);
+    return rows;
+}
+
+/**
+   * Get transactions for a user by month.
+   *
+   * @param {number} userId - The user ID.
+   * @param {number} year - The year.
+   * @param {number} month - The month.
+   * @returns {Promise<Array>} An array of transaction objects.
+   */
+async getTransactionsByMonth(userId, year, month) {
+  const [rows, fields] = await execute(
+    `SELECT C.CATEGORY_ID, C.CATEGORY_TITLE, T.TRANSACTION_ID, T.TRANSACTION_TYPE, T.TRANSACTION_AMOUNT, T.TRANSACTION_NOTES, DATE_FORMAT(T.TRANSACTION_DATE, '%m/%d/%Y') AS TRANSACTION_DATE, COALESCE(UGT.num_user_group_transactions, 0) AS TOTAL_USER_GROUP_TRANSACTIONS
+    FROM TRANSACTION T
+    JOIN CATEGORY C ON T.CATEGORY_ID = C.CATEGORY_ID
+    LEFT JOIN (
+      SELECT TRANSACTION_ID, COUNT(*) AS num_user_group_transactions
+      FROM USER_GROUP_TRANSACTION
+      GROUP BY TRANSACTION_ID
+    ) UGT ON T.TRANSACTION_ID = UGT.TRANSACTION_ID
+  WHERE C.OWNER_ID=? AND YEAR(T.TRANSACTION_DATE) = ? AND MONTH(T.TRANSACTION_DATE) = ?
+  ORDER BY T.TRANSACTION_DATE DESC;`, [userId, year, month]);
+  
+  return rows;
+}
+
+/**
+ * Get groups for a user.
+ *
+ * @param {number} userId - The user ID.
+ * @returns {Promise<Array>} An array of group objects.
+ */
+async getGroups(userId) {
+  const [rows, fields] = await execute(
+    `SELECT 
+        UG.USER_GROUP_ID, 
+        UG.OWNER_ID,
+        CONCAT(U.USER_LNAME, ', ', U.USER_FNAME) AS OWNER_NAME,
+        DATE_FORMAT(UG.USER_GROUP_DATE, '%m/%d/%Y') AS USER_GROUP_DATE,
+        UG.USER_GROUP_TITLE,
+        UG.USER_GROUP_DESCRIPTION,
+        COALESCE(UGT.TOTAL_USER_GROUP_TRANSACTIONS, 0) AS TOTAL_USER_GROUP_TRANSACTIONS
+      FROM USER_GROUP UG
+      JOIN USER U 
+        ON U.USER_ID = UG.OWNER_ID
+      JOIN USER_GROUP_MEMBERSHIP UGM 
+        ON UG.USER_GROUP_ID = UGM.USER_GROUP_ID
+      LEFT JOIN (
+          SELECT USER_GROUP_ID, COUNT(*) AS TOTAL_USER_GROUP_TRANSACTIONS
           FROM USER_GROUP_TRANSACTION
-          GROUP BY TRANSACTION_ID
-        ) UGT ON T.TRANSACTION_ID = UGT.TRANSACTION_ID
-      WHERE C.OWNER_ID=?
-      ORDER BY T.TRANSACTION_DATE DESC;`, [userId]);
-      return rows;
+          GROUP BY USER_GROUP_ID
+        ) UGT 
+        ON UG.USER_GROUP_ID = UGT.USER_GROUP_ID
+      WHERE UGM.MEMBER_ID = ?
+      ORDER BY UG.USER_GROUP_DATE DESC, UG.USER_GROUP_TITLE ASC`, 
+  [userId]);
+
+    return rows;
   }
 
-  async getTransactionsByMonth(userId, year, month) {
-      const [rows, fields] = await execute(
-        `SELECT C.CATEGORY_ID, C.CATEGORY_TITLE, T.TRANSACTION_ID, T.TRANSACTION_TYPE, T.TRANSACTION_AMOUNT, T.TRANSACTION_NOTES, DATE_FORMAT(T.TRANSACTION_DATE, '%m/%d/%Y') AS TRANSACTION_DATE, COALESCE(UGT.num_user_group_transactions, 0) AS TOTAL_USER_GROUP_TRANSACTIONS
-        FROM TRANSACTION T
-        JOIN CATEGORY C ON T.CATEGORY_ID = C.CATEGORY_ID
-        LEFT JOIN (
-          SELECT TRANSACTION_ID, COUNT(*) AS num_user_group_transactions
-          FROM USER_GROUP_TRANSACTION
-          GROUP BY TRANSACTION_ID
-        ) UGT ON T.TRANSACTION_ID = UGT.TRANSACTION_ID
-      WHERE C.OWNER_ID=? AND YEAR(T.TRANSACTION_DATE) = ? AND MONTH(T.TRANSACTION_DATE) = ?
-      ORDER BY T.TRANSACTION_DATE DESC;`, [userId, year, month]);
-      
-      return rows;
-  }
-
-  async getGroups(userId) {
-      const [rows, fields] = await execute(
-        `SELECT 
-            UG.USER_GROUP_ID, 
-            UG.OWNER_ID,
-            CONCAT(U.USER_LNAME, ', ', U.USER_FNAME) AS OWNER_NAME,
-            DATE_FORMAT(UG.USER_GROUP_DATE, '%m/%d/%Y') AS USER_GROUP_DATE,
-            UG.USER_GROUP_TITLE,
-            UG.USER_GROUP_DESCRIPTION,
-            COALESCE(UGT.TOTAL_USER_GROUP_TRANSACTIONS, 0) AS TOTAL_USER_GROUP_TRANSACTIONS
-          FROM USER_GROUP UG
-          JOIN USER U 
-            ON U.USER_ID = UG.OWNER_ID
-          JOIN USER_GROUP_MEMBERSHIP UGM 
-            ON UG.USER_GROUP_ID = UGM.USER_GROUP_ID
-          LEFT JOIN (
-              SELECT USER_GROUP_ID, COUNT(*) AS TOTAL_USER_GROUP_TRANSACTIONS
-              FROM USER_GROUP_TRANSACTION
-              GROUP BY USER_GROUP_ID
-            ) UGT 
-            ON UG.USER_GROUP_ID = UGT.USER_GROUP_ID
-          WHERE UGM.MEMBER_ID = ?
-          ORDER BY UG.USER_GROUP_DATE DESC, UG.USER_GROUP_TITLE ASC`, 
-      [userId]);
-
-      return rows;
-  }
-
+  /**
+   * Get group transactions paid by a user.
+   *
+   * @param {number} userId - The user ID.
+   * @param {number} groupId - The group ID.
+   * @returns {Promise<Array>} An array of transaction objects.
+   */
   async getGroupTransactionsPaid(userId, groupId) {
     const [rows, fields] = await execute(
       `SELECT 
@@ -240,6 +287,13 @@ class User {
     return rows;
   }
 
+  /**
+   * Get group transactions received by a user.
+   *
+   * @param {number} userId - The user ID.
+   * @param {number} groupId - The group ID.
+   * @returns {Promise<Array>} An array of transaction objects.
+   */
   async getGroupTransactionsReceived(userId, groupId) {
     const [rows, fields] = await execute(
       `SELECT UGT.*, CONCAT(U1.USER_LNAME, ", ", U1.USER_FNAME) AS PAID_BY_USER_FULLNAME, CONCAT(U2.USER_LNAME, ", ", U2.USER_FNAME) AS PAID_TO_USER_FULLNAME, UG.USER_GROUP_DATE, UG.USER_GROUP_TITLE
@@ -252,6 +306,12 @@ class User {
     return rows;
   }
 
+  /**
+   * Get group transactions where the user is owed money.
+   *
+   * @param {number} userId - The user ID.
+   * @returns {Promise<Array>} An array of transaction objects.
+   */
   async getGroupTransactionsMoneyOwedToMe(userId) {
     const [rows, fields] = await execute(
       `SELECT UGT.PAID_BY_USER_FULLNAME, UGT.PAID_TO_USER_FULLNAME, SUM(UGT.USER_GROUP_TRANSACTION_AMOUNT) AS MONEY_OWED_TO_ME
@@ -267,6 +327,12 @@ class User {
     return rows;
   }
 
+  /**
+   * Get group transactions where the user needs to pay money.
+   *
+   * @param {number} userId - The user ID.
+   * @returns {Promise<Array>} An array of transaction objects.
+   */
   async getGroupTransactionsMoneyINeedToPay(userId) {
     const [rows, fields] = await execute(
       `SELECT UGT.PAID_BY_USER_FULLNAME, UGT.PAID_TO_USER_FULLNAME, SUM(UGT.USER_GROUP_TRANSACTION_AMOUNT) AS MONEY_I_NEED_TO_PAY

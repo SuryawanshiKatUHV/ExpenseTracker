@@ -1,7 +1,15 @@
 const repository = require("../repositories/Transaction");
 
+/**
+ * Class representing a Transaction Controller.
+ */
 class Transaction {
-
+  /**
+   * Get all transactions.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getAll(req, res) {
     console.log("Transaction getAll is invoked...");
     try {
@@ -15,6 +23,12 @@ class Transaction {
     }
   }
 
+  /**
+   * Get a transaction by ID.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getById(req, res) {
     const { id } = req.params;
     try {
@@ -28,6 +42,12 @@ class Transaction {
     }
   }
 
+  /**
+   * Create a new transaction.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async create(req, res) {
     console.log("Transaction create is invoked...");
     try {
@@ -42,6 +62,12 @@ class Transaction {
     }
   }
 
+  /**
+   * Update a transaction.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async update(req, res) {
     console.log("Transaction update is invoked");
 
@@ -61,6 +87,12 @@ class Transaction {
     }
   }
 
+  /**
+   * Delete a transaction.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async delete(req, res) {
     console.log("Transaction delete is invoked...");
     try {
@@ -75,7 +107,6 @@ class Transaction {
       res.status(500).json({ message: error.message });
     }
   }
-  
 }
 
 module.exports = new Transaction();

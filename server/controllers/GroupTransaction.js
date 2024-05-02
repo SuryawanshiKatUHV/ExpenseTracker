@@ -4,7 +4,12 @@ const repository = require("../repositories/GroupTransaction");
  * Class representing a Group Transaction Controller.
  */
 class GroupTransaction {
-
+  /**
+   * Get all group transactions.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getAll(req, res) {
     console.log("Group Transaction getAll is invoked...");
     try {
@@ -18,6 +23,12 @@ class GroupTransaction {
     }
   }
 
+  /**
+   * Get a group transaction by ID.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   */
   async getById(req, res) {
     const { id } = req.params;
     try {
@@ -33,6 +44,7 @@ class GroupTransaction {
 
   /**
    * Create a new group transaction.
+   *
    * @param {Object} req - The request object.
    * @param {Object} res - The response object.
    * @returns {Promise<Object>} A Promise that resolves to the newly created group transaction object if successful.

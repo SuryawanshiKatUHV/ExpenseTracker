@@ -4,8 +4,7 @@ const repository = require("../repositories/User");
  * User class responsible for handling user-related operations.
  */
 class User {
-
-   /**
+  /**
    * Retrieve all users.
    *
    * @param {Object} req - Express request object.
@@ -24,7 +23,7 @@ class User {
     }
   }
 
-   /**
+  /**
    * Retrieve a user by ID.
    *
    * @param {Object} req - Express request object. req.params contains the id of the object.
@@ -46,7 +45,7 @@ class User {
     }
   }
 
-   /**
+  /**
    * Create a new user.
    *
    * @param {Object} req - Express request object. req.body contains the user data object.
@@ -141,6 +140,13 @@ class User {
     }
   }
 
+  /**
+   * Retrieve categories associated with a user.
+   *
+   * @param {Object} req - Express request object. req.params contains the id of the user.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getCategories(req, res) {
     console.log("User getCategories is invoked...");
     try {
@@ -154,7 +160,14 @@ class User {
       res.status(500).json({ message: error.message });
     }
   }
-  
+
+  /**
+   * Retrieve budgets associated with a user.
+   *
+   * @param {Object} req - Express request object. req.params contains the id of the user.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getBudgets(req, res) {
     console.log("User getBudgets is invoked...");
     try {
@@ -169,6 +182,13 @@ class User {
     }
   }
 
+  /**
+   * Retrieve budgets associated with a user for a specific month.
+   *
+   * @param {Object} req - Express request object. req.params contains the id, year, and month.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getBudgetsByMonth(req, res) {
     console.log("User getBudgetsByMonth is invoked...");
     try {
@@ -184,6 +204,13 @@ class User {
     }
   }
 
+  /**
+   * Retrieve transactions associated with a user.
+   *
+   * @param {Object} req - Express request object. req.params contains the id of the user.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getTransactions(req, res) {
     console.log("User getTransactions is invoked...");
     try {
@@ -198,6 +225,13 @@ class User {
     }
   }
 
+  /**
+   * Retrieve transactions associated with a user for a specific month.
+   *
+   * @param {Object} req - Express request object. req.params contains the id, year, and month.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getTransactionsByMonth(req, res) {
     console.log("User getTransactionsByMonth is invoked...");
     try {
@@ -213,6 +247,13 @@ class User {
     }
   }
 
+  /**
+   * Retrieve groups associated with a user.
+   *
+   * @param {Object} req - Express request object. req.params contains the id of the user.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getGroups(req, res) {
     console.log("User getGroups is invoked...");
     try {
@@ -227,6 +268,13 @@ class User {
     }
   }
 
+  /**
+   * Retrieve group transactions paid by a user.
+   *
+   * @param {Object} req - Express request object. req.params contains the userId and groupId.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getGroupTransactionsPaid(req, res) {
     console.log("User getGroupTransactionsPaid is invoked...");
     try {
@@ -241,6 +289,13 @@ class User {
     }
   }
 
+  /**
+   * Retrieve group transactions received by a user.
+   *
+   * @param {Object} req - Express request object. req.params contains the userId and groupId.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getGroupTransactionsReceived(req, res) {
     console.log("User getGroupTransactionsReceived is invoked...");
     try {
@@ -255,6 +310,13 @@ class User {
     }
   }
 
+  /**
+   * Retrieve group transactions where the user is owed money.
+   *
+   * @param {Object} req - Express request object. req.params contains the id of the user.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getGroupTransactionsMoneyOwedToMe(req, res) {
     console.log("User getGroupTransactionsMoneyOwedToMe is invoked...");
     try {
@@ -269,6 +331,13 @@ class User {
     }
   }
 
+  /**
+   * Retrieve group transactions where the user needs to pay money.
+   *
+   * @param {Object} req - Express request object. req.params contains the id of the user.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getGroupTransactionsMoneyINeedToPay(req, res) {
     console.log("User getGroupTransactionsMoneyINeedToPay is invoked...");
     try {
@@ -283,6 +352,13 @@ class User {
     }
   }
 
+  /**
+   * Retrieve the year-month range of transactions associated with a user.
+   *
+   * @param {Object} req - Express request object. req.params contains the id of the user.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getTransactionsYearMonthRange(req, res) {
     console.log("getTransactionsYearMonthRange is invoked...");
     try {
@@ -298,6 +374,13 @@ class User {
     }
   }
 
+  /**
+   * Retrieve the year-month range of budgets associated with a user.
+   *
+   * @param {Object} req - Express request object. req.params contains the id of the user.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getBudgetsYearMonthRange(req, res) {
     console.log("getBudgetsYearMonthRange is invoked...");
     try {
@@ -313,6 +396,13 @@ class User {
     }
   }
 
+  /**
+   * Retrieve the summary of transactions associated with a user for a specific type and month.
+   *
+   * @param {Object} req - Express request object. req.params contains the id, type, year, and month.
+   * @param {Object} res - Express response object.
+   * @returns {void}
+   */
   async getTransactionsSummary(req, res) {
     console.log("getTransactionsSummary is invoked...");
     try {
@@ -328,7 +418,6 @@ class User {
       res.status(500).json({ message: error.message });
     }
   }
-
 }
 
 module.exports = new User();

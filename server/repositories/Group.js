@@ -1,13 +1,28 @@
 const Joi = require("joi");
 const {execute, getConnection} = require('../common/database');
 
+/**
+ * Group class to interact with the 'USER_GROUP' database table.
+ */
 class Group {
 
+  /**
+   * Retrieve all groups.
+   *
+   * @returns {Promise<Array>} An array of group objects.
+   */
   async getAll() {
     const [rows, fields] = await execute("SELECT *, DATE_FORMAT(USER_GROUP_DATE, '%Y-%m-%d') AS USER_GROUP_DATE FROM USER_GROUP", []);
     return rows;
   }
 
+  /**
+   * Retrieve a group by its ID.
+   *
+   * @param {number} groupId - The group ID.
+   * @returns {Promise<Object>} The group object.
+   * @throws {Error} If the group is not found.
+   */
   async getById(groupId) {
     const [rows, fields] = await execute(`SELECT * FROM USER_GROUP WHERE USER_GROUP_ID=?`, [groupId]);
     if (!rows || rows.length == 0) {
@@ -132,6 +147,14 @@ class Group {
     return result;
   }
 
+  /**
+   * Delete a member from a group.
+   *
+   * @param {number} userGroupId - The group ID.
+   * @param {number} memberId - The member ID.
+   * @returns {Promise<void>}
+   * @throws {Error} If the group is not found.
+   */
   async deleteMember(userGroupId, memberId) {
     const result = await execute("DELETE FROM USER_GROUP_MEMBERSHIP WHERE USER_GROUP_ID=? AND MEMBER_ID=?", [userGroupId, memberId]);
     
@@ -142,6 +165,12 @@ class Group {
     return result;
   }
 
+  /**
+   * Retrieve members of a group.
+   *
+   * @param {number} groupId - The group ID.
+   * @returns {Promise<Array>} An array of member objects.
+   */
   async getMembers(groupId) {
     const SQL =
     `SELECT UGM.USER_GROUP_ID, UGM.MEMBER_ID, CONCAT(U.USER_LNAME, ", ", U.USER_FNAME) AS USER_FULLNAME
@@ -155,6 +184,12 @@ class Group {
     return rows;
   }
 
+  /**
+   * Retrieve active members of a group.
+   *
+   * @param {number} groupId - The group ID.
+   * @returns {Promise<Array>} An array of active member objects.
+   */
   async getActiveMembers(groupId) {
     const SQL = `SELECT UGT.PAID_BY_USER_ID, UGT.PAID_TO_USER_ID
     FROM USER_GROUP_TRANSACTION UGT
@@ -164,6 +199,12 @@ class Group {
     return rows;
   }
 
+  /**
+   * Retrieve transactions of a group.
+   *
+   * @param {number} groupId - The group ID.
+   * @returns {Promise<Array>} An array of transaction objects.
+   */
   async getTransactions(groupId) {
     const SQL = 
     `SELECT 
@@ -187,6 +228,12 @@ class Group {
     return rows;
   }
 
+  /**
+   * Retrieve the settlement summary of a group.
+   *
+   * @param {number} groupId - The group ID.
+   * @returns {Promise<Array>} An array of settlement summary objects.
+   */
   async getSettlementSummary(groupId) {
     const SQL =
     `SELECT
