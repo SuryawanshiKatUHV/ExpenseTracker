@@ -1,0 +1,44 @@
+.card {
+    width: 30rem;
+    margin: 0 auto;
+    padding: 2rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    background-color: #009b27;
+    margin-top: 2rem;
+  }
+  
+  .form-floating {
+    margin-bottom: 1rem;
+  }
+  
+  .form-floating label {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .form-floating input {
+    height: 3rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+  }
+  
+  .form-floating input:focus {
+    box-shadow: 0 0 0 0.125rem rgba(0, 123, 255, 0.25);
+  }
+  
+  .loginBtn, .registerBtn {
+    width: 100%;
+    height: 3rem;
+    border-radius: 0.25rem;
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .loginBtn :hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  }
